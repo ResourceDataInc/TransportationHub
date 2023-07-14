@@ -120,7 +120,7 @@ Vehicles is accessed via version 2 of the REST API. URL: https://developer.trime
             'lastStopSeq': @integer,
             'vehicleID': @integer,
             'time': @integer,
-            'offRoute': False
+            'offRoute': @boolean
         },
         ...
     ],
