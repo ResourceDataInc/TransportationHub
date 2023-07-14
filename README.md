@@ -35,7 +35,7 @@ Alerts is accessed via version 2 of the REST API. URL: https://developer.trimet.
 ### Request Parameters
 | Parameter | Type | Required | Description | Example |
 | --------- | ---- | -------- | ----------- | ------- |
-| appID | string | TRUE | appID to access API. | "4670688E9C3317977B21EED03" |
+| appID | string | TRUE | appID to access API. | "123456789XXXXXXXXX" |
 | routes | comma delimited values | FALSE | Return only alerts applicable for specified routes.	| [200, 100, 90]
 | route | alias for routes | FALSE | Same as routes. | [200, 100, 90] |
 | locIDs | comma delimited values | FALSE | Return only alerts applicable for specified location IDs. | [8377, 3077] | 
@@ -73,7 +73,7 @@ Vehicles is accessed via version 2 of the REST API. URL: https://developer.trime
 ### Request Parameters
 | Parameter | Type | Required | Description | Example |
 | --------- | ---- | -------- | ----------- | ------- |
-| appID | string | TRUE | appID to access API. | "4670688E9C3317977B21EED03" |
+| appID | string | TRUE | appID to access API. | "123456789XXXXXXXXX" |
 | routes | comma delimited values | FALSE | Return only vehicles travelling on specified routes. | [200, 100, 90] | 
 | blocks | comma delimited values | FALSE | Return only vehicles serving specified blocks. | [9084, 9003] |
 | ids | comma delimited values | FALSE | Return only vehicles of specified ids.	|174, 384, 123 |
@@ -137,7 +137,7 @@ Arrivals is accessed via version 2 of the REST API. URL: https://developer.trime
 ### Request Parameters
 | Parameter | Type | Required | Description | Example |
 | --------- | ---- | -------- | ----------- | ------- |
-| appID	| string | TRUE | appID to access API. | "4670688E9C3317977B21EED03" |
+| appID	| string | TRUE | appID to access API. | "123456789XXXXXXXXX" |
 | locIDs | comma delimited values | TRUE | Location IDs to report arrivals. Up to 10 location IDs. | [8377,3077] |
 | json | boolean (default true) | FALSE | If "false", return results in xml format (instead of default json). | false |
 | callback | string | FALSE | Returns json result in a jsonp callback function.| true |
@@ -195,7 +195,7 @@ RouteConfig is accessed via version 1 of the REST API. URL: https://developer.tr
 ### Request Parameters
 | Parameter | Type | Required | Description | Example |
 | --------- | ---- | -------- | ----------- | ------- |
-| appID	| string | TRUE | appID to access API. | "4670688E9C3317977B21EED03" |
+| appID	| string | TRUE | appID to access API. | "123456789XXXXXXXXX" |
 | routes | comma delimited values | FALSE | Return only alerts applicable for specified routes. If omitted, return every route.	| 70, 86, 20 |
 | route | alias for routes | FALSE | Same as routes. | 70, 86, 20 |
 | dir | integer (1 or 0) or string ("true" or "yes") | FALSE | Return direction elements under the route number. 0 (outbound), 1 (inbound), "true" or "yes" (both directions). | 1 |
