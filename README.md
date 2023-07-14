@@ -1,6 +1,3 @@
-AppID
-4670688E9C3317977B21EED03
-
 # Table of Contents
 1. [Overview](#overview)
 2. [GET URL Format](#get-url-format)
