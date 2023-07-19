@@ -8,7 +8,10 @@
     4. [RouteConfig](#routeconfig)
 
 # Overview
-TriMet offers a REST API to access information of their transportation services in General Transit Feed Specification (GTFS) format. The REST API can be called with HTTP GET requests. The API endpoints are either XML or JSON objects. Documentation is provided for accessing each service offered, including the GET request parameters and the endpoint datasets. 
+TriMet offers a REST API to access information of their transportation services in General Transit Feed Specification (GTFS) format. The REST API can be called with HTTP GET requests. The API endpoints are either XML or JSON objects. Documentation is provided for accessing each service offered, including the GET request parameters and the endpoint datasets. The dataset is refreshed at least ***every second***.
+
+The Transportation Hub will get data from the TriMet API and warehouse it in Snowflake to provide users with real time vehicle positions. 
+
 
 # GET URL Format
 Some services are only available on specific REST API versions.
