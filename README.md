@@ -193,6 +193,8 @@ Arrivals is accessed via version 2 of the REST API. URL: https://developer.trime
 ## RouteConfig
 https://developer.trimet.org/ws_docs/routeConfig_ws.shtml  
 By default, returns a XML object of routes. Key 'route' contains a list of route details, with optional stop and directional elements associated with a route. Includes 9 fields.
+Key 'dir' contains a list of possible directions a route can travel, 1 for inbound or 0 for outbound. Includes 2 fields.
+Key 'stop' contains a list of possible stops a route can contain and associated details of the stop. Includes 7 fields. 
 
 ### Version
 RouteConfig is accessed via version 1 of the REST API. URL: https://developer.trimet.org/ws/v1/routeConfig/
@@ -228,12 +230,29 @@ RouteConfig is accessed via version 1 of the REST API. URL: https://developer.tr
         },
         ...
     ],
+    'dir': [
+        {
+            'desc': @string,
+            'dir': @int
+        }
+    ],
+    'stop': [
+        {
+            'desc': @string,
+            'lat': @float,
+            'lng': @float,
+            'locid': @int,
+            'dir': @string,
+            'seq': @int,
+            'tp': @boolean
+        }
+    ]
 }
 ```
 
 ## StopLocation
 https://developer.trimet.org/ws_docs/stop_location_ws.shtml 
-As of 07/21/2023, the payload does not include stops data.
+As of 07/21/2023, the payload does not include stops data. See the response object for [RouteConfig](#response-object-3) and traverse to the 'stop' key for relevant information.
 
 ### Version
 Alerts is accessed via version 1 of the REST API. URL: https://developer.trimet.org/ws/v1/stops/
