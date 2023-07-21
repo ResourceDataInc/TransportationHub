@@ -6,6 +6,7 @@
     2. [Vehicles](#vehicles)
     3. [Arrivals](#arrivals)
     4. [RouteConfig](#routeconfig)
+    6. [StopLocation](#stoplocation)
 
 # Overview
 TriMet offers a REST API to access information of their transportation services in General Transit Feed Specification (GTFS) format. The REST API can be called with HTTP GET requests. The API endpoints are either XML or JSON objects. Documentation is provided for accessing each service offered, including the GET request parameters and the endpoint datasets. The dataset is refreshed at least ***every second***. Each payload is approximately ***300 kB***.
@@ -25,8 +26,9 @@ https://developer.trimet.org/ws/v2/*{service}*/
 | ------------ | --------- | ----------- |
 | Alerts | alerts | Reports alerts currently in effect by route or location ID. |
 | Vehicles | vehicles | Latest vehicle positions. |
-| Arrivals | arrivals |Reports arrivals at a stop identified by location ID. |
+| Arrivals | arrivals | Reports arrivals at a stop identified by location ID. |
 | RouteConfig | routeConfig | Retrieves a list of routes reported by TransitTracker from the active schedule. |
+| StopLocation | stops | Currently does not return stops json object in payload as of 07/21/2023 |
 
 ## Alerts
 https://developer.trimet.org/ws_docs/alerts2_ws.shtml  
@@ -226,5 +228,32 @@ RouteConfig is accessed via version 1 of the REST API. URL: https://developer.tr
         },
         ...
     ],
+}
+```
+
+## StopLocation
+https://developer.trimet.org/ws_docs/stop_location_ws.shtml 
+As of 07/21/2023, the payload does not include stops data.
+
+### Version
+Alerts is accessed via version 1 of the REST API. URL: https://developer.trimet.org/ws/v1/stops/
+
+### Request Parameters
+| Parameter | Type | Required | Description | Example |
+| --------- | ---- | -------- | ----------- | ------- |
+| appID | string | TRUE | appID to access API. | "123456789XXXXXXXXX" |
+| bbox | comma delimited list of lat, lon values | FALSE | Return only vehicles within the specified lat and lon bounding box.| 45.521417072238776, -122.68457131175182, 45.520469750084125, -122.68060165511433, 45.52002641575691, -122.68654546257596, 45.518447670838114, -122.68170692457747 |
+| ll | comma delimited lat, lon pair| FALSE | Defines the center of search radius in decimal degrees. | 45.518447670838114, -122.68170692457747 |
+| feet | integer | FALSE | Defines the search radius in feet. Requires field *ll* to be populated. | 5280 | 
+| meters | integer | FALSE | Defines the search radius in meters. Requires field *ll* to be populated. | 1000 |
+| showRoutes | boolean | FALSE | If "true", returns a list of routes that service the stop(s). | false |
+| showRouteDirs | boolean | FALSE | If "true", returns a list of *dir* elements for each route direction that service the stop(s). Requires *showRoutes* parameter to be "true". | false |
+| json | boolean (default false) | FALSE | If "true", return results in json format (instead of default xml). | false |
+| callback | string | FALSE | Returns json result in a jsonp callback function. json must be "true". | "true" |
+
+### Response Object
+```
+'resultSet': {
+    'queryTime': @integer,
 }
 ```
