@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="transportation_hub" id="Project-1abb" database="Snowflake" >
+	<schema name="HUB" catalogname="TRANSPORTATION_HUB" >
+		<table name="MESSAGE" prior="TABLE" >
+			<column name="MESSAGEID" type="integer" jt="4" mandatory="y" />
+			<column name="SIGN_MESSAGE" type="varchar" length="50" jt="12" />
+			<column name="SIGN_MESSAGE_LONG" type="varchar" length="100" jt="12" />
+			<index name="PK_MESSAGE_MESSAGEID" unique="PRIMARY_KEY" >
+				<column name="MESSAGEID" />
+			</index>
+		</table>
+		<table name="ROUTE" prior="TABLE" >
+			<column name="ROUTEID" prior="ROUTENUMBER" type="integer" jt="4" mandatory="y" >
+				<comment><![CDATA["routeNumber" in JSON dataset]]></comment>
+			</column>
+			<column name="ROUTE_TYPE" type="varchar" length="10" jt="12" />
+			<column name="ROUTE_SUB_TYPE" type="varchar" length="20" jt="12" />
+			<column name="ROUTE_COLOR" type="varchar" length="6" jt="12" />
+			<column name="FREQUENT_SERVICE" type="boolean" jt="16" />
+			<column name="ROUTE_DESC" type="varchar" length="50" jt="12" />
+			<index name="PK_ROUTE_ROUTENUMBER" unique="PRIMARY_KEY" >
+				<column name="ROUTEID" />
+			</index>
+		</table>
+		<table name="VEHICLE" >
+			<column name="VEHICLEID" type="integer" jt="4" mandatory="y" />
+			<column name="VEHICLE_TYPE" type="varchar" length="10" jt="12" />
+			<index name="PK_VEHICLE_VEHICLEID" unique="PRIMARY_KEY" >
+				<column name="VEHICLEID" />
+			</index>
+		</table>
+		<table name="VEHICLE_POSITION" prior="TABLE" >
+			<column name="ID" type="integer" jt="4" mandatory="y" />
+			<column name="VEHICLEID" type="integer" jt="4" />
+			<column name="DATETIME" prior="DATE" type="datetime" jt="91" />
+			<column name="LATITUDE" type="float" jt="6" />
+			<column name="LONGITUDE" type="float" jt="6" />
+			<column name="ROUTEID" type="integer" jt="4" />
+			<column name="TRIPID" type="integer" jt="4" />
+			<column name="LAST_LOCID" type="integer" jt="4" />
+			<column name="NEXT_LOCID" type="integer" jt="4" />
+			<column name="LAST_STOP_SEQ" type="integer" jt="4" />
+			<column name="NEXT_STOP_SEQ" type="integer" jt="4" />
+			<column name="IN_CONGESTION" type="boolean" jt="16" />
+			<column name="OFF_ROUTE" type="boolean" jt="16" />
+			<column name="MESSAGEID" type="integer" jt="4" />
+			<index name="PK_VEHICLE_POSITION_ID" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+			<fk name="FK_VEHICLE_POSITION_VEHICLE" to_schema="TRANSPORTATION_HUB.HUB" to_table="VEHICLE" >
+				<fk_column name="VEHICLEID" pk="VEHICLEID" />
+			</fk>
+			<fk name="FK_VEHICLE_POSITION_ROUTE" to_schema="TRANSPORTATION_HUB.HUB" to_table="ROUTE" >
+				<fk_column name="ROUTEID" pk="ROUTEID" />
+			</fk>
+			<fk name="FK_VEHICLE_POSITION_MESSAGE" to_schema="TRANSPORTATION_HUB.HUB" to_table="MESSAGE" >
+				<fk_column name="MESSAGEID" pk="MESSAGEID" />
+			</fk>
+		</table>
+	</schema>
+	<schema name="PUBLIC" catalogname="TRANSPORTATION_HUB" />
+	<schema name="STAGING" catalogname="TRANSPORTATION_HUB" >
+		<table name="VEHICLE_STAGING" prior="TABLE" >
+			<comment><![CDATA[transforms JSON from S3 external stage to staging table]]></comment>
+			<column name="BEARING" type="integer" jt="4" />
+			<column name="BLOCKID" type="integer" jt="4" />
+			<column name="DELAY" type="integer" jt="4" />
+			<column name="EXPIRES" type="datetime" jt="91" />
+			<column name="EXTRABLOCKID" prior="EXTRA_BLOCKID" type="integer" jt="4" />
+			<column name="GARAGE" type="varchar" length="10" jt="12" />
+			<column name="IN_CONGESTION" type="boolean" jt="16" />
+			<column name="LASTLOCID" prior="LAST_LOCID" type="integer" jt="4" />
+			<column name="LASTSTOPSEQ" prior="LAST_STOP_SEQ" type="integer" jt="4" />
+			<column name="LATITUDE" type="float" jt="6" />
+			<column name="LOADPERCENTAGE" prior="LOAD_PERCENTAGE" type="integer" jt="4" />
+			<column name="LOCATIONINSCHEDULEDAY" prior="LOCATION_IN_SCHEDULE_DAY" type="integer" jt="4" />
+			<column name="LONGITUDE" type="float" jt="6" />
+			<column name="MESSAGECODE" prior="MESSAGE_CODE" type="integer" jt="4" />
+			<column name="NEWTRIP" prior="NEW_TRIP" type="boolean" jt="16" />
+			<column name="NEXTLOCID" prior="NEXT_LOCID" type="integer" jt="4" />
+			<column name="NEXTSTOPSEQ" prior="NEXT_STOP_SEQ" type="integer" jt="4" />
+			<column name="OFFROUTE" prior="OFF_ROUTE" type="boolean" jt="16" />
+			<column name="ROUTECOLOR" prior="COLOR" type="varchar" length="6" jt="12" />
+			<column name="ROUTENUMBER" prior="ROUTE_NUMBER" type="integer" jt="4" />
+			<column name="ROUTESUBTYPE" prior="ROUTE_SUB_TYPE" type="varchar" length="20" jt="12" />
+			<column name="SERVICEDATE" prior="SERVICE_DATE" type="datetime" jt="91" />
+			<column name="SIGNMESSAGE" prior="SIGN_MESSAGE" type="varchar" length="50" jt="12" />
+			<column name="SIGNMESSAGELONG" prior="SIGN_MESSAGE_LONG" type="text" length="100" jt="12" />
+			<column name="SOURCE" type="varchar" length="5" jt="12" />
+			<column name="TIME" type="datetime" jt="91" />
+			<column name="TRIPID" type="integer" jt="4" />
+			<column name="VEHICLETYPE" prior="VEHICLE_TYPE" type="varchar" length="10" jt="12" >
+				<comment><![CDATA["type" from JSON dataset]]></comment>
+			</column>
+			<column name="VEHICLEID" type="integer" jt="4" />
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout-ac3" show_relation="columns" >
+		<entity schema="TRANSPORTATION_HUB.HUB" name="MESSAGE" color="C1D8EE" x="528" y="320" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="ROUTE" color="C1D8EE" x="544" y="160" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLE" color="C1D8EE" x="576" y="48" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLE_POSITION" color="C1D8EE" x="992" y="96" />
+		<entity schema="TRANSPORTATION_HUB.STAGING" name="VEHICLE_STAGING" color="EEC1C1" x="48" y="48" />
+	</layout>
+</project>
