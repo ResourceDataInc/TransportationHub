@@ -21,13 +21,26 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-
+import java.util.Map;
+import java.util.HashMap;
+class Service {
+    public String name;
+    public String link;
+    public Service(String name, String link) {
+        this.name = name;
+        this.link = "http://developer.trimet.org/"+link+"/"+name;
+    }
+}
 public class HttpRequest {
-    public byte[] getResponse() throws URISyntaxException, IOException {
-        String vehiclePositionsUrl = "http://developer.trimet.org/ws/gtfs/VehiclePositions";
-        String tripUpdatesUrl = "http://developer.trimet.org/ws/V1/TripUpdate";
-        String feedSpecAlertsUrl = "http://developer.trimet.org/ws/V1/FeedSpecAlerts";
-        HttpGet httpGet = new HttpGet(vehiclePositionsUrl);
+    public Map<Integer, Service> services;
+    public HttpRequest() {
+        services = new HashMap<>();
+        services.put(0, new Service("VehiclePositions", "ws/gtfs"));
+        services.put(1, new Service("TripUpdate", "ws/V1"));
+        services.put(2, new Service("FeedSpecAlerts", "ws/V1"));
+    }
+    public byte[] getResponse(String link) throws URISyntaxException, IOException {
+       HttpGet httpGet = new HttpGet(link);
         URI uri = new URIBuilder(httpGet.getURI())
                 .addParameter("appID", "1C3939B80D87BDB332D2D6318")
                 .build();
@@ -42,21 +55,39 @@ public class HttpRequest {
         }
     }
     public static void main(String[] args) throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+
+        int waitTimeMs = Integer.parseInt(args[1]);
+        boolean write_to_file = Boolean.parseBoolean(args[2]);
+        int numLoops = Integer.parseInt(args[3]);
         HttpRequest request = new HttpRequest();
-        byte[] response = request.getResponse();
-        FileUtils.writeByteArrayToFile(new File("gtfs-rt-vehicle-positions"), response);
-        FeedMessage msg = FeedMessage.parseFrom(response);
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                "org.apache.kafka.common.serialization.StringSerializer");
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
-        props.put("schema.registry.url", "http://0.0.0.0:8081");
-        Producer<String, FeedMessage> producer = new KafkaProducer<>(props);
-        ProducerRecord<String, FeedMessage> record
-                = new ProducerRecord<>("vehicle-positions", "msg", msg);
-        producer.send(record).get();
-        producer.close();
+        Service service = request.services.get(Integer.parseInt(args[0]));
+
+        //run ten times, then stop
+        for(int i=0; i < numLoops; i++){
+            // get data
+            byte[] response = request.getResponse(service.link);
+
+            if (write_to_file) FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + service.name + ".bin"), response);
+
+            //serialize data
+            FeedMessage msg = FeedMessage.parseFrom(response);
+
+            // set kafka producer configs
+            Properties props = new Properties();
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
+            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                    "org.apache.kafka.common.serialization.StringSerializer");
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                    "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
+            props.put("schema.registry.url", "http://0.0.0.0:8081");
+
+            Producer<String, FeedMessage> producer = new KafkaProducer<>(props);
+            ProducerRecord<String, FeedMessage> record
+                    = new ProducerRecord<>(service.name, service.name, msg);
+            producer.send(record).get();
+            producer.close();
+            // wait until going again
+            Thread.sleep(waitTimeMs);
+        }
     }
 }
