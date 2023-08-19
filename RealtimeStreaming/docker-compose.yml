@@ -164,3 +164,14 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:38082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+
+  datastreamer:
+    container_name: datastreamer
+    depends_on:
+      - broker
+      - schema-registry
+    build:
+      context: .
+      dockerfile: dockerfile_datastreamer
+    command: ["tail", "-f", "/dev/null"]
+    network_mode: "host"

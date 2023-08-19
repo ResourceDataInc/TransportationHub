@@ -74,12 +74,12 @@ public class HttpRequest {
 
             // set kafka producer configs
             Properties props = new Properties();
-            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092");
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                     "org.apache.kafka.common.serialization.StringSerializer");
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                     "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
-            props.put("schema.registry.url", "http://0.0.0.0:8081");
+            props.put("schema.registry.url", "http://127.0.0.1:8081");
 
             Producer<String, FeedMessage> producer = new KafkaProducer<>(props);
             ProducerRecord<String, FeedMessage> record
