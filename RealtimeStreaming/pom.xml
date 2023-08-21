@@ -45,6 +45,11 @@
             <artifactId>kafka-protobuf-serializer</artifactId>
             <version>7.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.snowflake</groupId>
+            <artifactId>snowflake-ingest-sdk</artifactId>
+            <version>2.0.2</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>RealtimeStreaming</finalName>
