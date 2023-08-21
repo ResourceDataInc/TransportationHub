@@ -9,8 +9,10 @@ docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-
 docker cp ksql/vehicles.sql ksqldb-cli:/home/appuser
 docker cp ksql/entities_exploded.sql ksqldb-cli:/home/appuser
 docker cp ksql/vehicles_latest.sql ksqldb-cli:/home/appuser
+docker cp ksql/json_vehicles_latest.sql ksqldb-cli:/home/appuser
 docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f vehicles.sql 
 docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f entities_exploded.sql 
 docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f vehicles_latest.sql 
+docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f json_vehicles_latest.sql 
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 0 1000 false -1
 
