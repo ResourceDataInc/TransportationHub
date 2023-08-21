@@ -40,7 +40,7 @@ public class HttpRequest {
         services.put(2, new Service("FeedSpecAlerts", "ws/V1"));
     }
     public byte[] getResponse(String link) throws URISyntaxException, IOException {
-       HttpGet httpGet = new HttpGet(link);
+        HttpGet httpGet = new HttpGet(link);
         URI uri = new URIBuilder(httpGet.getURI())
                 .addParameter("appID", "1C3939B80D87BDB332D2D6318")
                 .build();
@@ -54,40 +54,44 @@ public class HttpRequest {
             return EntityUtils.toByteArray(response.getEntity());
         }
     }
-    public static void main(String[] args) throws URISyntaxException, IOException, ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         int waitTimeMs = Integer.parseInt(args[1]);
         boolean write_to_file = Boolean.parseBoolean(args[2]);
         int numLoops = Integer.parseInt(args[3]);
+        if(numLoops == -1) numLoops = Integer.MAX_VALUE;
         HttpRequest request = new HttpRequest();
         Service service = request.services.get(Integer.parseInt(args[0]));
 
         //run ten times, then stop
         for(int i=0; i < numLoops; i++){
             // get data
-            byte[] response = request.getResponse(service.link);
+            try {
+                byte[] response = request.getResponse(service.link);
+                if (write_to_file) FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + service.name + ".bin"), response);
 
-            if (write_to_file) FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + service.name + ".bin"), response);
+                //serialize data
+                FeedMessage msg = FeedMessage.parseFrom(response);
 
-            //serialize data
-            FeedMessage msg = FeedMessage.parseFrom(response);
+                // set kafka producer configs
+                Properties props = new Properties();
+                props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+                props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                        "org.apache.kafka.common.serialization.StringSerializer");
+                props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                        "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
+                props.put("schema.registry.url", "http://127.0.0.1:8081");
 
-            // set kafka producer configs
-            Properties props = new Properties();
-            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                    "org.apache.kafka.common.serialization.StringSerializer");
-            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                    "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
-            props.put("schema.registry.url", "http://127.0.0.1:8081");
-
-            Producer<String, FeedMessage> producer = new KafkaProducer<>(props);
-            ProducerRecord<String, FeedMessage> record
-                    = new ProducerRecord<>(service.name, service.name, msg);
-            producer.send(record).get();
-            producer.close();
-            // wait until going again
-            Thread.sleep(waitTimeMs);
+                Producer<String, FeedMessage> producer = new KafkaProducer<>(props);
+                ProducerRecord<String, FeedMessage> record
+                        = new ProducerRecord<>(service.name, service.name, msg);
+                producer.send(record).get();
+                producer.close();
+                // wait until going again
+                Thread.sleep(waitTimeMs);
+            } catch (Exception e){
+                System.out.println(e);
+            }
         }
     }
 }
