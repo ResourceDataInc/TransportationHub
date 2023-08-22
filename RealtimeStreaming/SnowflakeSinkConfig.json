@@ -1,0 +1,22 @@
+{
+  "name":"trimet-gtfs",
+  "config":{
+    "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+    "tasks.max":"8",
+    "topics":"VehiclePositions,TripUpdate,FeedSpecAlerts",
+    "buffer.count.records":"1",
+    "buffer.flush.time":"10",
+    "buffer.size.bytes":"5000",
+    "snowflake.url.name":"***REMOVED***",
+    "snowflake.user.name":"AKIRAMADONO",
+    "snowflake.private.key":"***REMOVED***=",
+    "snowflake.private.key.passphrase":"***REMOVED***",
+    "snowflake.database.name":"TRANSPORTATION_HUB",
+    "snowflake.role.name":"SYSADMIN",
+    "snowflake.schema.name":"STAGING",
+    "key.converter":"org.apache.kafka.connect.storage.StringConverter",
+    "key.converter.schema.registry.url": "CONFLUENT_SCHEMA_REGISTRY",
+    "value.converter":"io.confluent.connect.protobuf.ProtobufConverter",
+    "value.converter.schema.registry.url":"http://schema-registry:8081"
+  }
+}
