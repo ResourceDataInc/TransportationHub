@@ -1,4 +1,4 @@
-CREATE STREAM vehicles
+CREATE STREAM Vehicles
   WITH (KAFKA_TOPIC='VehiclePositions',
         KEY_FORMAT = 'KAFKA',
         VALUE_FORMAT='PROTOBUF',
