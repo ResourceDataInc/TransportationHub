@@ -177,3 +177,13 @@ services:
       dockerfile: dockerfile_datastreamer
     command: ["tail", "-f", "/dev/null"]
     network_mode: "host"
+
+  react-js-ui:
+    build:
+      context: ./client-app
+    links:
+      - rest-proxy
+    environment:
+      NODE_ENV: production
+    ports:
+     - 8090:3000
