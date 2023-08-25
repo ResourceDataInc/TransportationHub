@@ -5,11 +5,9 @@ const options = {
     name: 'buses',
     initialState: {
         buses: [{
-            key: 4949, 
-            value: {
-                LATITUDE: 45.517,
-                LONGITUDE: -122.683,
-            }
+            row: {
+                columns: [4949, 45.517, -122.683],
+            },
         }],
         isLoading: true,
         hasError: false,
@@ -23,6 +21,7 @@ const options = {
             if (action.payload === null || action.payload.length <= 0) {
                 state.buses = state.buses;
             } else {
+                action.payload.shift();
                 state.buses = action.payload;
             };
 
