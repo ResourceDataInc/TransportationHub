@@ -7,7 +7,7 @@ export const BusMarker = (props) => {
     return (
         <>
             <Marker position={position} icon={busIcon}>
-                <Popup>This is bus number {bus.key}</Popup>
+                <Popup>This is bus number {bus.row.columns[0]}</Popup>
             </Marker>
         </>
     )

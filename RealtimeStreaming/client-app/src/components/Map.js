@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BusMarker } from './BusMarker';
 import { selectBuses } from '../store/buses/busesSlice';
 import { getVehiclePositions } from '../store/buses/busesActions';
-import { VehiclePositionApi } from '../api/vehiclePositionApi';
 
 // Leaflet Imports and Setup
 import 'leaflet/dist/leaflet.css';
@@ -18,50 +17,18 @@ L.Icon.Default.mergeOptions({
 
 export const Map = () => {
     const dispatch = useDispatch();
-    const [moveThatBus, setMoveThatBus] = useState(false);
     const buses = useSelector(selectBuses);
-    const api = new VehiclePositionApi();
-
-    const setupConsumerInstance = async () => {
-        try{
-            await api.createInstance();
-            await api.subscribe();
-
-            setMoveThatBus(true);
-        } catch(e) {
-            setMoveThatBus(false);
-        };     
-    };
-
-    useEffect(() => {
-        setupConsumerInstance();
-    }, []);
-
-    const changePosition = () => {
-        if (moveThatBus) {
-            //dispatch(getVehiclePositions(api))
-        }
-    };
 
     useEffect(() => {
         const postionChangeInterval = setInterval(() => {
-            changePosition();
-        }, 3000);
+            dispatch(getVehiclePositions());
+        }, 1000);
 
         return () => clearInterval(postionChangeInterval);
-    }, [moveThatBus]); 
+    }, []); 
     
     return (
         <div className='row'>
-            {/*
-            <div className='col-12'>
-                <button
-                    onClick={() => setTestingMoveThatBus(!testingMoveThatBus)}
-                    className={`text-light mb-2 ${testingMoveThatBus ? "bg-danger" : "bg-success"}`}
-                >Move That Bus? &#40;AKA Loop Get Records&#41;</button>
-            </div> 
-            */}
-
             <div className='col-12'>
                 <MapContainer
                     center={[45.517, -122.683]}
@@ -76,9 +43,9 @@ export const Map = () => {
                     {buses.map((bus) => {
                         return (
                             <BusMarker
-                                key={`${bus.key}`}
+                                key={`${bus.row.columns[0]}`}
                                 bus={bus}
-                                position={[bus.value.LATITUDE, bus.value.LONGITUDE]}
+                                position={[bus.row.columns[1], bus.row.columns[2]]}
                             />
                         )
                     })}
