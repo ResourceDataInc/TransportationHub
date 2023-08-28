@@ -1,6 +1,6 @@
-import L, {Icon, Point} from 'leaflet';
+import {Icon, Point} from 'leaflet';
 
-const busIcon = new Icon({
+export const busIcon = new Icon({
     iconUrl: require('../icons/icons8-bus-material-rounded-16.png'),
     iconRetinaUrl: require('../icons/icons8-bus-material-rounded-16.png'),
     iconSize: new Point(15, 15),
@@ -10,5 +10,3 @@ const busIcon = new Icon({
     //shadowSize: null,
     //shadowAnchor: null,
 });
-
-export { busIcon };

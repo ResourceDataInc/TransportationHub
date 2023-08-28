@@ -46,12 +46,17 @@ export const Map = () => {
                                 key={`${bus.row.columns[0]}`}
                                 bus={bus}
                                 position={[bus.row.columns[1], bus.row.columns[2]]}
+                                id={bus.row.columns[0]}
+                                latitude={bus.row.columns[1]}
+                                longitude={bus.row.columns[2]}
                             />
                         )
                     })}
                 </MapContainer>
-
-                <p className='w-75 mx-auto text-right'><a target="_blank" href="https://icons8.com/icon/86308/bus">Bus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></p>
+                
+                <p className='w-75 mx-auto text-right'>
+                    <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+                </p>
             </div>
         </div>
     )
