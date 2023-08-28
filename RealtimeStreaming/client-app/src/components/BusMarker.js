@@ -1,5 +1,4 @@
 import { Marker, Popup } from 'react-leaflet';
-import { busIcon } from '../assets/leafletIcons/busIcon';
 import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { yellowBusIcon } from '../assets/leafletIcons/yellowBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
@@ -12,7 +11,7 @@ export const BusMarker = (props) => {
         const busId = Number(id);
 
         if (busId > 4500) {
-            return greenBusIcon;
+            return greyBusIcon;
         };
 
         if (busId > 4000) {
@@ -23,14 +22,14 @@ export const BusMarker = (props) => {
             return redBusIcon;
         };
 
-        return greyBusIcon;
+        return greenBusIcon;
     };
 
     return (
-        <>
+        <div>
             <Marker position={position} icon={iconColor()}>
                 <Popup>This is bus number {id}</Popup>
             </Marker>
-        </>
+        </div>
     )
 };
