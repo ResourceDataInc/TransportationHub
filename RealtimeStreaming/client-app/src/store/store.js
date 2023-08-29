@@ -1,8 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import busesReducer from './buses/busesSlice';
+import vehiclesReducer from './vehicles/vehiclesSlice';
+import stopsReducer from './stops/stopsSlice';
 
 export default configureStore({
     reducer: combineReducers({
-        buses: busesReducer,
+        vehicles: vehiclesReducer,
+        stops: stopsReducer,
     })
 });
