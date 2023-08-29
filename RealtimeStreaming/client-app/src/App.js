@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './containers/Header';
-import { MapPage } from './containers/MapPage';
+import { Map } from './containers/Map';
 import { Footer } from './containers/Footer';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
 
         <div id='main'>
           <Routes>
-            <Route exact path='/' element={<MapPage/>}/>
+            <Route exact path='/' element={<Map/>}/>
           </Routes>
           
         </div>

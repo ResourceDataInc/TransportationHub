@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getVehiclePositions } from './busesActions';
+import { getVehicles } from './vehiclesActions';
 
 const options = {
-    name: 'buses',
+    name: 'vehicles',
     initialState: {
-        buses: [{
+        vehicles: [{
             row: {
                 columns: [4949, 45.517, -122.683],
             },
@@ -14,29 +14,28 @@ const options = {
     },
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getVehiclePositions.fulfilled, (state, action) => {
+        builder.addCase(getVehicles.fulfilled, (state, action) => {
             state.isLoading = false;
             state.hasError = false;
 
             if (action.payload === null || action.payload.length <= 0) {
-                state.buses = state.buses;
+                state.vehicles = state.vehicles;
             } else {
                 action.payload.shift();
-                state.buses = action.payload;
+                state.vehicles = action.payload;
             };
 
-            console.log(`There are ${state.buses.length} buses in the state`);
+            console.log(`There are ${state.vehicles.length} buses in the state`);
         });
 
-        builder.addCase(getVehiclePositions.rejected, (state) => {
+        builder.addCase(getVehicles.rejected, (state) => {
             state.buses.isLoading = false;
             state.buses.hasError = true;
         });
     },
 };
 
-const busesSlice = createSlice(options);
+const vehiclesSlice = createSlice(options);
 
-export default busesSlice.reducer;
-export const selectBuses = (state) => state.buses.buses;
-export const {handleChangePositions} = busesSlice.actions;
+export default vehiclesSlice.reducer;
+export const selectVehicles = (state) => state.vehicles.vehicles;
