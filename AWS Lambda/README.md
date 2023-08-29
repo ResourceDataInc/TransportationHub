@@ -1,5 +1,12 @@
+# AWS Lambda
+AWS Lambda and other AWS modules are utilized as an alternative method to extract data from TriMet's REST API and load it into Snowflake.
+The architecture for this data flow displayed in the diagram below:
+![img](../imgs/Transportation%20Hub%20DFD.png)
+
 # Data Sources and Requirements
 The Transportation Hub utilizes TriMet General Transit Feed Specification data offered via REST API and accessed using HTTPS GET requests. Documentation for the API can be found in [a_TriMet GTFS](<a_TriMet GTFS.md>) or [online](https://developer.trimet.org/ws_docs/).
+
+![architecture](../imgs/Transportation Hub DFD.png)
 
 # Extraction Tools
 RDI's "Portland_Office" AWS account hosts the processes required for data extraction and raw data storage. A Lambda function executes a Python GET request on the TriMet REST API to access its endpoints. Two Amazon EventBridges trigger the Lambda function to get TriMet route data and vehicle position data, scheduled at a one month and one minute frequency, respectively.
