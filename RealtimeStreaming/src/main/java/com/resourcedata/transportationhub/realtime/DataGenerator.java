@@ -4,6 +4,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.transit.realtime.GtfsRealtime;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -66,8 +67,9 @@ public class DataGenerator {
         }
     }
     public GtfsRealtime.FeedMessage generate(){
-        try{
+        try {
             byte[] response = getHttpResponse(requestParams.link);
+            if(response == null) throw new IOException("no response");
             if (requestParams.fileWriteRequested) try {
                 FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
             } catch (IOException io){
@@ -75,12 +77,15 @@ public class DataGenerator {
             }
             Thread.sleep(requestParams.waitTimeMs);
             return GtfsRealtime.FeedMessage.parseFrom(response);
-
+        }
+        catch (ConnectionClosedException err){
+            err.printStackTrace(System.err);
+            return null;
         }
         catch (IOException | InterruptedException e){
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        return null;
+       return null;
     }
 }
