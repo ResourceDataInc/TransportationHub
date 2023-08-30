@@ -41,6 +41,7 @@ public class DataStreamer implements Closeable {
             }).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace(System.err);
+            System.exit(1);
         }
     }
     public void close() { producer.close(); }
