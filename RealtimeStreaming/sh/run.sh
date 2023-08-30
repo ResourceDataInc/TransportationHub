@@ -12,11 +12,13 @@ docker exec broker bash -c "kafka-console-producer --bootstrap-server broker:909
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 0 1000 false -1 &
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 1 1000 false -1 &
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 2 1000 false -1 &
-sleep 20
+sleep 10
 for f in ksql/*.sql; do
 docker cp $f ksqldb-cli:/home/appuser
 rawfile=`basename $f`
 docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f $rawfile
+# for talking during the demo 
+sleep 10 
 done
 
 #docker cp SnowflakeSinkConfig.json connect:/home/appuser
