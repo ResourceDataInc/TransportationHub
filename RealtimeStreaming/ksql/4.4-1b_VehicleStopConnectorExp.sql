@@ -11,7 +11,8 @@ CREATE STREAM VehicleStopConnectorExp
         v.k1 as k1,
         v.k2 as k2,
         v.vehicle_id as vehicle_id,
-        v.trip_id as trip_id
+        v.trip_id as trip_id,
+        v.stop_id as stop_id
     FROM VehicleStopConnector v
     INNER JOIN StopMapState s ON s.id = v.k1
 EMIT CHANGES;
