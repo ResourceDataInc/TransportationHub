@@ -59,7 +59,8 @@ export const Map = () => {
                                 latitude={vehicle.row.columns[1]}
                                 longitude={vehicle.row.columns[2]}
                                 status={vehicle.row.columns[3]}
-                                currentOrNextStop={vehicle.row.columns[4]}
+                                stopSequence={vehicle.row.columns[4]}
+                                stopId={vehicle.row.columns[5]}
                             />
                         )
                     })}
@@ -73,6 +74,8 @@ export const Map = () => {
                                 latitude={stop.row.columns[4]}
                                 longitude={stop.row.columns[5]}
                                 address={stop.row.columns[6]}
+                                stopSequence={stop.row.columns[9].STOP_SEQUENCE}
+                                // stopId={stop.row.columns[]}
                             />
                         )
                     })}
