@@ -5,6 +5,7 @@
 .app {
   font-family: 'DM Sans', sans-serif;
   background-color: var(--primary-color);
+  min-height: 100vh;
 }
 
 .map-container {

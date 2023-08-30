@@ -45,7 +45,7 @@ export const Map = () => {
                     className='map-container mx-auto border border-dark'
                 >
                     <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons by <a target="_blank" href="https://icons8.com">Icons8</a>'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
@@ -59,7 +59,8 @@ export const Map = () => {
                                 latitude={vehicle.row.columns[1]}
                                 longitude={vehicle.row.columns[2]}
                                 status={vehicle.row.columns[3]}
-                                currentOrNextStop={vehicle.row.columns[4]}
+                                stopSequence={vehicle.row.columns[4]}
+                                stopId={vehicle.row.columns[5]}
                             />
                         )
                     })}
@@ -73,17 +74,19 @@ export const Map = () => {
                                 latitude={stop.row.columns[4]}
                                 longitude={stop.row.columns[5]}
                                 address={stop.row.columns[6]}
+                                stopSequence={stop.row.columns[9].STOP_SEQUENCE}
+                                // stopId={stop.row.columns[]}
                             />
                         )
                     })}
                     
                 </MapContainer>
                 
-                <p className='w-75 mx-auto text-right'>
-                    <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-                    <span>, </span>
-                    <a target="_blank" href="https://icons8.com/icon/123616/square">Square</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-                </p>
+                {/* <p className='w-75 mx-auto text-right'>
+                    <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a>
+                    <span> icon, </span>
+                    <a target="_blank" href="https://icons8.com/icon/37601/circle">Circle</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+                </p> */}
 
             </div>
         </div>
