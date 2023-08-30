@@ -51,7 +51,7 @@ The various locally deployed docker containers are depicted as squares.  The com
 
 ### datastreamer
 
-All the code written is [HttpRequest.java](RealtimeStreaming/src/main/java/com/resourcedata/transportationhub/realtime/HttpRequest.java).  The `com.google.transit.realtime` package contains generated code from the protobuf compiler.  The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments:
+All the custom code written is in the `com.resourcedata.transportationhub.realtime` package.  The `com.google.transit.realtime` package contains generated code from the protobuf compiler.  The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments:
 
 1. data feed (0,1, or 2) - Select which trimet feed is desired.
   * 0 - VehiclePositions
