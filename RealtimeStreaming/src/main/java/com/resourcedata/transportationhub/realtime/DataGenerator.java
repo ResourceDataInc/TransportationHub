@@ -77,12 +77,9 @@ public class DataGenerator {
             return GtfsRealtime.FeedMessage.parseFrom(response);
 
         }
-        catch (InvalidProtocolBufferException e){
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
         catch (IOException | InterruptedException e){
             e.printStackTrace(System.err);
+            System.exit(1);
         }
         return null;
     }
