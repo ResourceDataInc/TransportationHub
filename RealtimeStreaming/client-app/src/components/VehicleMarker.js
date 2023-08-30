@@ -33,7 +33,7 @@ export const VehicleMarker = (props) => {
 
     return (
         <div>
-            <Marker position={position} icon={iconColor()}>
+            <Marker position={position} icon={iconColor()} style={{ zIndex: 1 }}>
                 <Popup>
                     <p>This is bus number {id}</p>
                     <p>{status === 'IN_TRANSIT_TO' && `Currently in transit to stop ${currentOrNextStop}`}</p>

@@ -20,4 +20,4 @@ export class StopsApi {
         
         return json;
     }
-}
+};

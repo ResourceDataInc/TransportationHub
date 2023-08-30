@@ -1,5 +1,5 @@
-import { Marker, Popup } from 'react-leaflet';
-import { blueStopIcon } from '../assets/leafletIcons/blueStopIcon';
+import { Marker, Popup, Tooltip } from 'react-leaflet';
+import { stopIcon } from '../assets/leafletIcons/stopIcon';
 
 export const StopMarker = (props) => {
     const { 
@@ -12,10 +12,14 @@ export const StopMarker = (props) => {
 
     return (
         <div>
-            <Marker position={position} icon={blueStopIcon}>
-                <Popup>
+            <Marker 
+                position={position} 
+                icon={stopIcon}
+            >
+                <Tooltip>
+                    <br></br>
                     <p>{address}</p>
-                </Popup>
+                </Tooltip>
             </Marker>
         </div>
     )
