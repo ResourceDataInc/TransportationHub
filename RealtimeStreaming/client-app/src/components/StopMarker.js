@@ -1,5 +1,4 @@
-import { Marker, Popup } from 'react-leaflet';
-import { blueStopIcon } from '../assets/leafletIcons/blueStopIcon';
+import { CircleMarker, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 
 export const StopMarker = (props) => {
     const { 
@@ -7,16 +6,37 @@ export const StopMarker = (props) => {
         position, 
         latitude, 
         longitude, 
-        address,  
+        address,
+        stopSequence,
+        stopId,
     } = props;
 
+    const radius = 4;
+    
+    const pathOptions = {
+        color: 'black',
+        weight: 1.5,
+        fillColor: 'lightGrey',
+        fillOpacity: 1,
+    };
+
+    const map = useMapEvents({
+        zoom() {
+            const zoom = map.getZoom()
+        },
+    });
+
     return (
-        <div>
-            <Marker position={position} icon={blueStopIcon}>
-                <Popup>
-                    <p>{address}</p>
-                </Popup>
-            </Marker>
-        </div>
+        <CircleMarker
+            center={position}
+            radius={radius}
+            pathOptions={pathOptions}
+        >
+            <Tooltip>
+                <br></br>
+                <p>{address}</p>
+                <p>Stop Id: {stopId}</p>
+            </Tooltip>
+        </CircleMarker>
     )
 };
