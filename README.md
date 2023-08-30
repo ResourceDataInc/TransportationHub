@@ -81,7 +81,7 @@ The broker is the data storage layer of kafka.  Each separate data stream is sto
 
 ### realtime-visualizer
 
-The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists a React.js application which makes requests to the ksqldb-server, and plots returned information a Leaflet.js map. 
+The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information a Leaflet.js map. 
 
 ### ksqldb-server
 

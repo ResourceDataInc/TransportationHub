@@ -21,7 +21,7 @@ const options = {
             if (action.payload === null || action.payload.length <= 0) {
                 state.vehicles = state.vehicles;
             } else {
-                //console.log(action.payload[0].header.schema)
+                // console.log(action.payload[0].header.schema);
                 action.payload.shift();
                 state.vehicles = action.payload;
             };
