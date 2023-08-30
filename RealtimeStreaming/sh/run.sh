@@ -21,5 +21,5 @@ docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f $rawfile
 sleep 10 
 done
 
-#docker cp SnowflakeSinkConfig.json connect:/home/appuser
-#docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
+docker cp SnowflakeSinkConfig.json connect:/home/appuser
+docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
