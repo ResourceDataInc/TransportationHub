@@ -32,8 +32,18 @@ export const Map = () => {
     }, []); 
 
     useEffect(() => {
+        const stopsChangeInterval = setInterval(() => {
+            dispatch(getStops());
+        }, 1000);
+
+        return () => clearInterval(stopsChangeInterval);
+    }, []); 
+
+    /*
+    useEffect(() => {
         dispatch(getStops())
     }, []);
+    */
     
     return (
         <div className='row'>
@@ -70,12 +80,12 @@ export const Map = () => {
                             <StopMarker
                                 key={`${stop.row.columns[0]}`}
                                 stop={stop}
-                                position={[stop.row.columns[4], stop.row.columns[5]]}
-                                latitude={stop.row.columns[4]}
-                                longitude={stop.row.columns[5]}
-                                address={stop.row.columns[6]}
-                                stopSequence={stop.row.columns[9].STOP_SEQUENCE}
-                                // stopId={stop.row.columns[]}
+                                position={[stop.row.columns[5], stop.row.columns[6]]}
+                                latitude={stop.row.columns[5]}
+                                longitude={stop.row.columns[6]}
+                                address={stop.row.columns[7]}
+                                stopSequence={stop.row.columns[3]}
+                                stopId={stop.row.columns[4]}
                             />
                         )
                     })}
