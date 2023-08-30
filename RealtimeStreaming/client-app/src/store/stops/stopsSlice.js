@@ -17,7 +17,7 @@ const options = {
             if (action.payload === null || action.payload.length <= 0) {
                 state.stops = state.stops;
             } else {
-                //console.log(action.payload[0].header.schema)
+                console.log(action.payload[0].header.schema);
                 action.payload.shift();
                 state.stops = action.payload;
             };
