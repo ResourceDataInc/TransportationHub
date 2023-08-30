@@ -9,13 +9,12 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
    1. [Trimet API](#trimet-api)
    2. [datastreamer](#datastreamer)
    3. [broker/schema-registry](#broker-schema-registry)
-   4. [rest-proxy](#rest-proxy)
-   5. [realtime-visualizer](#realtime-visualizer)
-   6. [ksqldb-server](#ksqldb-server)
-   7. [ksqldb-cli](#ksqldb-cli)
-   8. [control-center](#control-center)
-   9. [connect](#connect)
-   10. [staging tables](#staging-tables)
+   4. [realtime-visualizer](#realtime-visualizer)
+   5. [ksqldb-server](#ksqldb-server)
+   6. [ksqldb-cli](#ksqldb-cli)
+   7. [control-center](#control-center)
+   8. [connect](#connect)
+   9. [staging tables](#staging-tables)
 
 ## Running
 
@@ -79,10 +78,6 @@ The datastreamer is written as a maven package and is made to deploy into an alp
 ### broker/schema-registry
 
 The broker is the data storage layer of kafka.  Each separate data stream is stored in a durable queue.  When using structured data such as protobuf or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  Each separate data queue is organized by topic.  The datastreamer container from above is a producer of data to kafka.  
-
-### rest-proxy
-
-The rest-proxy enables read requests through a REST API without having to setup and write clients.  It is the principle means by which the visualizer accesses data.
 
 ### realtime-visualizer
 
