@@ -21,6 +21,7 @@ CREATE STREAM VehicleStopConnector
         ) as k2,
         entity->vehicle->trip->route_id as route_id,
         entity->vehicle->current_stop_sequence as current_stop_sequence,
+        entity->vehicle->stop_id as stop_id,
         entity->vehicle->trip->direction_id as direction_id,
         entity->id as vehicle_id,
         entity->vehicle->trip->trip_id as trip_id

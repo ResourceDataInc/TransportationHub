@@ -8,6 +8,7 @@ CREATE STREAM StopEventsAnnotated
         v.route_id as route_id,
         v.direction_id as direction_id,
         v.stop_sequence as stop_sequence,
+        v.stop_id as stop_id,
         v.stop_lat as stop_lat,
         v.stop_lon as stop_lon,
         v.stop_name as stop_name,
