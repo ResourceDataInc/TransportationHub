@@ -2,13 +2,9 @@ import { CircleMarker, Marker, Popup, Tooltip, useMap, useMapEvents } from 'reac
 
 export const StopMarker = (props) => {
     const { 
-        stop, 
+        stopId, 
         position, 
-        latitude, 
-        longitude, 
         address,
-        stopSequence,
-        stopId,
     } = props;
 
     const radius = 4;
