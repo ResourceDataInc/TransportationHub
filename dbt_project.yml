@@ -28,4 +28,4 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   transportation_hub_dbt_etl:
     hub-etl:
-      materialized: view
+      materialized: table
