@@ -55,7 +55,7 @@ export const Map = () => {
                     className='map-container mx-auto border border-dark'
                 >
                     <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons by <a target="_blank" href="https://icons8.com">Icons8</a>'
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
@@ -64,10 +64,8 @@ export const Map = () => {
                             <VehicleMarker
                                 key={`${vehicle.row.columns[0]}`}
                                 vehicle={vehicle}
+                                vehicleId={vehicle.row.columns[0]}
                                 position={[vehicle.row.columns[1], vehicle.row.columns[2]]}
-                                id={vehicle.row.columns[0]}
-                                latitude={vehicle.row.columns[1]}
-                                longitude={vehicle.row.columns[2]}
                                 status={vehicle.row.columns[3]}
                                 stopSequence={vehicle.row.columns[4]}
                                 stopId={vehicle.row.columns[5]}
@@ -75,29 +73,19 @@ export const Map = () => {
                         )
                     })}
                     
-                    { stops.map((stop) => {
+                    {stops.map((stop) => {
                         return (
                             <StopMarker
                                 key={`${stop.row.columns[0]}`}
                                 stop={stop}
-                                position={[stop.row.columns[5], stop.row.columns[6]]}
-                                latitude={stop.row.columns[5]}
-                                longitude={stop.row.columns[6]}
-                                address={stop.row.columns[7]}
-                                stopSequence={stop.row.columns[3]}
-                                stopId={stop.row.columns[4]}
+                                stopId={stop.row.columns[0]}
+                                position={[stop.row.columns[2], stop.row.columns[3]]}
+                                address={stop.row.columns[4]}
                             />
                         )
                     })}
                     
                 </MapContainer>
-                
-                {/* <p className='w-75 mx-auto text-right'>
-                    <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a>
-                    <span> icon, </span>
-                    <a target="_blank" href="https://icons8.com/icon/37601/circle">Circle</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-                </p> */}
-
             </div>
         </div>
     )
