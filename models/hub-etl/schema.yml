@@ -1,0 +1,57 @@
+version: 2
+
+models:
+    - name: routes
+      description: "Dimensional table for TriMet routes"
+      columns:
+        - name: route_id
+          description: "ID for a route. Primary key of this table."
+          tests:
+              - unique
+              - not_null
+        - name: route_type
+          description: "The type of the route."
+        - name: route_sub_type
+          description: "The subtype of the route."
+        - name: route_color
+          description: "The color representation for the route."
+        - name: frequent_service
+          description: "Whether the route is considered frequent service."
+        - name: route_desc
+          description: "A description of the route."
+
+    - name: vehicles
+      description: "Dimensional table for TriMet vehicles"
+      columns:
+        - name: vehicle_id
+          description: "ID for a vehicle. Primary key of this table."
+          tests:
+              - unique
+              - not_null
+        - name: vehicle_type
+          description: "The type of the vehicle."
+        - name: license_plate
+          description: "License plate of the vehicle."
+  
+    - name: stops
+      description: "Dimensional table for TriMet stops"
+      columns:
+        - name: stop_id
+          description: "ID for a stop. Primary key of this table."
+        - name: route_id
+          description: "ID for a route that the stop belongs to. Foreign key to routes table."
+          tests:
+              - not_null
+              - relationships:
+                to: ref('routes')
+                field: route_id
+        - name: stop_desc
+          description: "Description for a stop."
+        - name: latitude
+          description: "Latitude of the stop."
+        - name: longitude
+          description: "Longitude of the stop."
+        - name: direction
+          description: "Direction on the route the vehicle travels for the stop."
+        - name: stop_sequence
+          description: "Sequence of the stop along the route."
