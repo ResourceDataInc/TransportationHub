@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="transportation_hub" id="Project-1abb" database="Snowflake" >
+	<schema name="MART" >
+		<comment><![CDATA[Data mart for Transportation Hub. Includes dimension and fact tables in star/snowflake schema to support reporting in BI layer]]></comment>
+		<table name="ROUTE" prior="TABLE" >
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_ROUTE_ROUTE_ID" unique="PRIMARY_KEY" >
+				<column name="ROUTE_ID" />
+			</index>
+		</table>
+		<table name="STOP" prior="TABLE" >
+			<column name="STOP_ID" type="integer" jt="4" mandatory="y" />
+			<column name="STOP_DESCRIPTION" prior="STOP_NAME" type="varchar" length="100" jt="12" />
+			<index name="PK_TABLE_STOP_ID" unique="PRIMARY_KEY" >
+				<column name="STOP_ID" />
+			</index>
+		</table>
+		<table name="STOP_EVENT" prior="TABLE" >
+			<column name="STOP_EVENT_ID" prior="STOP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_EVENT_ID" prior="TRIP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="SCHEDULED_ARRIVAL_TIME" prior="ESTIMATED_ARRIVAL_TIME" type="number" jt="3" />
+			<column name="ACTUAL_ARRIVAL_TIME" type="number" jt="3" />
+			<column name="SCHEDULED_DEPARTURE_TIME" prior="ESTIMATED_DEPARTURE_TIME" type="number" jt="3" />
+			<column name="ACTUAL_DEPARTURE_TIME" type="number" jt="3" />
+			<index name="PK_STOP_EVENT_STOP_ID" unique="PRIMARY_KEY" >
+				<column name="STOP_EVENT_ID" />
+			</index>
+		</table>
+		<table name="TRIP_EVENT" prior="TABLE" >
+			<column name="TRIP_EVENT_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_DATE" type="date" jt="91" mandatory="y" />
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" />
+			<index name="PK_TRIP_EVENT_TRIP_EVENT_ID" unique="PRIMARY_KEY" >
+				<column name="TRIP_EVENT_ID" />
+			</index>
+		</table>
+		<table name="VEHICLE" prior="TABLE" >
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_VEHICLE_VEHICLE_ID" unique="PRIMARY_KEY" >
+				<column name="VEHICLE_ID" />
+			</index>
+		</table>
+	</schema>
 	<schema name="HUB" catalogname="TRANSPORTATION_HUB" >
 		<table name="BLOCKS" prior="TABLE" >
 			<column name="BLOCK_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
@@ -190,11 +231,18 @@
 		<entity schema="TRANSPORTATION_HUB.HUB" name="PATTERNS" color="C1D8EE" x="1600" y="544" />
 		<entity schema="TRANSPORTATION_HUB.HUB" name="ROUTES" color="C1D8EE" x="1392" y="528" />
 		<entity schema="TRANSPORTATION_HUB.STAGING" name="ROUTE_STAGING" color="EEC1C1" x="288" y="64" />
-		<entity schema="TRANSPORTATION_HUB.HUB" name="SCHEDULES" color="C1D8EE" x="720" y="816" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="SCHEDULES" color="C1D8EE" x="624" y="608" />
 		<entity schema="TRANSPORTATION_HUB.HUB" name="STOPS" color="C1D8EE" x="960" y="528" />
 		<entity schema="TRANSPORTATION_HUB.HUB" name="TRIPS" color="CAEEC1" x="1328" y="48" />
 		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLES" color="C1D8EE" x="1200" y="432" />
 		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLE_POSITIONS" color="CAEEC1" x="960" y="48" />
 		<entity schema="TRANSPORTATION_HUB.STAGING" name="VEHICLE_STAGING" color="EEC1C1" x="48" y="64" />
+	</layout>
+	<layout name="MART" id="Layout-1850" show_relation="cascade" >
+		<entity schema="MART" name="ROUTE" color="C1D8EE" x="112" y="208" />
+		<entity schema="MART" name="STOP" color="C1D8EE" x="832" y="80" />
+		<entity schema="MART" name="STOP_EVENT" color="C1D8EE" x="496" y="96" />
+		<entity schema="MART" name="TRIP_EVENT" color="C1D8EE" x="288" y="48" />
+		<entity schema="MART" name="VEHICLE" color="C1D8EE" x="48" y="48" />
 	</layout>
 </project>
