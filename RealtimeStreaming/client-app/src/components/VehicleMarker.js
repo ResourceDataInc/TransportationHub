@@ -6,13 +6,9 @@ import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
 
 export const VehicleMarker = (props) => {
     const { 
-        vehicle, 
+        vehicleId, 
         position, 
-        id, 
-        latitude, 
-        longitude, 
         status, 
-        stopSequence,
         stopId,
     } = props;
 
@@ -23,17 +19,20 @@ export const VehicleMarker = (props) => {
             case 'STOPPED_AT':
                 return redBusIcon;
             case '':
-                return yellowBusIcon;
+                return greenBusIcon;
             default: 
                 return greyBusIcon;
-        }
+        };
     };
 
     return (
         <div>
-            <Marker position={position} icon={iconColor()} style={{ zIndex: 1 }}>
+            <Marker 
+                position={position} 
+                icon={iconColor()} 
+            >
                 <Popup>
-                    <p>This is bus number {id}</p>
+                    <p>This is bus number {vehicleId}</p>
                     <p>{status === 'IN_TRANSIT_TO' && `Currently in transit to stop ${stopId}`}</p>
                     <p>{status === 'STOPPED_AT' && `Currently sitting at stop ${stopId}`}</p>
                 </Popup>
