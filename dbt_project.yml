@@ -1,6 +1,6 @@
 
 name: 'transportation_hub_dbt_etl'
-version: '0.0.1'
+version: '1.0.0'
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
