@@ -11,7 +11,7 @@ models:
               - not_null
         - name: route_type
           description: "The type of the route."
-        - name: route_sub_type
+        - name: route_subtype
           description: "The subtype of the route."
         - name: route_color
           description: "The color representation for the route."
