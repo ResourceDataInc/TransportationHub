@@ -1,0 +1,4 @@
+
+dbt_prod/
+dbt_packages/
+logs/

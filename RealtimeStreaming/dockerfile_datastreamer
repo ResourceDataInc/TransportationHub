@@ -1,11 +1,10 @@
-FROM amazoncorretto:20-alpine-jdk
+FROM ubuntu:23.10
 RUN mkdir /javafiles
 COPY pom.xml /javafiles/pom.xml
 COPY src/ /javafiles/src/
 WORKDIR /javafiles
-RUN apk update
-RUN apk add maven
+RUN apt update
+RUN apt install maven openjdk-20-jdk python3 wget zip python3-pip python3-pandas -y
 RUN mvn clean package 
 RUN chmod 755 target/RealtimeStreaming-jar-with-dependencies.jar
-
-
+RUN mkdir gtfs

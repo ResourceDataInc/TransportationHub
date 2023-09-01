@@ -68,7 +68,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.resourcedata.transportationhub.realtime.HttpRequest</mainClass>
+                            <mainClass>com.resourcedata.transportationhub.realtime.DataStreamer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
