@@ -1,4 +1,4 @@
-CREATE  TABLE TRANSPORTATION_HUB.HUB.ROUTES ( 
+CREATE OR REPLACE TABLE HUB.ROUTES ( 
 	ROUTE_ID             number(38,0) NOT NULL    ,
 	ROUTE_TYPE           varchar(10)     ,
 	ROUTE_SUB_TYPE       varchar(20)     ,
