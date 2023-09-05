@@ -1,14 +1,17 @@
+import React, { useState } from 'react';
 import { CircleMarker, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 
 export const StopMarker = (props) => {
     const { 
-        stopId, 
+        stopId,
+        latitude,
+        longitude,
         position, 
         address,
     } = props;
 
     const radius = 4;
-    
+
     const pathOptions = {
         color: 'black',
         weight: 1.5,
@@ -16,11 +19,58 @@ export const StopMarker = (props) => {
         fillOpacity: 1,
     };
 
+    const [zoom, setZoom] = useState(14);
+    const [northBound, setNorthBound] = useState();
+    const [eastBound, setEastBound] = useState();
+    const [southBound, setSouthBound] = useState();
+    const [westBound, setWestBound] = useState();
+    
+    const setMapBounds = (newMapBounds) => {
+        const newNorthBound = newMapBounds._northEast.lat;
+        setNorthBound(newNorthBound);
+
+        const newEastBound = newMapBounds._northEast.lng;
+        setEastBound(newEastBound);
+
+        const newSouthBound = newMapBounds._southWest.lat;
+        setSouthBound(newSouthBound);
+
+        const newWestBound = newMapBounds._southWest.lng;
+        setWestBound(newWestBound);
+
+    };
+
     const map = useMapEvents({
+        load() {
+            const newMapBounds = map.getBounds();
+            setMapBounds(newMapBounds);
+        },
+        
+        move() {
+            const newMapBounds = map.getBounds();
+            setMapBounds(newMapBounds);
+        },
+
         zoom() {
-            const zoom = map.getZoom()
+            const newMapBounds = map.getBounds();
+            setMapBounds(newMapBounds);
+        
+            const newZoom = map.getZoom();
+            setZoom(newZoom);
         },
     });
+
+    if (zoom <= 14) {
+        return;
+    };
+
+    if (latitude > northBound || latitude < southBound) {
+        return;
+    };
+
+    if (longitude > eastBound || longitude < westBound) {
+        return;
+    };
 
     return (
         <CircleMarker
@@ -34,5 +84,5 @@ export const StopMarker = (props) => {
                 <p>Stop Id: {stopId}</p>
             </Tooltip>
         </CircleMarker>
-    )
+    );
 };

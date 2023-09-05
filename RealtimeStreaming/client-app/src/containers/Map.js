@@ -25,7 +25,7 @@ export const Map = () => {
 
     useEffect(() => {
         const postionChangeInterval = setInterval(() => {
-            dispatch(getVehicles());
+            //dispatch(getVehicles());
         }, 1000);
 
         return () => clearInterval(postionChangeInterval);
@@ -33,7 +33,7 @@ export const Map = () => {
 
     useEffect(() => {
         const stopsChangeInterval = setInterval(() => {
-            dispatch(getStops());
+            //dispatch(getStops());
         }, 1000);
 
         return () => clearInterval(stopsChangeInterval);
@@ -79,6 +79,8 @@ export const Map = () => {
                                 key={`${stop.row.columns[0]}`}
                                 stop={stop}
                                 stopId={stop.row.columns[0]}
+                                latitude={stop.row.columns[2]}
+                                longitude={stop.row.columns[3]}
                                 position={[stop.row.columns[2], stop.row.columns[3]]}
                                 address={stop.row.columns[4]}
                             />
