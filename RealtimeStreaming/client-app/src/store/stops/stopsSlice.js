@@ -4,7 +4,11 @@ import { getStops } from "./stopsActions";
 const options = {
     name: 'stops',
     initialState: {
-        stops: [],
+        stops: [{
+            row: {
+                columns: ['123', 123, 45.527, -122.693, '123 Address Street'],
+            },
+        }],
         isLoading: false,
         hasError: false,
     },
