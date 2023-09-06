@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { CircleMarker, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 
-export const StopMarker = (props) => {
+export const StopMarker = ({ stop }) => {
     const { 
-        stopId,
+        id,
         latitude,
         longitude,
         position, 
         address,
-    } = props;
-
+    } = stop;
+    
     const radius = 4;
-
     const pathOptions = {
         color: 'black',
         weight: 1.5,
@@ -30,14 +29,13 @@ export const StopMarker = (props) => {
         setNorthBound(newNorthBound);
 
         const newEastBound = newMapBounds._northEast.lng;
-        setEastBound(newEastBound);
+        setEastBound(newEastBound)
 
         const newSouthBound = newMapBounds._southWest.lat;
-        setSouthBound(newSouthBound);
+        setSouthBound(newSouthBound)
 
         const newWestBound = newMapBounds._southWest.lng;
-        setWestBound(newWestBound);
-
+        setWestBound(newWestBound)
     };
 
     const map = useMapEvents({
@@ -56,7 +54,7 @@ export const StopMarker = (props) => {
             setMapBounds(newMapBounds);
         
             const newZoom = map.getZoom();
-            setZoom(newZoom);
+            setZoom(newZoom)
         },
     });
 
@@ -81,7 +79,7 @@ export const StopMarker = (props) => {
             <Tooltip>
                 <br></br>
                 <p>{address}</p>
-                <p>Stop Id: {stopId}</p>
+                <p>Stop Id: {id}</p>
             </Tooltip>
         </CircleMarker>
     );
