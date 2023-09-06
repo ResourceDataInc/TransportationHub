@@ -24,7 +24,7 @@ const options = {
                 //console.log(action.payload[0].header.schema);
                 action.payload.shift();
                 state.stops = action.payload;
-            };
+            }; 
 
             console.log(`There are ${state.stops.length} stops in the state`);
         });

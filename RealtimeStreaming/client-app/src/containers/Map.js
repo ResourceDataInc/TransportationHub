@@ -6,6 +6,8 @@ import { selectVehicles } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
 import { selectStops } from '../store//stops/stopsSlice';
 import { getStops } from '../store/stops/stopsActions';
+import Vehicle from '../models/vehicle';
+import Stop from '../models/stop';
 
 // Leaflet Imports and Setup
 import 'leaflet/dist/leaflet.css';
@@ -38,12 +40,6 @@ export const Map = () => {
 
         return () => clearInterval(stopsChangeInterval);
     }, []); 
-
-    /*
-    useEffect(() => {
-        dispatch(getStops())
-    }, []);
-    */
     
     return (
         <div className='row'>
@@ -60,33 +56,24 @@ export const Map = () => {
                     />
 
                     {vehicles.map((vehicle) => {
+                        const vehicleInstance = new Vehicle(vehicle);
                         return (
                             <VehicleMarker
                                 key={`${vehicle.row.columns[0]}`}
-                                vehicle={vehicle}
-                                vehicleId={vehicle.row.columns[0]}
-                                position={[vehicle.row.columns[1], vehicle.row.columns[2]]}
-                                status={vehicle.row.columns[3]}
-                                stopSequence={vehicle.row.columns[4]}
-                                stopId={vehicle.row.columns[5]}
+                                vehicle={vehicleInstance}
                             />
                         )
                     })}
                     
                     {stops.map((stop) => {
+                        const stopInstance = new Stop(stop);
                         return (
                             <StopMarker
                                 key={`${stop.row.columns[0]}`}
-                                stop={stop}
-                                stopId={stop.row.columns[0]}
-                                latitude={stop.row.columns[2]}
-                                longitude={stop.row.columns[3]}
-                                position={[stop.row.columns[2], stop.row.columns[3]]}
-                                address={stop.row.columns[4]}
+                                stop={stopInstance}
                             />
                         )
                     })}
-                    
                 </MapContainer>
             </div>
         </div>
