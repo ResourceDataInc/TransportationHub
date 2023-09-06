@@ -2,7 +2,7 @@ version: 2
 
 models:
     - name: routes
-      description: "Dimensional table for TriMet routes"
+      description: "Dimensional table for TriMet routes."
       columns:
         - name: route_id
           description: "ID for a route. Primary key of this table."
@@ -32,26 +32,98 @@ models:
           description: "The type of the vehicle."
         - name: license_plate
           description: "License plate of the vehicle."
-  
+
     - name: stops
-      description: "Dimensional table for TriMet stops"
+      description: "Dimensional table for TriMet stops."
       columns:
+        - name: route_stop_id
+          description: "Unique ID for a stop on a route. Primary key of this table."
+          tests:
+            - unique
+            - not_null
         - name: stop_id
-          description: "ID for a stop. Primary key of this table."
+          description: "ID for a stop."
+          tests:
+            - not_null
         - name: route_id
           description: "ID for a route that the stop belongs to. Foreign key to routes table."
           tests:
               - not_null
               - relationships:
-                to: ref('routes')
-                field: route_id
+                  to: ref('routes')
+                  field: route_id
         - name: stop_desc
           description: "Description for a stop."
         - name: latitude
           description: "Latitude of the stop."
         - name: longitude
           description: "Longitude of the stop."
-        - name: direction
+        - name: route_direction
           description: "Direction on the route the vehicle travels for the stop."
+        - name: traffic_direction
+          description: "Direction of traffic at the stop as a cardinal direction."       
         - name: stop_sequence
           description: "Sequence of the stop along the route."
+        - name: time_point
+          description: "Whether the stop is a time point for the route's direction."
+
+    - name: trips
+      description: "Dimension table for TriMet trips."
+      columns:
+        - name: trip_id
+          description: "ID for a trip. Primary key of this table."
+          tests:
+              - unique
+              - not_null
+        - name: route_id
+          description: "ID for the route the trip is travelling."
+          tests:
+              - not_null
+              - relationships:
+                  to: ref('routes')
+                  field: route_id
+        - name: route_direction
+          description: "The direction the vehicle travels on the route for the trip."
+                
+    - name: vehicle_positions
+      description: "Fact table for TriMet vehicle positions."
+      columns:
+        - name: timestamp
+          description: "Timestamp for the vehicle position."
+          tests:
+              - not_null
+        - name: vehicle_id
+          description: "ID of the vehicle."
+          tests:
+              - not_null
+              - relationships:
+                  to: ref('vehicles')
+                  field: vehicle_id
+        - name: latitude
+          description: "Latitude of the current location the vehicle."
+        - name: longitude
+          description: "Longitude of the current location the vehicle."
+        - name: bearing
+          description: "Current bearing of the vehicle."
+        - name: speed
+          description: "Current speed of the vehicle."
+        - name: trip_id
+          description: "ID of the trip the vehicle is travelling."
+          tests:
+              - relationships:
+                  to: ref('trips')
+                  field: trip_id
+        - name: route_id
+          description: "ID of the route the vehicle is travelling."
+          tests:
+              - relationships:
+                  to: ref('routes')
+                  field: route_id
+        - name: stop_id
+          description: "ID of the stop the vehicle is stopped at or in transit to."
+          tests:
+              - relationships:
+                  to: ref('stops')
+                  field: stop_id
+        - name: current_status
+          description: "Status of the vehicle, whether it is stopped at or in transit to the current stop ID."

@@ -1,10 +1,9 @@
-{{ config(materialized='table') }}
-
-select 
-      id as 'route_id'
-    , type as 'route_type'
-    , routesubtype as 'route_subtype'
-    , routecolor as 'route_color'
-    , frequentservice as 'frequent_service'
-    , desc as 'route_desc'
-from staging.route_staging
+select distinct
+   rm.value:id::number(38,0) as route_id
+  ,rm.value:type::varchar as route_type
+  ,rm.value:routeSubType::varchar as route_subtype
+  ,rm.value:routeColor::varchar as route_color
+  ,rm.value:frequentService::boolean as frequent_service
+  ,rm.value:desc::varchar as route_descr
+from staging.route_staging r
+,lateral flatten(input => content) rm
