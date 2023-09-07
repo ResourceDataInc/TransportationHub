@@ -1,0 +1,30 @@
+import React, { useState, useEffect } from 'react';
+import { Map } from './Map';
+import { Cards } from './Cards';
+import { useSelector } from 'react-redux';
+import { selectVehicleCard, selectStopCard } from '../store/display/displaySlice';
+
+export const Main = () => {
+    const vehicleCard = useSelector(selectVehicleCard);
+    const stopCard = useSelector(selectStopCard);
+    const [displayCard, setDisplayCard] = useState(false);
+
+    useEffect(() => {
+        if (!vehicleCard && !stopCard) {
+            setDisplayCard(false);
+        } else {
+            setDisplayCard(true);
+        };
+    }, [vehicleCard, stopCard]);
+
+    return (
+        <div className='row'>
+            <div className={displayCard ? 'col-9' : 'col-12'}>
+                <Map/>
+            </div>
+            <div className={displayCard ? 'col-3': ''}>
+                <Cards/>
+            </div>
+        </div>
+    )
+};

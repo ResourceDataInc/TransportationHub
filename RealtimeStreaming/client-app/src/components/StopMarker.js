@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { CircleMarker, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+import { useDispatch } from 'react-redux';
+import { setStopCard } from '../store/display/displaySlice';
 
 export const StopMarker = ({ stop }) => {
     const { 
@@ -9,6 +11,8 @@ export const StopMarker = ({ stop }) => {
         position, 
         address,
     } = stop;
+
+    const dispatch = useDispatch();
     
     const radius = 4;
     const pathOptions = {
@@ -16,6 +20,19 @@ export const StopMarker = ({ stop }) => {
         weight: 1.5,
         fillColor: 'lightGrey',
         fillOpacity: 1,
+    };
+    
+    const markerEvents = {
+        click: () => {
+            const stopPayload = {
+                id,
+                latitude,
+                longitude,
+                position, 
+                address,
+            };
+            dispatch(setStopCard(stopPayload));
+        }
     };
 
     const [zoom, setZoom] = useState(14);
@@ -75,6 +92,7 @@ export const StopMarker = ({ stop }) => {
             center={position}
             radius={radius}
             pathOptions={pathOptions}
+            eventHandlers={markerEvents}
         >
             <Tooltip>
                 <br></br>
