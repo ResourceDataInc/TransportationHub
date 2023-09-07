@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Map } from './Map';
 import { Cards } from './Cards';
 import { useSelector } from 'react-redux';
-import { selectVehicleCard, selectStopCard } from '../store/display/displaySlice';
+import { selectSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import { selectSelectedStop } from '../store/stops/stopsSlice';
 
 export const Main = () => {
-    const vehicleCard = useSelector(selectVehicleCard);
-    const stopCard = useSelector(selectStopCard);
+    const vehicleCard = useSelector(selectSelectedVehicle);
+    const stopCard = useSelector(selectSelectedStop);
     const [displayCard, setDisplayCard] = useState(false);
 
     useEffect(() => {
