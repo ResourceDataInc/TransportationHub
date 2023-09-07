@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { VehicleMarker } from '../components/VehicleMarker';
 import { StopMarker } from '../components/StopMarker';
-import { selectVehicles } from '../store/vehicles/vehiclesSlice';
+import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
-import { selectStops } from '../store//stops/stopsSlice';
+import { selectStops, setSelectedStop } from '../store/stops/stopsSlice';
 import { getStops } from '../store/stops/stopsActions';
 import Vehicle from '../models/vehicle';
 import Stop from '../models/stop';
@@ -27,7 +27,8 @@ export const Map = () => {
 
     useEffect(() => {
         const postionChangeInterval = setInterval(() => {
-            //dispatch(getVehicles());
+            dispatch(getVehicles());
+            dispatch(setSelectedVehicle());
         }, 1000);
 
         return () => clearInterval(postionChangeInterval);
@@ -35,7 +36,8 @@ export const Map = () => {
 
     useEffect(() => {
         const stopsChangeInterval = setInterval(() => {
-            //dispatch(getStops());
+            dispatch(getStops());
+            dispatch(setSelectedStop());
         }, 1000);
 
         return () => clearInterval(stopsChangeInterval);

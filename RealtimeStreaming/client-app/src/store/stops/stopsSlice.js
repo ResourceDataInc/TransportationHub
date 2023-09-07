@@ -9,10 +9,31 @@ const options = {
                 columns: ['123', 123, 45.527, -122.693, '123 Address Street'],
             },
         }],
+        selectedStopId: null,
+        selectedStop: null,
         isLoading: false,
         hasError: false,
     },
-    reducers: {},
+    reducers: {
+        setSelectedStopId(state, action) {
+            state.selectedStopId = action.payload;
+        },
+
+        setSelectedStop(state) {
+            if (!state.selectedStopId) {
+                state.selectedStop = null;
+                return;
+            };
+
+            const index = state.stops.findIndex(x => x.row.columns[0] === state.selectedStopId);
+            state.selectedStop = state.stops[index];
+        },
+
+        clearSelectedStop(state) {
+            state.selectedStopId = null;
+            state.selectedStop = null;
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(getStops.fulfilled, (state, action) => {
             state.isLoading = false;
@@ -40,3 +61,5 @@ const stopsSlice = createSlice(options);
 
 export default stopsSlice.reducer;
 export const selectStops = (state) => state.stops.stops;
+export const selectSelectedStop = (state) => state.stops.selectedStop;
+export const { setSelectedStopId, setSelectedStop, clearSelectedStop } = stopsSlice.actions;

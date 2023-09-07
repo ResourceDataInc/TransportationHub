@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectStopCard } from '../store/display/displaySlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectSelectedStop, clearSelectedStop } from '../store/stops/stopsSlice';
+import Stop from '../models/stop';
 
 export const StopCard = () => {
-    const stop = useSelector(selectStopCard)
+    const dispatch = useDispatch();
+    const selectedStop = useSelector(selectSelectedStop);
+    let stop;
+
+    if (selectedStop) {
+        stop = new Stop(selectedStop);
+    } else {
+        return;
+    };
 
     return (
-        <div className='card'>
-            <img className="card-img-top" src='...' alt="Card image cap"/>
+        <div className='card h-100'>
+            <button 
+                className='btn-danger'
+                onClick={ () => dispatch(clearSelectedStop()) }
+            >Close</button>
             <div className="card-body">
                 <h5 className="card-title">Stop {stop.id}</h5>
                 <p className="card-text">{stop.address}</p>

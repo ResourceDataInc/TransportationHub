@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { VehicleCard } from '../components/VehicleCard';
 import { StopCard } from '../components/StopCard';
-import { selectVehicleCard, selectStopCard } from '../store/display/displaySlice';
+import { selectSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import { selectSelectedStop } from '../store/stops/stopsSlice';
 
 export const Cards = () => {
-    const vehicleCard = useSelector(selectVehicleCard);
-    const stopCard = useSelector(selectStopCard);
+    const vehicleCard = useSelector(selectSelectedVehicle);
+    const stopCard = useSelector(selectSelectedStop);
     const [displayVehicleCard, setDisplayVehicleCard] = useState(false);
     const [displayStopCard, setDisplayStopCard] = useState(false);
 
@@ -27,12 +28,12 @@ export const Cards = () => {
     return (
         <div className='cards-container row'>
             {displayVehicleCard && 
-                <div className='col-12'>
+                <div className='col-12 h-50 py-2'>
                     <VehicleCard/>
                 </div> 
             }
             {displayStopCard && 
-                <div className='col-12'>
+                <div className='col-12 h-50 py-2'>
                     <StopCard/>
                 </div> 
             }
