@@ -3,6 +3,8 @@ import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { yellowBusIcon } from '../assets/leafletIcons/yellowBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
+import { useDispatch } from 'react-redux';
+import { setVehicleCard } from '../store/display/displaySlice';
 
 export const VehicleMarker = ({ vehicle }) => {
     const {
@@ -11,6 +13,8 @@ export const VehicleMarker = ({ vehicle }) => {
         status,
         stopId,
     } = vehicle;
+
+    const dispatch = useDispatch();
 
     const iconColor = () => {
         switch (status) {
@@ -25,11 +29,24 @@ export const VehicleMarker = ({ vehicle }) => {
         };
     };
 
+    const markerEvents = {
+        click: () => {
+            const vehiclePayload = {
+                id,
+                position,
+                status,
+                stopId,
+            };
+            dispatch(setVehicleCard(vehiclePayload));
+        }
+    };
+
     return (
         <div>
             <Marker 
                 position={position} 
                 icon={iconColor()} 
+                eventHandlers={markerEvents}
             >
                 <Popup>
                     <p>This is bus number {id}</p>
