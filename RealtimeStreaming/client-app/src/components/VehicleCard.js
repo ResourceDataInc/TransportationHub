@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectVehicleCard } from '../store/display/displaySlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectSelectedVehicle, clearSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import Vehicle from '../models/vehicle';
 
 export const VehicleCard = () => {
-    const vehicle = useSelector(selectVehicleCard)
+    const dispatch = useDispatch();
+    const selectedVehicle = useSelector(selectSelectedVehicle);
+    let vehicle;
+
+    if (selectedVehicle) {
+        vehicle = new Vehicle(selectedVehicle);
+    } else {
+        return;
+    };
 
     return (
-        <div className='card'>
-            <img className="card-img-top" src='...' alt="Card image cap"/>
+        <div className='card h-100'>
+            <button 
+                className='btn-danger'
+                onClick={() => {
+                    dispatch(clearSelectedVehicle());
+                }}
+            >Close</button>
             <div className="card-body">
                 <h5 className="card-title">Vehicle {vehicle.id}</h5>
-                <p className="card-text">{vehicle.status}</p>
+                {vehicle.status === 'IN_TRANSIT_TO' && <p><span className='text-success'>Currently in transit to stop </span>{vehicle.stopId}</p>}
+                {vehicle.status === '' && <p><span className='text-success'>Currently in transit to stop </span>{vehicle.stopId}</p>}
+                {vehicle.status === 'STOPPED_AT' && <p><span className='text-danger'>Currently sitting at stop </span>{vehicle.stopId}</p>}
                 <a href="#" className="btn btn-primary">Go somewhere</a>
             </div>
         </div>

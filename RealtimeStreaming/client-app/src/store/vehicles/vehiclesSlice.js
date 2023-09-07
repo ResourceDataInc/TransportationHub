@@ -9,10 +9,31 @@ const options = {
                 columns: [4949, 45.517, -122.683],
             },
         }],
+        selectedVehicleId: null,
+        selectedVehicle: null,
         isLoading: true,
         hasError: false,
     },
-    reducers: {},
+    reducers: {
+        setSelectedVehicleId(state, action) {
+            state.selectedVehicleId = action.payload;
+        },
+
+        setSelectedVehicle(state) {
+            if (!state.selectedVehicleId) {
+                state.selectedVehicle = null;
+                return;
+            };
+
+            const index = state.vehicles.findIndex(x => Number(x.row.columns[0]) === state.selectedVehicleId);
+            state.selectedVehicle = state.vehicles[index];
+        },
+
+        clearSelectedVehicle(state) {
+            state.selectedVehicleId = null;
+            state.selectedVehicle = null;
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(getVehicles.fulfilled, (state, action) => {
             state.isLoading = false;
@@ -40,3 +61,5 @@ const vehiclesSlice = createSlice(options);
 
 export default vehiclesSlice.reducer;
 export const selectVehicles = (state) => state.vehicles.vehicles;
+export const selectSelectedVehicle = (state) => state.vehicles.selectedVehicle;
+export const { setSelectedVehicleId, setSelectedVehicle, clearSelectedVehicle } = vehiclesSlice.actions;
