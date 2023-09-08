@@ -1,4 +1,4 @@
-CREATE TABLE CalendarTable (
+CREATE SOURCE TABLE CalendarTable (
 index STRING PRIMARY KEY,
 service_id STRING,
 monday INT,
