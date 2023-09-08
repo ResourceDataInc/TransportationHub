@@ -1,4 +1,4 @@
-CREATE TABLE TripsTable (
+CREATE SOURCE TABLE TripsTable (
 index STRING PRIMARY KEY,
 route_id STRING,
 service_id STRING,
