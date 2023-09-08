@@ -1,4 +1,4 @@
-CREATE TABLE StopsTable (
+CREATE SOURCE TABLE StopsTable (
 stop_id STRING PRIMARY KEY,
 direction_id INT,
 route_id STRING,

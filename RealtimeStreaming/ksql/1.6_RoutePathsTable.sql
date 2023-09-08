@@ -1,4 +1,4 @@
-CREATE TABLE RoutePathsTable (
+CREATE SOURCE TABLE RoutePathsTable (
 shape_id STRING PRIMARY KEY,
 route_path ARRAY<ARRAY<DOUBLE>>
 )
