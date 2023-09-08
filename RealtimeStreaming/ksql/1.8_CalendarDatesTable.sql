@@ -1,4 +1,4 @@
-CREATE TABLE CalendarDatesTable (
+CREATE SOURCE TABLE CalendarDatesTable (
 index STRING PRIMARY KEY,
 service_id STRING,
 date BIGINT,
