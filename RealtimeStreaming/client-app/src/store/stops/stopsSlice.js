@@ -6,7 +6,7 @@ const options = {
     initialState: {
         stops: [{
             row: {
-                columns: ['123', 123, 45.527, -122.693, '123 Address Street'],
+                columns: ['123', 123, 45.527, -122.693, '123 Address Street', '', { 'ARRIVAL': {'DELAY': 100,}, 'DEPARTURE': {'DELAY': 100,}, }],
             },
         }],
         selectedStopId: null,
@@ -42,8 +42,6 @@ const options = {
             if (action.payload === null || action.payload.length <= 0) {
                 state.stops = state.stops;
             } else {
-                //console.log(action.payload[0].header.schema);
-                action.payload.shift();
                 state.stops = action.payload;
             }; 
 
