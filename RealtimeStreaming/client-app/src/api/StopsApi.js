@@ -17,6 +17,9 @@ export class StopsApi {
 
         const json = await response.json();
         console.log(json);
+
+        const header = json.shift();
+        //console.log(header);
         
         return json;
     }

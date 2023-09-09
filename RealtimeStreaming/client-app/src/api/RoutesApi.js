@@ -1,23 +1,102 @@
+import { yyyymmddFormat } from "../util/dateFormat";
+
 export class RoutesApi {
-    constructor() {}
+    constructor(routeId, directionId) {
+        this.routeId = routeId;
+        this.directionId = directionId;
+    }
 
     #root = 'http://localhost:8088/query';
 
-    async getRoutes() {
+    async getRoute() {
+        const serviceIds = await this.getServiceIds();
+        const shapeId = await this.getShapeId(serviceIds);
+        const routePath = await this.getRoutePath(shapeId);
+
+        console.log(routePath);
+        return routePath;
+    }
+
+    async getServiceIds() {
+        const date = yyyymmddFormat();
+
         const response = await fetch(`${this.#root}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/vnd.ksql.v1+json',
             },
             body: JSON.stringify({
-                "ksql": "",
+                "ksql": `SELECT * FROM CALENDARDATESTABLE WHERE DATE = ${date};`,
                 "streamsProperties": {}
             }),
         });
 
         const json = await response.json();
-        console.log(json);
+        json.shift();
         
-        return json;
+        const serviceIds = [];
+        for (let record of json) {
+            const serviceId = record.row.columns[1];
+            serviceIds.push(serviceId);
+        };
+        
+        return serviceIds;
+    }
+
+    serviceIdsString(serviceIds) {
+        let serviceIdsString = '';
+
+        for(let i = 0; i < serviceIds.length; i++) {
+            if (i === serviceIds.length -1) {
+                serviceIdsString += (`SERVICE_ID = '${serviceIds[i]}'`);
+                break;
+            };
+
+            serviceIdsString += (`SERVICE_ID = '${serviceIds[i]}' OR `);
+        };
+
+        return serviceIdsString;
+    }
+
+    async getShapeId(serviceIds) {
+        const serviceIdsString = this.serviceIdsString(serviceIds)
+
+        const response = await fetch(`${this.#root}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/vnd.ksql.v1+json',
+            },
+            body: JSON.stringify({
+                "ksql": `SELECT * FROM TRIPSTABLE WHERE ${serviceIdsString} AND ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId};`,
+                "streamsProperties": {}
+            }),
+        });
+
+
+        const json = await response.json();
+        json.shift();
+        const shapeId = json[0]['row']['columns'][4];
+        
+        return shapeId; 
+    }
+
+    async getRoutePath(shapeId) {
+        const response = await fetch(`${this.#root}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/vnd.ksql.v1+json',
+            },
+            body: JSON.stringify({
+                "ksql": `SELECT * FROM  ROUTEPATHSTABLE WHERE SHAPE_ID = '${shapeId}';`,
+                "streamsProperties": {}
+            }),
+        });
+        
+        const json = await response.json();
+        json.shift();
+        
+        const routePath = json[0]['row']['columns'][1];
+        
+        return routePath;
     }
 };
