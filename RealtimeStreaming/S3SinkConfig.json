@@ -1,0 +1,28 @@
+{
+  "name":"trimet-gtfs-s3",
+  "config":{
+    "connector.class":"io.confluent.connect.s3.S3SinkConnector",
+    "format.class": "io.confluent.connect.s3.format.parquet.ParquetFormat",
+    "parquet.codec": "none",
+    "storage.class": "io.confluent.connect.s3.storage.S3Storage",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "io.confluent.connect.protobuf.ProtobufConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schemas.enable": "true",
+    "partitioner.class":"io.confluent.connect.storage.partitioner.TimeBasedPartitioner",
+    "partition.duration.ms":"3600000",
+    "path.format":"'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH",
+    "locale":"en-US",
+    "timezone":"America/Los_Angeles",
+    "flush.size": "100000",
+    "store.kafka.keys": "false",
+    "input.data.format": "PROTOBUF",
+    "output.data.format": "PARQUET",
+    "s3.bucket.name": "trimet-gtfs-realtime-071220964300",
+    "tasks.max": "8",
+    "topics":"VehicleEntitiesExploded,TripEntitiesExploded",
+    "s3.region": "us-west-2",
+    "aws.access.key.id":"<enter yours here>",
+    "aws.secret.access.key":"<enter yours here>"
+  }
+}

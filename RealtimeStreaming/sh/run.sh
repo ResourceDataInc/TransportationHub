@@ -21,6 +21,7 @@ docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 1 1000 false -1 &
 docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 2 1000 false -1 &
 sleep 10
+
 for f in ksql/*.sql; do
 docker cp $f ksqldb-cli:/home/appuser
 rawfile=`basename $f`
@@ -31,3 +32,5 @@ done
 
 docker cp SnowflakeSinkConfig.json connect:/home/appuser
 docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
+docker cp S3SinkConfig.json connect:/home/appuser
+docker exec connect curl -X POST -H "Content-Type: application/json" --data @S3SinkConfig.json http://localhost:8083/connectors
