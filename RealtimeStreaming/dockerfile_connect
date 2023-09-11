@@ -1,8 +1,8 @@
-FROM cnfldemos/cp-server-connect-datagen:0.5.3-7.1.0
+FROM cnfldemos/cp-server-connect-datagen:0.6.0-7.3.0
 USER root
-RUN wget -P /usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen/lib https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.0.0/snowflake-kafka-connector-2.0.0.jar 
-RUN wget -P /usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen/lib https://packages.confluent.io/maven/io/confluent/kafka-connect-s3/10.4.2/kafka-connect-s3-10.4.2.jar
-RUN wget -P /usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen/lib https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk15on/1.70/bcprov-jdk15on-1.70.jar
-RUN wget -P /usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen/lib https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
-RUN wget -P /usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen/lib https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar 
+RUN wget http://client.hub.confluent.io/confluent-hub-client-latest.tar.gz 
+RUN tar -xvf confluent-hub-client-latest.tar.gz
+RUN ./bin/confluent-hub install snowflakeinc/snowflake-kafka-connector:2.0.1 --no-prompt
+RUN ./bin/confluent-hub install confluentinc/kafka-connect-s3:10.5.3 --no-prompt
+RUN wget -P  /usr/share/confluent-hub-components/confluentinc-kafka-connect-s3/lib https://repo1.maven.org/maven2/org/apache/hadoop/thirdparty/hadoop-shaded-guava/1.1.1/hadoop-shaded-guava-1.1.1.jar
 USER appuser
