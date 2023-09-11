@@ -26,8 +26,6 @@ for f in ksql/*.sql; do
 docker cp $f ksqldb-cli:/home/appuser
 rawfile=`basename $f`
 docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f $rawfile
-# for talking during the demo 
-sleep 10 
 done
 
 docker cp SnowflakeSinkConfig.json connect:/home/appuser
