@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { VehicleMarker } from '../components/VehicleMarker';
 import { StopMarker } from '../components/StopMarker';
+import { RouteLine } from '../components/RouteLine';
 import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
 import { selectStops, setSelectedStop } from '../store/stops/stopsSlice';
@@ -76,6 +77,8 @@ export const Map = () => {
                             />
                         )
                     })}
+
+                    <RouteLine/>
                 </MapContainer>
             </div>
         </div>
