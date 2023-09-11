@@ -14,7 +14,7 @@ models:
         - name: route_subtype
           description: "The subtype of the route."
         - name: route_color
-          description: "The color representation for the route."
+          description: "The color of the route."
         - name: frequent_service
           description: "Whether the route is considered frequent service."
         - name: route_desc
@@ -36,11 +36,6 @@ models:
     - name: stops
       description: "Dimensional table for TriMet stops."
       columns:
-        - name: route_stop_id
-          description: "Unique ID for a stop on a route. Primary key of this table."
-          tests:
-            - unique
-            - not_null
         - name: stop_id
           description: "ID for a stop."
           tests:
