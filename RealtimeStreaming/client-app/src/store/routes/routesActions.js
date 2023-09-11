@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RoutesApi } from "../../api/RoutesApi";
 
-export const getRoutes = createAsyncThunk(
+export const getRoute = createAsyncThunk(
     'routes/getRoute',
-    async () => {
-        const api = new RoutesApi();
+    async (request) => {
+        const api = new RoutesApi(request.routeId, request.directionId);
         const data = await api.getRoute();
         return data;
     }

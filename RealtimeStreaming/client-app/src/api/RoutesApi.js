@@ -13,7 +13,6 @@ export class RoutesApi {
         const shapeId = await this.getShapeId(serviceIds);
         const routePath = await this.getRoutePath(shapeId);
 
-        console.log(routePath);
         return routePath;
     }
 
@@ -61,20 +60,23 @@ export class RoutesApi {
     async getShapeId(serviceIds) {
         const serviceIdsString = this.serviceIdsString(serviceIds)
 
+        console.log(`route id = ${this.routeId}`);
+        console.log(`direction id = ${this.directionId}`);
+
         const response = await fetch(`${this.#root}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/vnd.ksql.v1+json',
             },
             body: JSON.stringify({
-                "ksql": `SELECT * FROM TRIPSTABLE WHERE ${serviceIdsString} AND ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId};`,
+                "ksql": `SELECT * FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND ${serviceIdsString};`,
                 "streamsProperties": {}
             }),
         });
 
-
         const json = await response.json();
         json.shift();
+        
         const shapeId = json[0]['row']['columns'][4];
         
         return shapeId; 
@@ -96,7 +98,7 @@ export class RoutesApi {
         json.shift();
         
         const routePath = json[0]['row']['columns'][1];
-        
+
         return routePath;
     }
 };
