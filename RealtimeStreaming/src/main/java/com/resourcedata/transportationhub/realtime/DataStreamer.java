@@ -31,18 +31,20 @@ public class DataStreamer implements Closeable {
         this.requestParams = requestParams;
     }
     public void produce(FeedMessage message){
-        final ProducerRecord<String, FeedMessage> producerRecord = new ProducerRecord<>(requestParams.name, requestParams.name, message);
-        try {
-            producer.send(producerRecord, (recordMetadata, exception) -> {
+        if(message != null) {
+            final ProducerRecord<String, FeedMessage> producerRecord = new ProducerRecord<>(requestParams.name, requestParams.name, message);
+            try {
+                producer.send(producerRecord, (recordMetadata, exception) -> {
 
-                if(exception != null){
-                    System.err.println("An error occured in the producer");
-                    exception.printStackTrace(System.err);
-                }
-            }).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace(System.err);
-            System.exit(1);
+                    if (exception != null) {
+                        System.err.println("An error occured in the producer");
+                        exception.printStackTrace(System.err);
+                    }
+                }).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace(System.err);
+                System.exit(1);
+            }
         }
     }
     public void close() { producer.close(); }
