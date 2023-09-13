@@ -63,13 +63,17 @@ public class DataGenerator {
             StatusLine statusLine = response.getStatusLine();
             final int statusCode = statusLine.getStatusCode();
             assert statusCode == HttpStatus.SC_OK;
-            return EntityUtils.toByteArray(response.getEntity());
+            byte[] end_result= EntityUtils.toByteArray(response.getEntity());
+            return end_result;
+        } catch (ConnectionClosedException err){
+            err.printStackTrace(System.err);
+            return null;
         }
     }
     public GtfsRealtime.FeedMessage generate(){
         try {
             byte[] response = getHttpResponse(requestParams.link);
-            if(response == null) throw new IOException("no response");
+            if(response == null) return null;
             if (requestParams.fileWriteRequested) try {
                 FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
             } catch (IOException io){
@@ -77,10 +81,6 @@ public class DataGenerator {
             }
             Thread.sleep(requestParams.waitTimeMs);
             return GtfsRealtime.FeedMessage.parseFrom(response);
-        }
-        catch (ConnectionClosedException err){
-            err.printStackTrace(System.err);
-            return null;
         }
         catch (IOException | InterruptedException e){
             e.printStackTrace(System.err);
