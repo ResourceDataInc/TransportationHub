@@ -3,14 +3,18 @@ import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { yellowBusIcon } from '../assets/leafletIcons/yellowBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
+import { useDispatch } from 'react-redux';
+import { setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 
-export const VehicleMarker = (props) => {
-    const { 
-        vehicleId, 
-        position, 
-        status, 
+export const VehicleMarker = ({ vehicle }) => {
+    const {
+        id,
+        position,
+        status,
         stopId,
-    } = props;
+    } = vehicle;
+
+    const dispatch = useDispatch();
 
     const iconColor = () => {
         switch (status) {
@@ -25,16 +29,26 @@ export const VehicleMarker = (props) => {
         };
     };
 
+    const updateCard = () => {
+        dispatch(setSelectedVehicleId(id));
+        dispatch(setSelectedVehicle());
+    };
+
+    const markerEvents = {
+        click: () => {
+            updateCard();
+        },
+    };
+
     return (
         <div>
             <Marker 
                 position={position} 
                 icon={iconColor()} 
+                eventHandlers={markerEvents}
             >
                 <Popup>
-                    <p>This is bus number {vehicleId}</p>
-                    <p>{status === 'IN_TRANSIT_TO' && `Currently in transit to stop ${stopId}`}</p>
-                    <p>{status === 'STOPPED_AT' && `Currently sitting at stop ${stopId}`}</p>
+                    <p>This is vehicle number {id}</p>
                 </Popup>
             </Marker>
         </div>
