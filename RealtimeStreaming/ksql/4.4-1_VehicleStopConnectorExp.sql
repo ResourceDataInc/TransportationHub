@@ -8,5 +8,5 @@ CREATE STREAM VehicleStopConnectorExp
         s.stop_lon as stop_lon,
         s.stop_name as stop_name
     FROM VehicleEntitiesExploded v
-    JOIN StopMapState s ON s.stop_id = v.entity->vehicle->stop_id
+    JOIN StopsTable s ON s.stop_id = v.entity->vehicle->stop_id
 EMIT CHANGES;
