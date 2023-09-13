@@ -148,7 +148,6 @@ services:
       context: .
       dockerfile: dockerfile_datastreamer
     command: ["tail", "-f", "/dev/null"]
-    network_mode: "host"
     volumes:
       - shared-data:/shared-data
       
