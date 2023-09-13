@@ -1,9 +1,9 @@
 with cte_vp as (
-    select distinct 
-         v.value:vehicle:vehicle:id::number(38,0) as vehicle_id
-        ,nullif(v.value:vehicle:vehicle:license_plate::varchar, '') as license_plate
-    from staging.vehiclepositions vp,
-    lateral flatten(input => record_content:entity, outer => true) v
+    select distinct
+         v.value:VEHICLE:VEHICLE:ID::number(38,0) as vehicle_id
+        ,nullif(v.value:VEHICLE:VEHICLE:LICENSE_PLATE::varchar, '') as license_plate
+    from staging.vehicleentitiesexploded vp,
+    lateral flatten(input => record_content) v
 )
 
 select distinct
