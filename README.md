@@ -15,6 +15,7 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
    7. [control-center](#control-center)
    8. [connect](#connect)
    9. [staging tables](#staging-tables)
+   10. [aws](#aws)
 
 ## Running
 
@@ -47,7 +48,7 @@ The architecture of the pipeline is as follows, descriptions for all components 
 
 The Transportation Hub warehouses data for Portland's local transit system, TriMet.  The starting point for data is the [GTFS api](https://developer.trimet.org/GTFS.shtml).  JSON/XML [endpoints](https://developer.trimet.org/ws_docs/) are listed on the api website.  A realtime [protobuf](https://www.transit.land/feeds/f-trimet~rt/) endpoint was chosen for the advantages of using a structured data format, and for ease of use in both downstream ETL and future evolution of this project.
 
-The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in <span style="color:LightSkyBlue">blue</span>.  Objects that have visual components that can be accessed in the browser are shown in <span style="color:LightCoral">red</span>. 
+The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in blue.  Containers that have visual components that can be accessed in the browser are shown in red.  The yellow elements are in AWS.
 
 ### datastreamer
 
@@ -99,3 +100,6 @@ The kafka connect plugin is a suite of tools for connecting outside data sources
 ### staging tables
 Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.
 
+### aws
+
+The second destination we will sending data is to a data lake in AWS.  What differentiates a data lake from a data warehouse such as snowflake is several things.  Data lakes are transparently based off of an object store and can allow heterogenous data sources easily without needed to store data in its own format.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this isnot a major downside.  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code writtein in Spark. 
