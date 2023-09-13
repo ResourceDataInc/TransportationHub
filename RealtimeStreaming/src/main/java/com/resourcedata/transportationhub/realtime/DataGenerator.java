@@ -82,6 +82,10 @@ public class DataGenerator {
             Thread.sleep(requestParams.waitTimeMs);
             return GtfsRealtime.FeedMessage.parseFrom(response);
         }
+        catch (InvalidProtocolBufferException e){
+            e.printStackTrace(System.err);
+            return null;
+        }
         catch (IOException | InterruptedException e){
             e.printStackTrace(System.err);
             System.exit(1);
