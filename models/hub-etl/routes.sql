@@ -12,6 +12,7 @@ with lambda_cte as (
         ,properties:type::varchar as route_type
         ,case when properties:frequent::varchar = 'True' then True else False end as frequent_service
         ,properties:rte_desc::varchar as route_desc
+        ,geography as route_shape
     from transportation_hub.staging.routes r
 )
 select 
@@ -21,5 +22,6 @@ select
     ,lambda_cte.route_color as route_color
     ,protobuf_cte.frequent_service as frequent_service
     ,protobuf_cte.route_desc as route_desc
+    ,protobuf_cte.route_shape as route_shape
 from protobuf_cte
 left join lambda_cte on lambda_cte.route_id = protobuf_cte.route_id

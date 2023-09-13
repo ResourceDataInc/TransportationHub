@@ -19,7 +19,9 @@ models:
           description: "Whether the route is considered frequent service."
         - name: route_desc
           description: "A description of the route."
-
+        - name: route_shape
+          description: "A geoJSON object of the route shape."
+  
     - name: vehicles
       description: "Dimensional table for TriMet vehicles"
       columns:
