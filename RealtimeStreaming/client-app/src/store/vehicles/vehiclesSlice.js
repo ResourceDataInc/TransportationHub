@@ -6,7 +6,16 @@ const options = {
     initialState: {
         vehicles: [{
             row: {
-                columns: [4949, 45.517, -122.683],
+                columns: [
+                    4949,               // [0] VEHICLE_ID: String
+                    45.517,             // [1] LATITUDE: Double
+                    -122.683,           // [2] LONGITUDE: Double
+                    'IN_TRANSIT_TO',    // [3] CURRENT_STATUS: String
+                    5,                  // [4] CURRENT_STOP_SEQUENCE: BigInt
+                    '8374',             // [5] STOP_ID: String
+                    '90',               // [6] ROUTE_ID: String
+                    1694712350          // [7] TIMESTMP: BigInt
+                ],
             },
         }],
         selectedVehicleId: null,
