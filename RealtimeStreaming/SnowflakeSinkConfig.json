@@ -1,5 +1,5 @@
 {
-  "name":"trimet-gtfs",
+  "name":"trimet-gtfs-snowflake",
   "config":{
     "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
     "tasks.max":"8",
@@ -8,9 +8,9 @@
     "buffer.flush.time":"900",
     "buffer.size.bytes":"10000000",
     "snowflake.url.name":"***REMOVED***",
-    "snowflake.user.name":"AKIRAMADONO",
-    "snowflake.private.key":"***REMOVED***=",
-    "snowflake.private.key.passphrase":"***REMOVED***",
+    "snowflake.user.name":"<your user name>",
+    "snowflake.private.key":"<your private key>",
+    "snowflake.private.key.passphrase":"<your private key passphrase>",
     "snowflake.database.name":"TRANSPORTATION_HUB",
     "snowflake.role.name":"SYSADMIN",
     "snowflake.schema.name":"STAGING",
