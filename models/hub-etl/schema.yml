@@ -81,7 +81,35 @@ models:
                   field: route_id
         - name: route_direction
           description: "The direction the vehicle travels on the route for the trip."
-                
+
+    - name: trip_delays
+      description: "Fact table for trip delays."
+      columns:
+        - name: timestamp
+          description: "Timestamp for the trip delay."
+          tests:
+            - not_null
+        - name: trip_id
+          description: "ID of the trip."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('trips')
+                field: trip_id
+        - name: trip_stop_sequence
+          description: "The sequence of the stop in the trip."
+          tests:
+            - not_null:
+        - name: stop_id
+          description: "ID of the stop."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stops')
+                field: stop_id
+        - name: delay
+          description: "Delay, in seconds, from the scheduled arrival time to the stop."
+
     - name: vehicle_positions
       description: "Fact table for TriMet vehicle positions."
       columns:
