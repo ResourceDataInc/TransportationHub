@@ -1,17 +1,17 @@
 with stop_times as (
     select
         to_timestamp(record_content:ENTITY:VEHICLE:TIMESTAMP) as timestamp
-        ,try_to_number(record_content:ENTITY:VEHICLE:TRIP:TRIP_ID)
-        ,try_to_number(record_content:ENTITY:VEHICLE:CURRENT_STOP_SEQUENCE)
+        ,try_to_number(record_content:ENTITY:VEHICLE:TRIP:TRIP_ID::text) as trip_id
+        ,try_to_number(record_content:ENTITY:VEHICLE:CURRENT_STOP_SEQUENCE::text) as current_stop_sequence
         ,record_content:ENTITY:VEHICLE:CURRENT_STATUS::varchar as current_status
-        ,try_to_number(record_content:ENTITY:VEHICLE:STOP_ID) as stop_id
+        ,try_to_number(record_content:ENTITY:VEHICLE:STOP_ID::text) as stop_id
     from staging.vehicleentitiesexploded v
 )
 ,trip_delays as (select 
     to_timestamp(t.record_content:TS) as timestamp
-    ,try_to_number(t.record_content:TRIP_ID) as trip_id
-    ,try_to_number(t.record_content:STOP_TIME_UPDATE:STOP_SEQUENCE) as trip_stop_sequence
-    ,try_to_number(t.record_content:STOP_TIME_UPDATE:ARRIVAL:DELAY) as delay
+    ,try_to_number(t.record_content:TRIP_ID::text) as trip_id
+    ,try_to_number(t.record_content:STOP_TIME_UPDATE:STOP_SEQUENCE::text) as trip_stop_sequence
+    ,try_to_number(t.record_content:STOP_TIME_UPDATE:ARRIVAL:DELAY::text) as delay
 from staging.tripentitiesexplodedstopsexploded t
 )
 select distinct
