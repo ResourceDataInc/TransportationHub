@@ -27,16 +27,19 @@ export const Cards = () => {
 
     return (
         <div className='cards-container row'>
+            
             {displayVehicleCard && 
-                <div className='col-12 h-50 py-2'>
+                <div className='col-12 h-50 py-1'>
                     <VehicleCard/>
                 </div> 
             }
+
             {displayStopCard && 
-                <div className='col-12 h-50 py-2'>
+                <div className='col-12 h-50 py-1'>
                     <StopCard/>
                 </div> 
             }
+
         </div>
     )
 };
