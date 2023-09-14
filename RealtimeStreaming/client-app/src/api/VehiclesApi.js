@@ -10,7 +10,7 @@ export class VehiclesApi {
                 'Accept': 'application/vnd.ksql.v1+json',
             },
             body: JSON.stringify({
-                "ksql": "SELECT * FROM VehiclesLatest;",
+                "ksql": "SELECT * FROM VEHICLESLATEST;",
                 "streamsProperties": {}
             }),
         });
