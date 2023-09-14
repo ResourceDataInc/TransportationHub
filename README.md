@@ -46,7 +46,7 @@ The architecture of the pipeline is as follows, descriptions for all components 
 
 ### Trimet API
 
-The Transportation Hub warehouses data for Portland's local transit system, TriMet.  The starting point for data is the [GTFS api](https://developer.trimet.org/GTFS.shtml).  JSON/XML [endpoints](https://developer.trimet.org/ws_docs/) are listed on the api website.  A realtime [protobuf](https://www.transit.land/feeds/f-trimet~rt/) endpoint was chosen for the advantages of using a structured data format, and for ease of use in both downstream ETL and future evolution of this project.
+The Transportation Hub warehouses data for Portland's local transit system, TriMet.  The starting point for data is the [GTFS api](https://developer.trimet.org/GTFS.shtml).  JSON/XML [endpoints](https://developer.trimet.org/ws_docs/) are listed on the api website.  A realtime [protobuf](https://www.transit.land/feeds/f-trimet~rt/) endpoint was chosen for the advantages of using a structured data format, and for ease of use in both downstream ETL and future evolution of this project.  A separate pathway for streaming json is described [here](RealtimeStreaming/cloud_streaming/loading_via_lambda.md).
 
 The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in blue.  Containers that have visual components that can be accessed in the browser are shown in red.  The yellow elements are in AWS.
 
