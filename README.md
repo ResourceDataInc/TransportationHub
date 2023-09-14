@@ -42,7 +42,7 @@ This shell script will do the following:
 ## Overview
 
 The architecture of the pipeline is as follows, descriptions for all components pictured follow:
-![architecture](./imgs/transportation_hub_v2.png)
+![architecture](./Documentation/imgs/transportation_hub_v2.png)
 
 ### Trimet API
 
