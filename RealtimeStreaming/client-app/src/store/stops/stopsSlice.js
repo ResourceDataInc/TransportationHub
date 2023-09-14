@@ -6,7 +6,30 @@ const options = {
     initialState: {
         stops: [{
             row: {
-                columns: ['123', 123, 45.527, -122.693, '123 Address Street', '', { 'ARRIVAL': {'DELAY': 100,}, 'DEPARTURE': {'DELAY': 100,}, }],
+                columns: [
+                    '123',                      // [0] STOP_ID: String
+                    123,                        // [1] TRIP_SEQ_ID: String
+                    45.527,                     // [2] STOP_LAT: Double
+                    -122.693,                   // [3] STOP_LON: Double
+                    '123 Address Street',       // [4] STOP_NAME: String
+                    '3950',                     // [5] VEHICLE_ID: String
+                    {                           // [6] STOP_TIME_UPDATE: 
+                        'STOP_ID': '123',
+                        'STOP_SEQUENCE': 59,
+                        'SCHEDULE_RELATIONSHIP': '',
+                        'ARRIVAL': {
+                            'DELAY': 100,
+                            'TIME': 0,
+                            'UNCERTAINTY': 0,
+                        }, 
+                        'DEPARTURE': {
+                            'DELAY': 100,
+                            'TIME': 0,
+                            'UNCERTAINTY': 0,
+                        },
+                    },
+                    1694709653                  // [7] TIMESTMP: BigInt
+                ],
             },
         }],
         selectedStopId: null,

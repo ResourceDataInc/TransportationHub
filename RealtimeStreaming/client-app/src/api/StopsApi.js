@@ -10,7 +10,7 @@ export class StopsApi {
                 'Accept': 'application/vnd.ksql.v1+json',
             },
             body: JSON.stringify({
-                "ksql": "SELECT * FROM StopsLatest;",
+                "ksql": "SELECT * FROM STOPSLATEST LIMIT 1000;",
                 "streamsProperties": {}
             }),
         });
