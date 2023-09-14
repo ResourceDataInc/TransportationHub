@@ -1,5 +1,6 @@
 :root {
-  --primary-color: lightgray;
+  --primary-color:#F5F0EF;
+  --containers-height: 85vh;
 }
 
 .app {
@@ -9,10 +10,16 @@
 }
 
 .map-container {
-  height: 90vh;
-  width: 80%;
+  height: var(--containers-height);
+  width: 90%;
 }
 
 .cards-container {
-  height: 90vh;
+  height: var(--containers-height);
+}
+
+.vehicle-stop-cards {
+  background-color: #DBDADA;
+  border-width: 5px;
+  border-radius: 5%;
 }

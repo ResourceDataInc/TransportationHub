@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { CloseCardIcon } from './CloseCardIcon';
 import { selectSelectedStop, clearSelectedStop } from '../store/stops/stopsSlice';
 import Stop from '../models/stop';
 
@@ -14,19 +15,21 @@ export const StopCard = () => {
     };
 
     return (
-        <div className='card h-100'>
-            
-            <button 
-                className='btn-danger'
-                onClick={ () => dispatch(clearSelectedStop()) }
-            >Close</button>
-
-            <div className="card-body">
-                <h5 className="card-title">Stop {stop.id}</h5>
+        <div className='vehicle-stop-cards card h-100'>
+            <CloseCardIcon 
+                onClick={() => dispatch(clearSelectedStop()) }
+            />
                 
-                <p className="card-text">{stop.address}</p>
-                <p className="card-text">{stop.arrivalDelay !== null && `Last bus's arrival delay: ${stop.arrivalDelay} seconds`}</p>
-                <p className="card-text">{stop.departureDelay !== null && `Last bus's departure delay: ${stop.departureDelay} seconds`}</p>
+            <div className="card-body">
+                <h4 className="card-title ">{stop.address}</h4>
+
+                <hr></hr>
+                
+                <div>
+                    <p className="card-text">Stop {stop.id}</p>
+                    <p className="card-text">{stop.arrivalDelay !== null && `Last bus's arrival delay: ${stop.arrivalDelay} seconds`}</p>
+                    <p className="card-text">{stop.departureDelay !== null && `Last bus's departure delay: ${stop.departureDelay} seconds`}</p>
+                </div>
             </div>
         </div>
     )

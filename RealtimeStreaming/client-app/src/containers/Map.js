@@ -43,7 +43,7 @@ export const Map = () => {
 
         return () => clearInterval(stopsChangeInterval);
     }, []); 
-    
+
     return (
         <div className='row'>
             <div className='col-12'>
