@@ -15,13 +15,29 @@ models:
           description: "The subtype of the route."
         - name: route_color
           description: "The color of the route."
-        - name: frequent_service
-          description: "Whether the route is considered frequent service."
         - name: route_desc
           description: "A description of the route."
-        - name: route_shape
-          description: "A geoJSON object of the route shape."
-  
+
+    - name: route_shapes
+      description: "Dimensional table for TriMet route shapes for each direction."
+      columns:
+        - name: route_id
+          description: "ID for a route."
+          tests:
+            - not_null
+        - name: direction
+          description: "Direction on the route, inbound or outbound."
+          tests:
+            - not_null
+        - name: direction_desc
+          description: "Description of the direction."
+        - name: frequent_service
+          description: "Whether the route is considered frequent service."
+        - name: geography
+          description: "GeoJSON object of the route line shape."
+          tests:
+            - not_null
+                
     - name: vehicles
       description: "Dimensional table for TriMet vehicles"
       columns:
@@ -81,7 +97,35 @@ models:
                   field: route_id
         - name: route_direction
           description: "The direction the vehicle travels on the route for the trip."
-                
+
+    - name: trip_delays
+      description: "Fact table for trip delays."
+      columns:
+        - name: timestamp
+          description: "Timestamp for the trip delay."
+          tests:
+            - not_null
+        - name: trip_id
+          description: "ID of the trip."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('trips')
+                field: trip_id
+        - name: trip_stop_sequence
+          description: "The sequence of the stop in the trip."
+          tests:
+            - not_null
+        - name: stop_id
+          description: "ID of the stop."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('stops')
+                field: stop_id
+        - name: delay
+          description: "Delay, in seconds, from the scheduled arrival time to the stop."
+
     - name: vehicle_positions
       description: "Fact table for TriMet vehicle positions."
       columns:
@@ -93,9 +137,7 @@ models:
           description: "ID of the vehicle."
           tests:
               - not_null
-              - relationships:
-                  to: ref('vehicles')
-                  field: vehicle_id
+
         - name: latitude
           description: "Latitude of the current location the vehicle."
         - name: longitude
