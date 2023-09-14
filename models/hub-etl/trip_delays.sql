@@ -1,0 +1,27 @@
+with stop_times as (
+    select
+        to_timestamp(record_content:ENTITY:VEHICLE:TIMESTAMP) as timestamp
+        ,try_to_number(record_content:ENTITY:VEHICLE:TRIP:TRIP_ID)
+        ,try_to_number(record_content:ENTITY:VEHICLE:CURRENT_STOP_SEQUENCE)
+        ,record_content:ENTITY:VEHICLE:CURRENT_STATUS::varchar as current_status
+        ,try_to_number(record_content:ENTITY:VEHICLE:STOP_ID) as stop_id
+    from staging.vehicleentitiesexploded v
+)
+,trip_delays as (select 
+    to_timestamp(t.record_content:TS) as timestamp
+    ,try_to_number(t.record_content:TRIP_ID) as trip_id
+    ,try_to_number(t.record_content:STOP_TIME_UPDATE:STOP_SEQUENCE) as trip_stop_sequence
+    ,try_to_number(t.record_content:STOP_TIME_UPDATE:ARRIVAL:DELAY) as delay
+from staging.tripentitiesexplodedstopsexploded t
+)
+select distinct
+    t.timestamp
+    ,t.trip_id
+    ,t.trip_stop_sequence
+    ,s.stop_id
+    ,t.delay
+from stop_times s
+join trip_delays t on
+    s.timestamp = t.timestamp and
+    s.trip_id = t.trip_id and
+    s.current_stop_sequence = t.trip_stop_sequence
