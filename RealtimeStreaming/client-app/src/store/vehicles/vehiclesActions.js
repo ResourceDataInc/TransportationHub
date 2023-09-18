@@ -9,3 +9,13 @@ export const getVehicles = createAsyncThunk(
         return data;
     }
 );
+
+export const getVehiclesOnRoute = createAsyncThunk(
+    'buses/getVehiclesOnRoute',
+    async (routeId) => {
+        const api = new VehiclesApi();
+        const data = await api.getVehiclesOnRoute(routeId);
+        return data;
+    }
+);
+
