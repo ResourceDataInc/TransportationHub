@@ -18,9 +18,9 @@
 		<table name="STOP_EVENT" prior="TABLE" >
 			<column name="STOP_EVENT_ID" prior="STOP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
 			<column name="TRIP_EVENT_ID" prior="TRIP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
-			<column name="ESTIMATED_ARRIVAL_TIME" type="number" jt="3" />
+			<column name="SCHEDULED_ARRIVAL_TIME" prior="ESTIMATED_ARRIVAL_TIME" type="number" jt="3" />
 			<column name="ACTUAL_ARRIVAL_TIME" type="number" jt="3" />
-			<column name="ESTIMATED_DEPARTURE_TIME" type="number" jt="3" />
+			<column name="SCHEDULED_DEPARTURE_TIME" prior="ESTIMATED_DEPARTURE_TIME" type="number" jt="3" />
 			<column name="ACTUAL_DEPARTURE_TIME" type="number" jt="3" />
 			<index name="PK_STOP_EVENT_STOP_ID" unique="PRIMARY_KEY" >
 				<column name="STOP_EVENT_ID" />
@@ -241,7 +241,7 @@
 	<layout name="MART" id="Layout-1850" show_relation="cascade" >
 		<entity schema="MART" name="ROUTE" color="C1D8EE" x="112" y="208" />
 		<entity schema="MART" name="STOP" color="C1D8EE" x="832" y="80" />
-		<entity schema="MART" name="STOP_EVENT" color="C1D8EE" x="576" y="64" />
+		<entity schema="MART" name="STOP_EVENT" color="C1D8EE" x="496" y="96" />
 		<entity schema="MART" name="TRIP_EVENT" color="C1D8EE" x="288" y="48" />
 		<entity schema="MART" name="VEHICLE" color="C1D8EE" x="48" y="48" />
 	</layout>
