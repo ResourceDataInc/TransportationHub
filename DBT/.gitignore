@@ -1,0 +1,8 @@
+.user.yml
+appID.txt
+dbt_packages/
+logs/
+profiles.yml
+seeds/*.csv
+target/
+venv/
