@@ -8,21 +8,11 @@ const options = {
         selectedRoutePositions: [],
         selectedRouteId: 0,
         selectedRouteDirection: 0,
-        isLoading: false,
-        hasError: false,
     },
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getRoute.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.hasError = false;
-
             state.selectedRoutePositions = action.payload;
-        });
-
-        builder.addCase(getRoute.rejected, (state) => {
-            state.isLoading = false;
-            state.hasError = true;
         });
     },
 };

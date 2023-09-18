@@ -20,8 +20,6 @@ const options = {
         }],
         selectedVehicleId: null,
         selectedVehicle: null,
-        isLoading: true,
-        hasError: false,
     },
     reducers: {
         setSelectedVehicleId(state, action) {
@@ -45,9 +43,6 @@ const options = {
     },
     extraReducers: (builder) => {
         builder.addCase(getVehicles.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.hasError = false;
-
             if (action.payload === null || action.payload.length <= 0) {
                 state.vehicles = state.vehicles;
             } else {
@@ -55,11 +50,6 @@ const options = {
             };
 
             console.log(`There are ${state.vehicles.length} buses in the state`);
-        });
-
-        builder.addCase(getVehicles.rejected, (state) => {
-            state.buses.isLoading = false;
-            state.buses.hasError = true;
         });
     },
 };

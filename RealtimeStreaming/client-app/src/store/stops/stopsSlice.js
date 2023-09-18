@@ -34,8 +34,6 @@ const options = {
         }],
         selectedStopId: null,
         selectedStop: null,
-        isLoading: false,
-        hasError: false,
     },
     reducers: {
         setSelectedStopId(state, action) {
@@ -59,9 +57,6 @@ const options = {
     },
     extraReducers: (builder) => {
         builder.addCase(getStops.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.hasError = false;
-
             if (action.payload === null || action.payload.length <= 0) {
                 state.stops = state.stops;
             } else {
@@ -69,11 +64,6 @@ const options = {
             }; 
 
             console.log(`There are ${state.stops.length} stops in the state`);
-        });
-
-        builder.addCase(getStops.rejected, (state) => {
-            state.isLoading = false;
-            state.hasError = true;
         });
     },
 };
