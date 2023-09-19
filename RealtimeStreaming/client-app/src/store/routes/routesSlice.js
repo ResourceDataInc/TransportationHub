@@ -5,9 +5,9 @@ const options = {
     name: 'routes',
     initialState: {
         routes: [],
-        selectedRoutePositions: [],
         selectedRouteId: 0,
         selectedRouteDirection: 0,
+        selectedRoutePositions: [],
     },
     reducers: {},
     extraReducers: (builder) => {
