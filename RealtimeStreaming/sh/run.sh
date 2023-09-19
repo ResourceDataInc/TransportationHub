@@ -24,9 +24,11 @@ function post_static_data(){
 
 
 function stream_dynamic_data(){
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 0 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 1 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar 2 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 vehicles ResultSetVehicle 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 alerts ResultSetAlert 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/gtfs VehiclePositions GtfsRealtime 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 TripUpdate GtfsRealtime 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 FeedSpecAlerts GtfsRealtime 1000 false -1 &
 }
 
 function setup_ksql(){
@@ -55,4 +57,3 @@ sleep 10
 setup_ksql
 connect_snowflake
 connect_s3
-
