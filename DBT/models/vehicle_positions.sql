@@ -17,7 +17,7 @@ with vehicle_positions as (
     where trip_id is not null
 )
 select
-    row_number() OVER (ORDER BY vehicle_id, timestamp) as vehicle_position_id
+    row_number() over (order by vehicle_id, timestamp) as vehicle_position_id
     ,timestamp
     ,vehicle_id
     ,latitude
@@ -26,6 +26,6 @@ select
     ,speed
     ,trip_id
     ,route_id
-    ,stop_id
+    ,stop_id as stop_location_id
     ,current_status
 from vehicle_positions
