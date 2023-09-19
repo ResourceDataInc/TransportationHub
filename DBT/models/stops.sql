@@ -103,3 +103,4 @@ select
     ,route_direction
     ,stop_sequence
     ,time_point
+from stops
