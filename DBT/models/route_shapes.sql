@@ -12,7 +12,7 @@ with route_shapes as (
     from {{ source('transport_hub', 'routes') }} r
 )
 select 
-    row_number() OVER (ORDER BY route_id, direction) as route_shape_id
+    row_number() over (order by route_id, direction) as route_shape_id
     ,route_id
     ,direction
     ,direction_desc
