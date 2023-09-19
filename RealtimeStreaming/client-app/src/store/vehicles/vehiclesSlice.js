@@ -58,5 +58,6 @@ const vehiclesSlice = createSlice(options);
 
 export default vehiclesSlice.reducer;
 export const selectVehicles = (state) => state.vehicles.vehicles;
+export const selectSelectedVehicleId = (state) => state.vehicles.selectedVehicleId;
 export const selectSelectedVehicle = (state) => state.vehicles.selectedVehicle;
 export const { setSelectedVehicleId, setSelectedVehicle, clearSelectedVehicle } = vehiclesSlice.actions;
