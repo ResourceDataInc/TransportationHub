@@ -71,7 +71,12 @@ models:
       description: "Dimensional table for TriMet stops."
       columns:
         - name: stop_id
-          description: "ID for a stop."
+          description: "ID for a stop on a specific route, generated through the ETL. Primary key of this table."
+          tests:
+            - not_null
+            - unique
+        - name: stop_location_id
+          description: "ID for a stop location. Multiple routes can include a single location ID."
           tests:
             - not_null
         - name: route_id
@@ -137,13 +142,13 @@ models:
           description: "The sequence of the stop in the trip."
           tests:
             - not_null
-        - name: stop_id
+        - name: stop_location_id
           description: "ID of the stop."
           tests:
             - not_null
             - relationships:
                 to: ref('stops')
-                field: stop_id
+                field: stop_location_id
         - name: delay
           description: "Delay, in seconds, from the scheduled arrival time to the stop."
     
@@ -184,11 +189,11 @@ models:
               - relationships:
                   to: ref('routes')
                   field: route_id
-        - name: stop_id
+        - name: stop_location_id
           description: "ID of the stop the vehicle is stopped at or in transit to."
           tests:
               - relationships:
                   to: ref('stops')
-                  field: stop_id
+                  field: stop_location_id
         - name: current_status
           description: "Status of the vehicle, whether it is stopped at or in transit to the current stop ID."
