@@ -15,7 +15,8 @@ with stop_times as (
 from {{ source('transport_hub', 'TRIPENTITIESEXPLODEDSTOPSEXPLODED') }} t
 )
 select distinct
-    t.timestamp
+    row_number() OVER (ORDER BY t.trip_id, t.timestamp) as trip_delay_id
+    ,t.timestamp
     ,t.trip_id
     ,t.trip_stop_sequence
     ,s.stop_id
