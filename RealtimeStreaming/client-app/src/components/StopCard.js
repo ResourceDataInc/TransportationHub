@@ -17,7 +17,7 @@ export const StopCard = () => {
     return (
         <div className='vehicle-stop-cards card h-100'>
             <CloseCardIcon 
-                onClick={() => dispatch(clearSelectedStop()) }
+                onClick={ () => dispatch(clearSelectedStop()) }
             />
                 
             <div className="card-body">

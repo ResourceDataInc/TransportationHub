@@ -6,8 +6,6 @@ import { setSelectedStopId, setSelectedStop } from '../store/stops/stopsSlice';
 export const StopMarker = ({ stop }) => {
     const { 
         id,
-        latitude,
-        longitude,
         position, 
         address,
     } = stop;
@@ -33,41 +31,11 @@ export const StopMarker = ({ stop }) => {
         },
     };
 
+    // Only Show Stops When Zoomed In //
     const [zoom, setZoom] = useState(14);
-    const [northBound, setNorthBound] = useState();
-    const [eastBound, setEastBound] = useState();
-    const [southBound, setSouthBound] = useState();
-    const [westBound, setWestBound] = useState();
-    
-    const setMapBounds = (newMapBounds) => {
-        const newNorthBound = newMapBounds._northEast.lat;
-        setNorthBound(newNorthBound);
-
-        const newEastBound = newMapBounds._northEast.lng;
-        setEastBound(newEastBound)
-
-        const newSouthBound = newMapBounds._southWest.lat;
-        setSouthBound(newSouthBound)
-
-        const newWestBound = newMapBounds._southWest.lng;
-        setWestBound(newWestBound)
-    };
 
     const map = useMapEvents({
-        load() {
-            const newMapBounds = map.getBounds();
-            setMapBounds(newMapBounds);
-        },
-        
-        move() {
-            const newMapBounds = map.getBounds();
-            setMapBounds(newMapBounds);
-        },
-
         zoom() {
-            const newMapBounds = map.getBounds();
-            setMapBounds(newMapBounds);
-        
             const newZoom = map.getZoom();
             setZoom(newZoom)
         },
@@ -76,14 +44,7 @@ export const StopMarker = ({ stop }) => {
     if (zoom <= 14) {
         return;
     };
-
-    if (latitude > northBound || latitude < southBound) {
-        return;
-    };
-
-    if (longitude > eastBound || longitude < westBound) {
-        return;
-    };
+    // Only Show Stops When Zoomed In //
 
     return (
         <CircleMarker
