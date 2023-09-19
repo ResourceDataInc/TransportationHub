@@ -1,8 +1,12 @@
 package com.resourcedata.transportationhub.realtime;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.transit.realtime.GtfsRealtime;
+import com.google.transit.realtime.GtfsRealtime.FeedMessage;
+import com.google.transit.realtime.ResultSetAlert;
+import com.google.transit.realtime.ResultSetVehicle;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
+import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpStatus;
@@ -26,13 +30,12 @@ import java.util.Properties;
 public class DataGenerator {
     public Properties properties;
     public RequestParams requestParams;
-
+    public ObjectMapper objectMapper = new ObjectMapper();
     public DataGenerator(RequestParams requestParams){
-        this.properties = buildProperties();
         this.requestParams = requestParams;
-
+        this.properties = buildProperties();
     }
-    private static Properties buildProperties(){
+    private Properties buildProperties(){
         Properties properties = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try(InputStream input = classLoader.getResourceAsStream("producer.properties")){
@@ -42,7 +45,11 @@ public class DataGenerator {
             System.exit(1);
         }
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
+        if(requestParams.dataClass.equals("GtfsRealtime")) {
+            properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
+        } else {
+            properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class);
+        }
         return properties;
     }
     public byte[] getHttpResponse(String link) throws IOException {
@@ -63,14 +70,14 @@ public class DataGenerator {
             StatusLine statusLine = response.getStatusLine();
             final int statusCode = statusLine.getStatusCode();
             assert statusCode == HttpStatus.SC_OK;
-            byte[] end_result= EntityUtils.toByteArray(response.getEntity());
-            return end_result;
+            byte[] result = EntityUtils.toByteArray(response.getEntity());
+            return result;
         } catch (ConnectionClosedException err){
             err.printStackTrace(System.err);
             return null;
         }
     }
-    public GtfsRealtime.FeedMessage generate(){
+   private byte[] processResponse(){
         try {
             byte[] response = getHttpResponse(requestParams.link);
             if(response == null) return null;
@@ -80,7 +87,7 @@ public class DataGenerator {
                 io.printStackTrace(System.err);
             }
             Thread.sleep(requestParams.waitTimeMs);
-            return GtfsRealtime.FeedMessage.parseFrom(response);
+            return response;
         }
         catch (InvalidProtocolBufferException e){
             e.printStackTrace(System.err);
@@ -90,6 +97,36 @@ public class DataGenerator {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-       return null;
+        return null;
+    }
+    public FeedMessage generateProto(){
+        byte[] response = processResponse();
+        try {
+            return FeedMessage.parseFrom(response);
+        }
+        catch (InvalidProtocolBufferException e){
+            e.printStackTrace(System.err);
+        }
+        return null;
+    }
+    public ResultSetVehicle generateResultSetVehicle() {
+        byte[] response = processResponse();
+        try {
+            return objectMapper.readValue(response, ResultSetVehicle.class);
+        }
+        catch(IOException e) {
+            e.printStackTrace(System.err);
+        }
+        return null;
+    }
+    public ResultSetAlert generateResultSetAlert() {
+        byte[] response = processResponse();
+        try {
+            return objectMapper.readValue(response, ResultSetAlert.class);
+        }
+        catch(IOException e) {
+            e.printStackTrace(System.err);
+        }
+        return null;
     }
 }
