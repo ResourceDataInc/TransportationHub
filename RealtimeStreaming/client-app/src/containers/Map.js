@@ -1,18 +1,18 @@
+import 'leaflet/dist/leaflet.css';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import { VehicleMarker } from '../components/VehicleMarker';
 import { StopMarker } from '../components/StopMarker';
 import { RouteLine } from '../components/RouteLine';
+import { SetMapProperties } from '../components/SetMapProperties';
 import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
 import { selectStops, setSelectedStop } from '../store/stops/stopsSlice';
-import { getStops } from '../store/stops/stopsActions';
 import Vehicle from '../models/vehicle';
 import Stop from '../models/stop';
 
-// Leaflet Imports and Setup
-import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer } from 'react-leaflet';
+// Leaflet Default Marker Setup
 import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -30,18 +30,10 @@ export const Map = () => {
         const postionChangeInterval = setInterval(() => {
             dispatch(getVehicles());
             dispatch(setSelectedVehicle());
-        }, 1000);
-
-        return () => clearInterval(postionChangeInterval);
-    }, []); 
-
-    useEffect(() => {
-        const stopsChangeInterval = setInterval(() => {
-            dispatch(getStops());
             dispatch(setSelectedStop());
         }, 1000);
 
-        return () => clearInterval(stopsChangeInterval);
+        return () => clearInterval(postionChangeInterval);
     }, []); 
 
     return (
@@ -57,6 +49,8 @@ export const Map = () => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | <a target="_blank" href="https://icons8.com/icon/86288/bus">Bus</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+                    
+                    <SetMapProperties/>
 
                     {vehicles.map((vehicle) => {
                         const vehicleInstance = new Vehicle(vehicle);
