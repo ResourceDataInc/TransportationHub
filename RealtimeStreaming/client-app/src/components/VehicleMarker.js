@@ -1,31 +1,37 @@
 import { Marker, Popup } from 'react-leaflet';
 import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
-import { yellowBusIcon } from '../assets/leafletIcons/yellowBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
-import { useDispatch } from 'react-redux';
-import { setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 
 export const VehicleMarker = ({ vehicle }) => {
     const {
         id,
         position,
         status,
-        stopId,
     } = vehicle;
 
+    const selectedVehicleId = useSelector(selectSelectedVehicleId)
     const dispatch = useDispatch();
 
-    const iconColor = () => {
+    const iconColorAndSize = () => {
+        let iconSize;
+        if (selectedVehicleId === id) {
+            iconSize = 27;
+        } else {
+            iconSize = 17;
+        };
+
         switch (status) {
             case 'IN_TRANSIT_TO':
-                return greenBusIcon;
+                return greenBusIcon(iconSize);
             case 'STOPPED_AT':
-                return redBusIcon;
+                return redBusIcon(iconSize);
             case '':
-                return greenBusIcon;
+                return greenBusIcon(iconSize);
             default: 
-                return greyBusIcon;
+                return greyBusIcon(iconSize);
         };
     };
 
@@ -44,7 +50,7 @@ export const VehicleMarker = ({ vehicle }) => {
         <div>
             <Marker 
                 position={position} 
-                icon={iconColor()} 
+                icon={iconColorAndSize()} 
                 eventHandlers={markerEvents}
             >
                 <Popup>

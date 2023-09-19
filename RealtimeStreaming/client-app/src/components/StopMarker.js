@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { CircleMarker, Tooltip, useMapEvents } from 'react-leaflet';
-import { useDispatch } from 'react-redux';
-import { setSelectedStopId, setSelectedStop } from '../store/stops/stopsSlice';
+import { CircleMarker, Tooltip } from 'react-leaflet';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectSelectedStopId, setSelectedStopId, setSelectedStop } from '../store/stops/stopsSlice';
 
 export const StopMarker = ({ stop }) => {
     const { 
@@ -10,15 +9,21 @@ export const StopMarker = ({ stop }) => {
         address,
     } = stop;
 
+    const selectedStopId = useSelector(selectSelectedStopId)
     const dispatch = useDispatch();
     
-    const radius = 4;
+    let radius = 4
     const pathOptions = {
         color: 'black',
         weight: 1.5,
         fillColor: 'lightGrey',
         fillOpacity: 1,
     };
+
+    if (selectedStopId === id) {
+        radius = 7;
+        pathOptions.fillColor = 'red';
+    }
     
     const updateCard = () => {
         dispatch(setSelectedStopId(id));
