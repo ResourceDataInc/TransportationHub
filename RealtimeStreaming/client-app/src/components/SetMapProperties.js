@@ -30,21 +30,6 @@ export const SetMapProperties = () => {
             const newMapBounds = map.getBounds();
             setMapBounds(newMapBounds);
         },
-
-        /*
-        zoom() {
-            const newMapBounds = map.getBounds();
-            setMapBounds(newMapBounds);
-        
-            const newZoom = map.getZoom();
-            setZoom(newZoom)
-        },
-
-        load() {
-            const newMapBounds = map.getBounds();
-            setMapBounds(newMapBounds);
-        },
-        */
     });
     
     useEffect(() => {
