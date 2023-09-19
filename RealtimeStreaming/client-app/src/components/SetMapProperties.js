@@ -8,7 +8,6 @@ export const SetMapProperties = () => {
     const [eastBound, setEastBound] = useState();
     const [southBound, setSouthBound] = useState();
     const [westBound, setWestBound] = useState();
-    const [zoom, setZoom] = useState(14);
     const dispatch = useDispatch();
 
      const setMapBounds = (newMapBounds) => {
