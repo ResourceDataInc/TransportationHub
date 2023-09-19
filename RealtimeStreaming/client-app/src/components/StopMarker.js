@@ -31,21 +31,6 @@ export const StopMarker = ({ stop }) => {
         },
     };
 
-    // Only Show Stops When Zoomed In //
-    const [zoom, setZoom] = useState(14);
-
-    const map = useMapEvents({
-        zoom() {
-            const newZoom = map.getZoom();
-            setZoom(newZoom)
-        },
-    });
-
-    if (zoom <= 14) {
-        return;
-    };
-    // Only Show Stops When Zoomed In //
-
     return (
         <CircleMarker
             center={position}
