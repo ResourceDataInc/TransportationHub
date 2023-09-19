@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getStops } from "./stopsActions";
+import { getAllStops, getStopsWithinMapBounds } from "./stopsActions";
 
 const options = {
     name: 'stops',
@@ -56,9 +56,19 @@ const options = {
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getStops.fulfilled, (state, action) => {
+        builder.addCase(getAllStops.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
-                state.stops = state.stops;
+                return;
+            } else {
+                state.stops = action.payload;
+            }; 
+
+            console.log(`There are ${state.stops.length} stops in the state`);
+        });
+
+        builder.addCase(getStopsWithinMapBounds.fulfilled, (state, action) => {
+            if (action.payload === null || action.payload.length <= 0) {
+                return;
             } else {
                 state.stops = action.payload;
             }; 

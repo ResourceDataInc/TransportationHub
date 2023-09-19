@@ -1,6 +1,5 @@
 class Vehicle {
     constructor(vehicle) {
-        this.key = `${vehicle.row.columns[0]}`;
         this.id = Number(vehicle.row.columns[0]);
         this.latitude = vehicle.row.columns[1];
         this.longitude = vehicle.row.columns[2];

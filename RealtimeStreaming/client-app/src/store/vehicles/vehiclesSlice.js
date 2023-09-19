@@ -44,7 +44,7 @@ const options = {
     extraReducers: (builder) => {
         builder.addCase(getVehicles.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
-                state.vehicles = state.vehicles;
+                return;
             } else {
                 state.vehicles = action.payload;
             };
