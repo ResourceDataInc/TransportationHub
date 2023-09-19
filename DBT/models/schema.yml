@@ -32,6 +32,11 @@ models:
     - name: route_shapes
       description: "Dimensional table for TriMet route shapes for each direction."
       columns:
+        - name: route_shape_id
+          description: "ID for a route shape. Primary key of this table, generated as a surrogate key of route_id and geography."
+          tests:
+            - unique
+            - not_null
         - name: route_id
           description: "ID for a route."
           tests:
@@ -112,6 +117,11 @@ models:
     - name: trip_delays
       description: "Fact table for trip delays."
       columns:
+        - name: trip_delay_id
+          description: "ID for the trip delay. Primary key of this table."
+          tests:
+            - not_null
+            - unique
         - name: timestamp
           description: "Timestamp for the trip delay."
           tests:
@@ -140,6 +150,11 @@ models:
     - name: vehicle_positions
       description: "Fact table for TriMet vehicle positions."
       columns:
+        - name: vehicle_position_id
+          description: "ID for the vehicle position. Primary key of this table."
+          tests:
+            - not_null
+            - unique
         - name: timestamp
           description: "Timestamp for the vehicle position."
           tests:
