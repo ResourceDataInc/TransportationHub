@@ -82,5 +82,6 @@ const stopsSlice = createSlice(options);
 
 export default stopsSlice.reducer;
 export const selectStops = (state) => state.stops.stops;
+export const selectSelectedStopId = (state) => state.stops.selectedStopId;
 export const selectSelectedStop = (state) => state.stops.selectedStop;
 export const { setSelectedStopId, setSelectedStop, clearSelectedStop } = stopsSlice.actions;
