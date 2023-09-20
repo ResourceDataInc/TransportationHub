@@ -20,6 +20,7 @@ const options = {
         }],
         selectedVehicleId: null,
         selectedVehicle: null,
+        selectedRouteId: null,
     },
     reducers: {
         setSelectedVehicleId(state, action) {
@@ -40,14 +41,27 @@ const options = {
             state.selectedVehicleId = null;
             state.selectedVehicle = null;
         },
+
+        setSelectedRouteId(state, action) {
+            state.selectedRouteId = action.payload;
+        },
+
+        clearSelectedRouteId(state) {
+            state.selectedRouteId = null;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getVehicles.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
                 return;
-            } else {
-                state.vehicles = action.payload;
             };
+            
+            if (state.selectedRouteId !== null){
+                state.vehicles = action.payload.filter(x => x.row.columns[6] === state.selectedRouteId);
+                return;
+            };
+
+            state.vehicles = action.payload;
 
             console.log(`There are ${state.vehicles.length} buses in the state`);
         });
@@ -60,4 +74,10 @@ export default vehiclesSlice.reducer;
 export const selectVehicles = (state) => state.vehicles.vehicles;
 export const selectSelectedVehicleId = (state) => state.vehicles.selectedVehicleId;
 export const selectSelectedVehicle = (state) => state.vehicles.selectedVehicle;
-export const { setSelectedVehicleId, setSelectedVehicle, clearSelectedVehicle } = vehiclesSlice.actions;
+export const { 
+    setSelectedVehicleId,
+    setSelectedVehicle,
+    clearSelectedVehicle,
+    setSelectedRouteId,
+    clearSelectedRouteId,
+} = vehiclesSlice.actions;

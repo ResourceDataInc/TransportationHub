@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { setSelectedRouteId, clearSelectedRouteId } from '../store/vehicles/vehiclesSlice';
 import { clearRouteData } from '../store/routes/routesSlice';
 import { getRoute } from '../store/routes/routesActions';
 
 export const RouteInputs = () => {
-    const [routeIdInput, setRouteIdInput] = useState(0);
-    const [directionIdInput, setDirectionIdInput] = useState(0);
+    const [routeIdInput, setRouteIdInput] = useState('0');
+    const [directionIdInput, setDirectionIdInput] = useState('0');
     const dispatch = useDispatch();
 
     return (
@@ -38,12 +39,14 @@ export const RouteInputs = () => {
                     className='mr-2'
                     onClick={(e) => {
                         e.preventDefault();
-    
+                        
+                        dispatch(setSelectedRouteId(routeIdInput));
+                        
                         const request = {
                             routeId: routeIdInput,
                             directionId: directionIdInput,
                         };
-    
+                        
                         dispatch(getRoute(request));
                     }}
                 >Submit</button>
@@ -52,8 +55,9 @@ export const RouteInputs = () => {
                     onClick={(e) => {
                         e.preventDefault();
 
-                        setRouteIdInput(0);
-                        setDirectionIdInput(0);
+                        setRouteIdInput('0');
+                        setDirectionIdInput('0');
+                        dispatch(clearSelectedRouteId());
                         dispatch(clearRouteData());
                     }}
                 >Clear</button>

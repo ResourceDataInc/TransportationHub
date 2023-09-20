@@ -10,7 +10,7 @@ export const RouteLine = () => {
         color: 'red',
     };
 
-    if (selectedRouteId === 0 || selectedRouteId === null) {
+    if (selectedRouteId === '0' || selectedRouteId === null) {
         return;
     };
 
