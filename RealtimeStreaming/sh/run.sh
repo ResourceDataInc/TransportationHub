@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 function startup_containers(){
-    docker-compose up -d
+    docker compose up -d
 }
 
 function post_static_data(){ 
+    docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=3600000
     docker exec datastreamer wget https://developer.trimet.org/schedule/gtfs.zip
     docker exec datastreamer unzip gtfs.zip -d gtfs
     docker cp py/gtfs_script.py datastreamer:/javafiles
