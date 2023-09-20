@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { clearRouteData } from '../store/routes/routesSlice';
 import { getRoute } from '../store/routes/routesActions';
 
 export const RouteInputs = () => {
@@ -9,18 +10,7 @@ export const RouteInputs = () => {
 
     return (
         <div className=''>
-            <form 
-                onSubmit={ (e) => {
-                    e.preventDefault();
-
-                    const request = {
-                        routeId: routeIdInput,
-                        directionId: directionIdInput,
-                    };
-
-                    dispatch(getRoute(request));
-                }}
-            >
+            <form>
                 <label htmlFor='routeIdInput'>Route ID:</label>
                 <input
                     className='mx-2'
@@ -44,7 +34,29 @@ export const RouteInputs = () => {
                     onChange={ (e) => setDirectionIdInput(e.target.value) }
                 />
 
-                <input type='submit'/>
+                <button
+                    className='mr-2'
+                    onClick={(e) => {
+                        e.preventDefault();
+    
+                        const request = {
+                            routeId: routeIdInput,
+                            directionId: directionIdInput,
+                        };
+    
+                        dispatch(getRoute(request));
+                    }}
+                >Submit</button>
+
+                <button 
+                    onClick={(e) => {
+                        e.preventDefault();
+
+                        setRouteIdInput(0);
+                        setDirectionIdInput(0);
+                        dispatch(clearRouteData());
+                    }}
+                >Clear</button>
             </form>
         </div>
     )
