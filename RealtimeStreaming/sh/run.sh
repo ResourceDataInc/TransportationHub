@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function startup_containers(){
-    docker-compose up -d
+    docker compose up -d
 }
 
 function post_static_data(){ 
