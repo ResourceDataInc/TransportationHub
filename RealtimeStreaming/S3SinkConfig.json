@@ -20,7 +20,7 @@
     "output.data.format": "PARQUET",
     "s3.bucket.name": "trimet-gtfs-realtime-071220964300",
     "tasks.max": "8",
-    "topics":"VehicleEntitiesExploded,TripEntitiesExplodedStopsExploded,AlertEntitiesExploded,AlertsAltExploded,VehiclesAltExploded",
+    "topics": "VehicleEntitiesExploded,TripEntitiesExplodedStopsExploded,AlertEntitiesExploded,AlertsAltExploded,VehiclesAltExploded",
     "s3.region": "us-west-2",
     "aws.access.key.id":"<enter yours here>",
     "aws.secret.access.key":"<enter yours here>"
