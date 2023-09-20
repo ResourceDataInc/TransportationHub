@@ -65,68 +65,63 @@ public class DataGenerator {
             System.exit(1);
         }
         httpGet.setHeader("Content-Type", "application/x-protobuf");
+        byte[] result = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             CloseableHttpResponse response = client.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
             final int statusCode = statusLine.getStatusCode();
             assert statusCode == HttpStatus.SC_OK;
-            byte[] result = EntityUtils.toByteArray(response.getEntity());
+            result = EntityUtils.toByteArray(response.getEntity());
             return result;
         } catch (ConnectionClosedException err){
             err.printStackTrace(System.err);
-            return null;
         }
+        return result;
     }
    private byte[] processResponse(){
+        byte[] response = null;
         try {
-            byte[] response = getHttpResponse(requestParams.link);
-            if(response == null) return null;
-            if (requestParams.fileWriteRequested) try {
+            response = getHttpResponse(requestParams.link);
+            if (requestParams.fileWriteRequested)
                 FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
-            } catch (IOException io){
-                io.printStackTrace(System.err);
-            }
             Thread.sleep(requestParams.waitTimeMs);
-            return response;
         }
-        catch (InvalidProtocolBufferException e){
+        catch (Exception e){
             e.printStackTrace(System.err);
-            return null;
         }
-        catch (IOException | InterruptedException e){
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
-        return null;
+        return response;
     }
     public FeedMessage generateProto(){
-        byte[] response = processResponse();
+        FeedMessage message = null;
         try {
-            return FeedMessage.parseFrom(response);
+            byte[] response = processResponse();
+            message = FeedMessage.parseFrom(response);
         }
-        catch (InvalidProtocolBufferException e){
+        catch (Exception e){
             e.printStackTrace(System.err);
         }
-        return null;
+        return message;
     }
     public ResultSetVehicle generateResultSetVehicle() {
-        byte[] response = processResponse();
+        ResultSetVehicle resultSetVehicle = null;
         try {
-            return objectMapper.readValue(response, ResultSetVehicle.class);
+            byte[] response = processResponse();
+            resultSetVehicle = objectMapper.readValue(response, ResultSetVehicle.class);
         }
-        catch(IOException e) {
+        catch(Exception e) {
             e.printStackTrace(System.err);
         }
-        return null;
+        return resultSetVehicle;
     }
     public ResultSetAlert generateResultSetAlert() {
-        byte[] response = processResponse();
+        ResultSetAlert resultSetAlert = null;
         try {
-            return objectMapper.readValue(response, ResultSetAlert.class);
+            byte[] response = processResponse();
+            resultSetAlert = objectMapper.readValue(response, ResultSetAlert.class);
         }
-        catch(IOException e) {
+        catch(Exception e) {
             e.printStackTrace(System.err);
         }
-        return null;
+        return resultSetAlert;
     }
 }
