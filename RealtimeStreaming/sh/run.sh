@@ -5,7 +5,7 @@ function startup_containers(){
 }
 
 function post_static_data(){ 
-    docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=3600000
+    docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=36000000
     docker exec datastreamer wget https://developer.trimet.org/schedule/gtfs.zip
     docker exec datastreamer unzip gtfs.zip -d gtfs
     docker cp py/gtfs_script.py datastreamer:/javafiles
@@ -27,6 +27,7 @@ function post_static_data(){
 function stream_dynamic_data(){
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 vehicles ResultSetVehicle 1000 false -1 &
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 alerts ResultSetAlert 1000 false -1 &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 routeConfig ResultSetRoute 1000 false 1
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/gtfs VehiclePositions GtfsRealtime 1000 false -1 &
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 TripUpdate GtfsRealtime 1000 false -1 &
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 FeedSpecAlerts GtfsRealtime 1000 false -1 &
@@ -43,6 +44,9 @@ function setup_ksql(){
 function connect_snowflake(){
     docker cp SnowflakeSinkConfig.json connect:/home/appuser
     docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
+    docker cp SnowflakeSingleSinkConfig.json connect:/home/appuser
+    docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSingleSinkConfig.json http://localhost:8083/connectors
+
 }
 
 function connect_s3(){
