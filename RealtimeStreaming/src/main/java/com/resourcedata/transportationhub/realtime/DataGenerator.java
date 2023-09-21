@@ -62,6 +62,7 @@ public class DataGenerator {
                         .addParameter("appID", properties.getProperty("appID"))
                         .addParameter("dir","yes")
                         .addParameter("stops","yes")
+                        .addParameter("json", "true")
                         .build();
             }
             else {
