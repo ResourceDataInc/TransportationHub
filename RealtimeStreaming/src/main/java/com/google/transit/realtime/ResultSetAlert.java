@@ -1,75 +1,52 @@
 package com.google.transit.realtime;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
-class Route {
-    @JsonProperty
-    public String routeColor;
-    @JsonProperty
-    public Boolean frequentService;
-    @JsonProperty
-    public Integer route;
-    @JsonProperty
-    public Boolean no_service_flag;
-    @JsonProperty
-    public String routeSubType;
-    @JsonProperty
-    public Integer id;
-    @JsonProperty
-    public String type;
-    @JsonProperty
-    public String desc;
-    @JsonProperty
-    public BigInteger routeSortOrder;
-}
-class Location {
-    @JsonProperty
-    public Double lng;
-    @JsonProperty
-    public Boolean no_service_flag;
-    @JsonProperty
-    public String passengerCode;
-    @JsonProperty
-    public BigInteger id;
-    @JsonProperty
-    public String dir;
-    @JsonProperty
-    public Double lat;
-    @JsonProperty
-    public String desc;
-}
-class Alert {
-    @JsonProperty
-    public List<Route> route;
-    @JsonProperty
-    public String info_link_url;
-    @JsonProperty
-    public BigInteger end;
-    @JsonProperty
-    public Boolean system_wide_flag;
-    @JsonProperty
-    public List<Location> location;
-    @JsonProperty
-    public BigInteger id;
-    @JsonProperty
-    public String header_text;
-    @JsonProperty
-    public BigInteger begin;
-    @JsonProperty
-    public String desc;
-}
-class AlertSet {
-    @JsonProperty
-    public List<Alert> alert;
-    @JsonProperty
-    public BigInteger queryTime;
-}
+
+
+@JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
 public class ResultSetAlert {
-    @JsonProperty
+    @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
+    static class AlertSet {
+        @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
+        static class Alert {
+            @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
+            static class Location {
+                Double lng;
+                Boolean no_service_flag;
+                String passengerCode;
+                BigInteger id;
+                String dir;
+                Double lat;
+                String desc;
+            }
+            @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
+            static class Route {
+                String routeColor;
+                Boolean frequentService;
+                Integer route;
+                Boolean no_service_flag;
+                String routeSubType;
+                Integer id;
+                String type;
+                String desc;
+                BigInteger routeSortOrder;
+            }
+
+            List<Route> route;
+            String info_link_url;
+            BigInteger end;
+            Boolean system_wide_flag;
+            List<Location> location;
+            BigInteger id;
+            String header_text;
+            BigInteger begin;
+            String desc;
+        }
+        List<Alert> alert;
+        BigInteger queryTime;
+    }
     AlertSet resultSet;
 }
