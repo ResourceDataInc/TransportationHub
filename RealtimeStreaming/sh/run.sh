@@ -5,7 +5,7 @@ function startup_containers(){
 }
 
 function post_static_data(){ 
-    docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=3600000
+    docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=36000000
     docker exec datastreamer wget https://developer.trimet.org/schedule/gtfs.zip
     docker exec datastreamer unzip gtfs.zip -d gtfs
     docker cp py/gtfs_script.py datastreamer:/javafiles
@@ -56,5 +56,5 @@ post_static_data
 stream_dynamic_data
 sleep 10
 setup_ksql
-connect_snowflake
-connect_s3
+# connect_snowflake
+# connect_s3
