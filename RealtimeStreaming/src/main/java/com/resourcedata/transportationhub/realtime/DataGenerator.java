@@ -55,10 +55,20 @@ public class DataGenerator {
     public byte[] getHttpResponse(String link) throws IOException {
         HttpGet httpGet = new HttpGet(link);
         try {
-
-            URI uri = new URIBuilder(httpGet.getURI())
-                    .addParameter("appID", properties.getProperty("appID"))
-                    .build();
+            URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
+            URI uri = null;
+            if(requestParams.dataClass.equals("ResultSetRoute")){
+                uri = uriBuilder
+                        .addParameter("appID", properties.getProperty("appID"))
+                        .addParameter("dir","yes")
+                        .addParameter("stops","yes")
+                        .build();
+            }
+            else {
+                uri = uriBuilder
+                        .addParameter("appID", properties.getProperty("appID"))
+                        .build();
+            }
             httpGet.setURI(uri);
         } catch (URISyntaxException e) {
             e.printStackTrace(System.err);
