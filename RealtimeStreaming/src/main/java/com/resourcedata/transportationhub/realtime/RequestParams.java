@@ -1,14 +1,14 @@
 package com.resourcedata.transportationhub.realtime;
 
 public class RequestParams {
-    public String baseUrl;
-    public String ext;
-    public String name;
-    public String dataClass;
-    public int waitTimeMs;
-    public boolean fileWriteRequested;
-    public int numLoops;
-    public String link;
+    public final String baseUrl;
+    public final String ext;
+    public final String name;
+    public final String dataClass;
+    public final int waitTimeMs;
+    public final boolean fileWriteRequested;
+    public final int numLoops;
+    public final String link;
     public RequestParams(String baseUrl,
                          String ext,
                          String name,
