@@ -26,24 +26,24 @@ import java.util.Properties;
 
 public class DataGenerator {
     private final Properties properties;
-    private final RequestParams requestParams;
+    private final CliParams cliParams;
     private int numLoops;
     private final HttpGet request;
     private final LinkedList<Route> existingRoutes;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public DataGenerator(RequestParams requestParams, Properties properties){
-        this.requestParams = requestParams;
-        this.numLoops = requestParams.numLoops;
+    public DataGenerator(CliParams cliParams, Properties properties){
+        this.cliParams = cliParams;
+        this.numLoops = cliParams.numLoops;
         this.properties = properties;
         this.request = setupRequest();
         this.existingRoutes = new LinkedList<>();
     }
     private HttpGet setupRequest(){
-        HttpGet httpGet = new HttpGet(requestParams.link);
+        HttpGet httpGet = new HttpGet(cliParams.link);
         try {
             URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
             URI uri = null;
-            if(requestParams.dataClass.equals("ResultSetRoute")){
+            if(cliParams.dataClass.equals("ResultSetRoute")){
                 uri = uriBuilder
                         .addParameter("appID", properties.getProperty("appID"))
                         .addParameter("dir","yes")
@@ -61,7 +61,7 @@ public class DataGenerator {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        if(requestParams.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
+        if(cliParams.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
         else httpGet.setHeader("Content-Type", "application/json");
         return httpGet;
     }
@@ -82,12 +82,12 @@ public class DataGenerator {
     private byte[] processResponse(){
         byte[] response = null;
         try {
-            if(requestParams.numLoops == -1 || this.numLoops > 0) {
-                response = getHttpResponse(requestParams.link);
-                if (requestParams.fileWriteRequested)
-                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + "-"+ this.numLoops +".bin"), response);
-                Thread.sleep(requestParams.waitTimeMs);
-                if(requestParams.numLoops != -1) this.numLoops--;
+            if(cliParams.numLoops == -1 || this.numLoops > 0) {
+                response = getHttpResponse(cliParams.link);
+                if (cliParams.fileWriteRequested)
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cliParams.name + "-"+ this.numLoops +".bin"), response);
+                Thread.sleep(cliParams.waitTimeMs);
+                if(cliParams.numLoops != -1) this.numLoops--;
             } else {
                 System.exit(0);
             }
