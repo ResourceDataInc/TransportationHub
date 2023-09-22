@@ -6,10 +6,10 @@ sources:
     schema: STAGING
     tables:
       - name: routes
-      - name: route_staging
-      - name: vehicle_staging
+      - name: routeconfig
       - name: VEHICLEENTITIESEXPLODED
       - name: TRIPENTITIESEXPLODEDSTOPSEXPLODED
+      - name: VEHICLESALTEXPLODED
 
 models:
     - name: routes

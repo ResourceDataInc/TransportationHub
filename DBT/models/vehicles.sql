@@ -8,9 +8,9 @@ with cte_vp as (
 
 select distinct
     cte_vp.vehicle_id as vehicle_id
-    ,v.content:type::varchar as vehicle_type
+    ,v.record_content:VEHICLE:TYPE::varchar as vehicle_type
     ,cte_vp.license_plate as license_plate
 from cte_vp cte_vp
-join {{ source('transport_hub', 'vehicle_staging') }} v on
-    v.content:vehicleID = cte_vp.vehicle_id
-where v.content:vehicleID::number(38,0) is not null
+join {{ source('transport_hub', 'VEHICLESALTEXPLODED') }} v on
+    v.record_content:VEHICLE:VEHICLEID = cte_vp.vehicle_id
+where v.record_content:VEHICLE:VEHICLEID::number(38,0) is not null
