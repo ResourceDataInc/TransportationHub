@@ -27,38 +27,24 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 public class DataGenerator {
-    public Properties properties;
-    public RequestParams requestParams;
+    private final Properties properties;
+    private final RequestParams requestParams;
     private int numLoops;
-    public ObjectMapper objectMapper = new ObjectMapper();
-    public DataGenerator(RequestParams requestParams){
+    private final HttpGet request;
+    private final LinkedList<Route> existingRoutes;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    public DataGenerator(RequestParams requestParams, Properties properties){
         this.requestParams = requestParams;
         this.numLoops = requestParams.numLoops;
-        this.properties = buildProperties();
+        this.properties = properties;
+        this.request = setupRequest();
+        this.existingRoutes = new LinkedList<>();
     }
-    private Properties buildProperties(){
-        Properties properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try(InputStream input = classLoader.getResourceAsStream("producer.properties")){
-            properties.load(input);
-        } catch (IOException ioError){
-            ioError.printStackTrace(System.err);
-            System.exit(1);
-        }
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        if(requestParams.dataClass.equals("GtfsRealtime")) {
-            properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
-        } else {
-            properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class);
-        }
-        return properties;
-    }
-    public byte[] getHttpResponse(String link) throws IOException {
-        HttpGet httpGet = new HttpGet(link);
+    private HttpGet setupRequest(){
+        HttpGet httpGet = new HttpGet(requestParams.link);
         try {
             URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
             URI uri = null;
@@ -80,10 +66,14 @@ public class DataGenerator {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        httpGet.setHeader("Content-Type", "application/x-protobuf");
+        if(requestParams.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
+        else httpGet.setHeader("Content-Type", "application/json");
+        return httpGet;
+    }
+    private byte[] getHttpResponse(String link) throws IOException {
         byte[] result = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            CloseableHttpResponse response = client.execute(httpGet);
+            CloseableHttpResponse response = client.execute(this.request);
             StatusLine statusLine = response.getStatusLine();
             final int statusCode = statusLine.getStatusCode();
             assert statusCode == HttpStatus.SC_OK;
@@ -145,15 +135,14 @@ public class DataGenerator {
         }
         return resultSetAlert;
     }
-    private LinkedList<Route> existingRoutes;
 
     public Route generateRoute(){
         Route route = null;
-        if(existingRoutes == null || existingRoutes.isEmpty()) {
+        if(existingRoutes.isEmpty()) {
             try {
                 byte[] response = processResponse();
                 ResultSetRoute resultSetRoute = objectMapper.readValue(response, ResultSetRoute.class);
-                existingRoutes = resultSetRoute.resultSet.route;
+                existingRoutes.addAll(resultSetRoute.resultSet.route);
                 route = existingRoutes.pop();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
