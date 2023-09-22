@@ -170,8 +170,8 @@ models:
         tests:
           - not_null
           - relationships:
-            to: ref('vehicles')
-            field: vehicle_id
+              to: ref('vehicles')
+              field: vehicle_id
       - name: latitude
         description: "Latitude of the current location the vehicle."
       - name: longitude
