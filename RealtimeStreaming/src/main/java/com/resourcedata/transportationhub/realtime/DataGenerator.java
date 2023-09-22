@@ -33,9 +33,11 @@ import java.util.Properties;
 public class DataGenerator {
     public Properties properties;
     public RequestParams requestParams;
+    private int numLoops;
     public ObjectMapper objectMapper = new ObjectMapper();
     public DataGenerator(RequestParams requestParams){
         this.requestParams = requestParams;
+        this.numLoops = requestParams.numLoops;
         this.properties = buildProperties();
     }
     private Properties buildProperties(){
@@ -95,10 +97,16 @@ public class DataGenerator {
    private byte[] processResponse(){
         byte[] response = null;
         try {
-            response = getHttpResponse(requestParams.link);
-            if (requestParams.fileWriteRequested)
-                FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
-            Thread.sleep(requestParams.waitTimeMs);
+            if(requestParams.numLoops == -1 || this.numLoops > 0) {
+                response = getHttpResponse(requestParams.link);
+                if (requestParams.fileWriteRequested)
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
+                Thread.sleep(requestParams.waitTimeMs);
+                this.numLoops--;
+            } else {
+                System.exit(0);
+            }
+
         }
         catch (Exception e){
             e.printStackTrace(System.err);
@@ -142,7 +150,7 @@ public class DataGenerator {
 
     public Route generateRoute(){
         Route route = null;
-        if(existingRoutes == null) {
+        if(existingRoutes == null || existingRoutes.isEmpty()) {
             try {
                 byte[] response = processResponse();
                 ResultSetRoute resultSetRoute = objectMapper.readValue(response, ResultSetRoute.class);
@@ -152,10 +160,7 @@ public class DataGenerator {
                 e.printStackTrace(System.err);
             }
         }
-        else if(!existingRoutes.isEmpty()) route = existingRoutes.pop();
-        else {
-           System.exit(0);
-        }
+        else route = existingRoutes.pop();
         return route;
     }
 }
