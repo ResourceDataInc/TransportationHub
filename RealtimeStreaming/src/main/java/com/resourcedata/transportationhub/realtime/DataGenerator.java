@@ -6,8 +6,6 @@ import com.google.transit.realtime.ResultSetAlert;
 import com.google.transit.realtime.ResultSetVehicle;
 import com.google.transit.realtime.ResultSetRoute.RouteSet.Route;
 import com.google.transit.realtime.ResultSetRoute;
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
-import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpStatus;
@@ -18,12 +16,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -31,24 +26,24 @@ import java.util.Properties;
 
 public class DataGenerator {
     private final Properties properties;
-    private final RequestParams requestParams;
+    private final CliArgs cliArgs;
     private int numLoops;
     private final HttpGet request;
     private final LinkedList<Route> existingRoutes;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public DataGenerator(RequestParams requestParams, Properties properties){
-        this.requestParams = requestParams;
-        this.numLoops = requestParams.numLoops;
+    public DataGenerator(CliArgs cliArgs, Properties properties){
+        this.cliArgs = cliArgs;
+        this.numLoops = cliArgs.numLoops;
         this.properties = properties;
         this.request = setupRequest();
         this.existingRoutes = new LinkedList<>();
     }
     private HttpGet setupRequest(){
-        HttpGet httpGet = new HttpGet(requestParams.link);
+        HttpGet httpGet = new HttpGet(cliArgs.link);
         try {
             URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
             URI uri = null;
-            if(requestParams.dataClass.equals("ResultSetRoute")){
+            if(cliArgs.dataClass.equals("ResultSetRoute")){
                 uri = uriBuilder
                         .addParameter("appID", properties.getProperty("appID"))
                         .addParameter("dir","yes")
@@ -66,11 +61,11 @@ public class DataGenerator {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        if(requestParams.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
+        if(cliArgs.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
         else httpGet.setHeader("Content-Type", "application/json");
         return httpGet;
     }
-    private byte[] getHttpResponse(String link) throws IOException {
+    private byte[] getHttpResponse() throws IOException {
         byte[] result = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             CloseableHttpResponse response = client.execute(this.request);
@@ -84,15 +79,15 @@ public class DataGenerator {
         }
         return result;
     }
-   private byte[] processResponse(){
+    private byte[] processResponse(){
         byte[] response = null;
         try {
-            if(requestParams.numLoops == -1 || this.numLoops > 0) {
-                response = getHttpResponse(requestParams.link);
-                if (requestParams.fileWriteRequested)
-                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
-                Thread.sleep(requestParams.waitTimeMs);
-                if(requestParams.numLoops != -1) this.numLoops--;
+            if(cliArgs.numLoops == -1 || this.numLoops > 0) {
+                response = getHttpResponse();
+                if (cliArgs.fileWriteRequested)
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cliArgs.name + "-"+ this.numLoops +".bin"), response);
+                Thread.sleep(cliArgs.waitTimeMs);
+                if(cliArgs.numLoops != -1) this.numLoops--;
             } else {
                 System.exit(0);
             }
