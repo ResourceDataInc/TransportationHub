@@ -1,6 +1,6 @@
 package com.resourcedata.transportationhub.realtime;
 
-public class RequestParams {
+public class CliParams {
     public String baseUrl;
     public String ext;
     public String name;
