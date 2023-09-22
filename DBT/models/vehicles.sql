@@ -1,16 +1,30 @@
-with cte_vp as (
+with vehicletypes as (
     select distinct
-         v.value:VEHICLE:VEHICLE:ID::number(38,0) as vehicle_id
-        ,nullif(v.value:VEHICLE:VEHICLE:LICENSE_PLATE::varchar, '') as license_plate
-    from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} vp,
-    lateral flatten(input => record_content) v
+        v.record_content:VEHICLE:VEHICLEID::number(38,0) as vehicle_id
+        ,v.record_content:VEHICLE:TYPE::varchar as vehicle_type
+    from {{ source('transport_hub', 'VEHICLESALTEXPLODED') }} v
 )
-
-select distinct
-    cte_vp.vehicle_id as vehicle_id
-    ,v.record_content:VEHICLE:TYPE::varchar as vehicle_type
-    ,cte_vp.license_plate as license_plate
-from cte_vp cte_vp
-join {{ source('transport_hub', 'VEHICLESALTEXPLODED') }} v on
-    v.record_content:VEHICLE:VEHICLEID = cte_vp.vehicle_id
-where v.record_content:VEHICLE:VEHICLEID::number(38,0) is not null
+, vehicles as (
+    select distinct
+        v.value:VEHICLE:VEHICLE:ID::number(38,0) as vehicle_id
+    from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} vp,
+    lateral flatten(input => vp.record_content) v
+)
+, joined_vehicles as (
+    select 
+        v.vehicle_id
+        ,vt.vehicle_type
+    from vehicles v
+    left join vehicletypes vt on
+        v.vehicle_id = vt.vehicle_id
+)
+select 
+    vehicle_id
+    ,vehicle_type
+from joined_vehicles jv
+union
+select 
+    vehicle_id
+    ,vehicle_type
+from vehicletypes
+;
