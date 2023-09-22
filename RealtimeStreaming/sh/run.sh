@@ -54,11 +54,13 @@ function connect_s3(){
     docker exec connect curl -X POST -H "Content-Type: application/json" --data @S3SinkConfig.json http://localhost:8083/connectors
 }
 
-startup_containers
-sleep 80
-post_static_data
-stream_dynamic_data
-sleep 10
-setup_ksql
-connect_snowflake
-connect_s3
+function do_all(){
+    startup_containers
+    sleep 80
+    post_static_data
+    stream_dynamic_data
+    sleep 10
+    setup_ksql
+    connect_snowflake
+    connect_s3
+}
