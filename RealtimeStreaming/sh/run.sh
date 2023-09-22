@@ -41,12 +41,14 @@ function setup_ksql(){
     done
 }
 
-function connect_snowflake(){
+function connect_snowflake_continuous(){
     docker cp SnowflakeSinkConfig.json connect:/home/appuser
     docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
+}
+
+function connect_snowflake_oneshot(){
     docker cp SnowflakeSingleSinkConfig.json connect:/home/appuser
     docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSingleSinkConfig.json http://localhost:8083/connectors
-
 }
 
 function connect_s3(){
