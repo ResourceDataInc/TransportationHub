@@ -19,17 +19,18 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 
 ## Running
 
-First an appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.
-
-Secondly an ssh key must be generated for communicating with snowflake. For directions on setting this up, consult the snowflake [reference](https://docs.snowflake.com/en/user-guide/key-pair-auth).  Note, the `ALTER USER` step must be performed by someone with `ACCOUNTADMIN` credentials. 
-
-The main requirement for running the realtime pipeline is [docker desktop](https://www.docker.com/products/docker-desktop/) with [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run it from linux assuming a windows workstation. 
+1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.
+2. Enter the appid obtained in `src/main/resources/producer.properties`.
+3. An ssh key must be generated for communicating with snowflake. For directions on setting this up, consult the snowflake [reference](https://docs.snowflake.com/en/user-guide/key-pair-auth).  Note, the `ALTER USER` step must be performed by someone with `ACCOUNTADMIN` credentials.  The ssh key will factor into correct settings for the various snowflake connect configurations (SnowflakeSinkConfig.json, SnowflakeSingleSinkConfig.json).  Additionally, to configure the S3 connector for kafka (S3SinkConfig.json), aws access credentials, namely `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` must be obtained. 
+4. The main requirement for running the realtime pipeline is [docker desktop](https://www.docker.com/products/docker-desktop/) with [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run it from linux assuming a windows workstation. 
  
 The realtime component of the pipeline is launched from a linux shell prompt as follows:
 ```
 cd RealtimeStreaming
-./sh/run.sh
+source /sh/run.sh
+do_all
 ```
+If you want to run select sections of the startup sequence, look in `sh/run.sh`.
 This shell script will do the following:
 
 1. Deploy all containers using docker compose and the `docker-compose.yml` file.
@@ -102,4 +103,4 @@ Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json`
 
 ### aws
 
-The second destination we will sending data is to a data lake in AWS.  What differentiates a data lake from a data warehouse such as snowflake is several things.  Data lakes are transparently based off of an object store and can allow heterogenous data sources easily without needed to store data in its own format.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this isnot a major downside.  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code writtein in Spark. 
+The second destination we will sending data is to a data lake in AWS.  What differentiates a data lake from a data warehouse such as snowflake is several things.  Data lakes are transparently based off of an object store and can allow heterogenous data sources easily without needed to store data in its own format.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this isnot a major downside.  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code written in in Spark. 
