@@ -26,24 +26,24 @@ import java.util.Properties;
 
 public class DataGenerator {
     private final Properties properties;
-    private final CliParams cliParams;
+    private final CliArgs cliArgs;
     private int numLoops;
     private final HttpGet request;
     private final LinkedList<Route> existingRoutes;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public DataGenerator(CliParams cliParams, Properties properties){
-        this.cliParams = cliParams;
-        this.numLoops = cliParams.numLoops;
+    public DataGenerator(CliArgs cliArgs, Properties properties){
+        this.cliArgs = cliArgs;
+        this.numLoops = cliArgs.numLoops;
         this.properties = properties;
         this.request = setupRequest();
         this.existingRoutes = new LinkedList<>();
     }
     private HttpGet setupRequest(){
-        HttpGet httpGet = new HttpGet(cliParams.link);
+        HttpGet httpGet = new HttpGet(cliArgs.link);
         try {
             URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
             URI uri = null;
-            if(cliParams.dataClass.equals("ResultSetRoute")){
+            if(cliArgs.dataClass.equals("ResultSetRoute")){
                 uri = uriBuilder
                         .addParameter("appID", properties.getProperty("appID"))
                         .addParameter("dir","yes")
@@ -61,11 +61,11 @@ public class DataGenerator {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        if(cliParams.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
+        if(cliArgs.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
         else httpGet.setHeader("Content-Type", "application/json");
         return httpGet;
     }
-    private byte[] getHttpResponse(String link) throws IOException {
+    private byte[] getHttpResponse() throws IOException {
         byte[] result = null;
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             CloseableHttpResponse response = client.execute(this.request);
@@ -82,12 +82,12 @@ public class DataGenerator {
     private byte[] processResponse(){
         byte[] response = null;
         try {
-            if(cliParams.numLoops == -1 || this.numLoops > 0) {
-                response = getHttpResponse(cliParams.link);
-                if (cliParams.fileWriteRequested)
-                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cliParams.name + "-"+ this.numLoops +".bin"), response);
-                Thread.sleep(cliParams.waitTimeMs);
-                if(cliParams.numLoops != -1) this.numLoops--;
+            if(cliArgs.numLoops == -1 || this.numLoops > 0) {
+                response = getHttpResponse();
+                if (cliArgs.fileWriteRequested)
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cliArgs.name + "-"+ this.numLoops +".bin"), response);
+                Thread.sleep(cliArgs.waitTimeMs);
+                if(cliArgs.numLoops != -1) this.numLoops--;
             } else {
                 System.exit(0);
             }
