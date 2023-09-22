@@ -13,15 +13,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 public class DataStreamer<T> implements Closeable {
-    private final RequestParams requestParams;
+    private final CliParams cliParams;
     private final Producer<String, T> producer;
-    public DataStreamer(final Producer<String, T> producer, final RequestParams requestParams){
+    public DataStreamer(final Producer<String, T> producer, final CliParams cliParams){
         this.producer = producer;
-        this.requestParams = requestParams;
+        this.cliParams = cliParams;
     }
     public void produce(T message){
         if(message != null) {
-            final ProducerRecord<String, T> producerRecord = new ProducerRecord<>(requestParams.name, requestParams.name, message);
+            final ProducerRecord<String, T> producerRecord = new ProducerRecord<>(cliParams.name, cliParams.name, message);
             try {
                 producer.send(producerRecord, (recordMetadata, exception) -> {
 
@@ -37,14 +37,14 @@ public class DataStreamer<T> implements Closeable {
         }
     }
     public void close() { producer.close(); }
-    public static <T> void streamData(Stream<T> stream, Properties properties, RequestParams requestParams){
+    public static <T> void streamData(Stream<T> stream, Properties properties, CliParams cliParams){
         try(Producer<String, T> producer = new KafkaProducer<>(properties)){
-            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, requestParams);
+            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, cliParams);
             stream.forEach(dataStreamer::produce);
         }
     }
     public static void main(String[] args){
-        RequestParams cliArgs = new RequestParams();
+        CliParams cliArgs = new CliParams();
         cliArgs.baseUrl = args[0];
         cliArgs.ext = args[1];
         cliArgs.name = args[2];
