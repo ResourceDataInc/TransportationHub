@@ -1,0 +1,22 @@
+{
+  "name":"trimet-gtfs-snowflake",
+  "config":{
+    "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+    "tasks.max":"1",
+    "topics":"routeConfig",
+    "buffer.count.records":"200",
+    "buffer.flush.time":"10",
+    "buffer.size.bytes":"10000000",
+    "snowflake.url.name":"***REMOVED***",
+    "snowflake.user.name":"<your user name>",
+    "snowflake.private.key":"<your private key>",
+    "snowflake.private.key.passphrase":"<your private key passphrase>",
+    "snowflake.database.name":"TRANSPORTATION_HUB",
+    "snowflake.role.name":"SYSADMIN",
+    "snowflake.schema.name":"STAGING",
+    "key.converter":"org.apache.kafka.connect.storage.StringConverter",
+    "key.converter.schema.registry.url": "CONFLUENT_SCHEMA_REGISTRY",
+    "value.converter":"io.confluent.connect.protobuf.ProtobufConverter",
+    "value.converter.schema.registry.url":"http://schema-registry:8081"
+  }
+}

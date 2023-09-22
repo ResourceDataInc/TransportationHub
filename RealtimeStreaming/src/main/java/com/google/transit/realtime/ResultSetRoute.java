@@ -1,6 +1,8 @@
 package com.google.transit.realtime;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.math.BigInteger;
 
@@ -8,9 +10,9 @@ import java.math.BigInteger;
 @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
 public class ResultSetRoute {
     @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
-    static class RouteSet {
+    public static class RouteSet {
         @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
-        static class Route {
+        public static class Route {
             @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
             static class Direction {
                 @JsonAutoDetect(fieldVisibility=JsonAutoDetect.Visibility.ANY)
@@ -38,7 +40,7 @@ public class ResultSetRoute {
             String desc;
             BigInteger routeSortOrder;
         }
-        List<Route> route;
+        public LinkedList<Route> route;
     }
-    RouteSet resultSet;
+    public RouteSet resultSet;
 }
