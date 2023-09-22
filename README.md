@@ -74,7 +74,7 @@ The broker is the data storage layer of kafka.  Each separate data stream is sto
 
 ### realtime-visualizer
 
-The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information a Leaflet.js map. 
+The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information a Leaflet.js map.  In a locally deployed version, it can be seen on `https://localhost:8090`.
 
 ### ksqldb-server
 
@@ -84,7 +84,7 @@ ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handle
 The ksqldb-cli provides a cli for issuing ksql requests. 
 
 ### control-center
-The control center provides a user interface for viewing everything happening in the kafka containers as well a way to supply ad-hoc configuration and ETL requests.
+The control center provides a user interface for viewing everything happening in the kafka containers as well a way to supply ad-hoc configuration and ETL requests.  The control center can be accessed on a local container deployment at `https://localhost:9021`.
 
 ### connect
 The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.
