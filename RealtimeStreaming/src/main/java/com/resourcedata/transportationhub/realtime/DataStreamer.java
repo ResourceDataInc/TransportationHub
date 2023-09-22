@@ -53,25 +53,26 @@ public class DataStreamer<T> implements Closeable {
         int numLoops = Integer.parseInt(args[6]);
 
         RequestParams requestParams = new RequestParams(baseUrl, ext, name, dataClass, waitTimeMs, fileWriteRequested, numLoops);
-        DataGenerator dataGenerator = new DataGenerator(requestParams);
-        Admin.createTopic(dataGenerator.properties, requestParams.name);
+        Properties properties = Admin.buildProperties(requestParams);
+        DataGenerator dataGenerator = new DataGenerator(requestParams, properties);
+        Admin.createTopic(properties, requestParams.name);
 
         switch(requestParams.dataClass){
             case "GtfsRealtime":
                 Stream<FeedMessage> protoStream = Stream.generate(dataGenerator::generateProto);
-                streamData(protoStream, dataGenerator.properties, requestParams);
+                streamData(protoStream, properties, requestParams);
                 break;
             case "ResultSetVehicle":
                 Stream<ResultSetVehicle> jsonVehicleStream = Stream.generate(dataGenerator::generateResultSetVehicle);
-                streamData(jsonVehicleStream, dataGenerator.properties, requestParams);
+                streamData(jsonVehicleStream, properties, requestParams);
                 break;
             case "ResultSetAlert":
                 Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
-                streamData(jsonAlertStream, dataGenerator.properties, requestParams);
+                streamData(jsonAlertStream, properties, requestParams);
                 break;
             case "ResultSetRoute":
                 Stream<Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
-                streamData(jsonRouteStream, dataGenerator.properties, requestParams);
+                streamData(jsonRouteStream, properties, requestParams);
                 break;
             default:
                 System.err.println("No such class "+requestParams.dataClass+" defined");
