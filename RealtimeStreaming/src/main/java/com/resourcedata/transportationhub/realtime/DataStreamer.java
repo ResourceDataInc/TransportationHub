@@ -44,38 +44,39 @@ public class DataStreamer<T> implements Closeable {
         }
     }
     public static void main(String[] args){
-        String baseUrl = args[0];
-        String ext = args[1];
-        String name = args[2];
-        String dataClass = args[3];
-        int waitTimeMs = Integer.parseInt(args[4]);
-        boolean fileWriteRequested = Boolean.parseBoolean(args[5]);
-        int numLoops = Integer.parseInt(args[6]);
+        RequestParams cliArgs = new RequestParams();
+        cliArgs.baseUrl = args[0];
+        cliArgs.ext = args[1];
+        cliArgs.name = args[2];
+        cliArgs.dataClass = args[3];
+        cliArgs.waitTimeMs = Integer.parseInt(args[4]);
+        cliArgs.fileWriteRequested = Boolean.parseBoolean(args[5]);
+        cliArgs.numLoops = Integer.parseInt(args[6]);
+        cliArgs.makeLink();
 
-        RequestParams requestParams = new RequestParams(baseUrl, ext, name, dataClass, waitTimeMs, fileWriteRequested, numLoops);
-        Properties properties = Admin.buildProperties(requestParams);
-        DataGenerator dataGenerator = new DataGenerator(requestParams, properties);
-        Admin.createTopic(properties, requestParams.name);
+        Properties properties = Admin.buildProperties(cliArgs);
+        DataGenerator dataGenerator = new DataGenerator(cliArgs, properties);
+        Admin.createTopic(properties, cliArgs.name);
 
-        switch(requestParams.dataClass){
+        switch(cliArgs.dataClass){
             case "GtfsRealtime":
                 Stream<FeedMessage> protoStream = Stream.generate(dataGenerator::generateProto);
-                streamData(protoStream, properties, requestParams);
+                streamData(protoStream, properties, cliArgs);
                 break;
             case "ResultSetVehicle":
                 Stream<ResultSetVehicle> jsonVehicleStream = Stream.generate(dataGenerator::generateResultSetVehicle);
-                streamData(jsonVehicleStream, properties, requestParams);
+                streamData(jsonVehicleStream, properties, cliArgs);
                 break;
             case "ResultSetAlert":
                 Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
-                streamData(jsonAlertStream, properties, requestParams);
+                streamData(jsonAlertStream, properties, cliArgs);
                 break;
             case "ResultSetRoute":
                 Stream<Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
-                streamData(jsonRouteStream, properties, requestParams);
+                streamData(jsonRouteStream, properties, cliArgs);
                 break;
             default:
-                System.err.println("No such class "+requestParams.dataClass+" defined");
+                System.err.println("No such class "+cliArgs.dataClass+" defined");
                 break;
         }
     }
