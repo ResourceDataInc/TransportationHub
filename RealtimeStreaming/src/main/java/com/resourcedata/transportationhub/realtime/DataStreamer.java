@@ -1,6 +1,7 @@
 package com.resourcedata.transportationhub.realtime;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.ResultSetAlert;
+import com.google.transit.realtime.ResultSetRoute.RouteSet.Route;
 import com.google.transit.realtime.ResultSetVehicle;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -69,6 +70,13 @@ public class DataStreamer<T> implements Closeable {
             case "ResultSetAlert":
                 Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
                 streamData(jsonAlertStream, dataGenerator.properties, requestParams);
+                break;
+            case "ResultSetRoute":
+                Stream<Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
+                streamData(jsonRouteStream, dataGenerator.properties, requestParams);
+                break;
+            default:
+                System.err.println("No such class "+requestParams.dataClass+" defined");
                 break;
         }
     }
