@@ -6,8 +6,6 @@ import com.google.transit.realtime.ResultSetAlert;
 import com.google.transit.realtime.ResultSetVehicle;
 import com.google.transit.realtime.ResultSetRoute.RouteSet.Route;
 import com.google.transit.realtime.ResultSetRoute;
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
-import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpStatus;
@@ -18,12 +16,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -84,13 +79,13 @@ public class DataGenerator {
         }
         return result;
     }
-   private byte[] processResponse(){
+    private byte[] processResponse(){
         byte[] response = null;
         try {
             if(requestParams.numLoops == -1 || this.numLoops > 0) {
                 response = getHttpResponse(requestParams.link);
                 if (requestParams.fileWriteRequested)
-                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + "-"+ this.numLoops +".bin"), response);
                 Thread.sleep(requestParams.waitTimeMs);
                 if(requestParams.numLoops != -1) this.numLoops--;
             } else {
