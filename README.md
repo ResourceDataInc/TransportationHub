@@ -27,7 +27,7 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 The realtime component of the pipeline is launched from a linux shell prompt as follows:
 ```
 cd RealtimeStreaming
-source /sh/run.sh
+source sh/run.sh
 do_all
 ```
 If you want to run select sections of the startup sequence, look in `sh/run.sh`.
@@ -39,6 +39,11 @@ This shell script will do the following:
 4. Deploy ksql ETL transformations in lexicographic order of file name.
 5. Deploy the Snowflake kafka connect sink.
 6. Continuously run the datastreamer for each data feed.
+
+The containers can be stopped and associated data deleted with
+```
+./sh/stop.sh
+```
 
 ## Overview
 
