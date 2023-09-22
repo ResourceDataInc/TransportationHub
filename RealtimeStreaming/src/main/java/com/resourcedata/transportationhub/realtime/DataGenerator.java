@@ -102,11 +102,10 @@ public class DataGenerator {
                 if (requestParams.fileWriteRequested)
                     FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + requestParams.name + ".bin"), response);
                 Thread.sleep(requestParams.waitTimeMs);
-                this.numLoops--;
+                if(requestParams.numLoops != -1) this.numLoops--;
             } else {
                 System.exit(0);
             }
-
         }
         catch (Exception e){
             e.printStackTrace(System.err);
