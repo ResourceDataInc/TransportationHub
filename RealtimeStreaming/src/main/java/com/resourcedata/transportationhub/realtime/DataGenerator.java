@@ -1,10 +1,11 @@
 package com.resourcedata.transportationhub.realtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.ResultSetAlert;
 import com.google.transit.realtime.ResultSetVehicle;
+import com.google.transit.realtime.ResultSetRoute.RouteSet.Route;
+import com.google.transit.realtime.ResultSetRoute;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import org.apache.commons.io.FileUtils;
@@ -25,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 public class DataGenerator {
@@ -134,5 +137,25 @@ public class DataGenerator {
             e.printStackTrace(System.err);
         }
         return resultSetAlert;
+    }
+    private LinkedList<Route> existingRoutes;
+
+    public Route generateRoute(){
+        Route route = null;
+        if(existingRoutes == null) {
+            try {
+                byte[] response = processResponse();
+                ResultSetRoute resultSetRoute = objectMapper.readValue(response, ResultSetRoute.class);
+                existingRoutes = resultSetRoute.resultSet.route;
+                route = existingRoutes.pop();
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+            }
+        }
+        else if(!existingRoutes.isEmpty()) route = existingRoutes.pop();
+        else {
+           System.exit(0);
+        }
+        return route;
     }
 }
