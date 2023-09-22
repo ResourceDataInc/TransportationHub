@@ -4,6 +4,6 @@ RUN wget http://client.hub.confluent.io/confluent-hub-client-latest.tar.gz
 RUN tar -xvf confluent-hub-client-latest.tar.gz
 RUN ./bin/confluent-hub install snowflakeinc/snowflake-kafka-connector:2.0.1 --no-prompt
 RUN ./bin/confluent-hub install confluentinc/kafka-connect-s3:10.5.3 --no-prompt
-RUN ./bin/confluent-hub install confluentinc/kafka-connect-json-schema-converter:7.5.0
+RUN ./bin/confluent-hub install confluentinc/kafka-connect-json-schema-converter:7.5.0 --no-prompt
 RUN wget -P  /usr/share/confluent-hub-components/confluentinc-kafka-connect-s3/lib https://repo1.maven.org/maven2/org/apache/hadoop/thirdparty/hadoop-shaded-guava/1.1.1/hadoop-shaded-guava-1.1.1.jar
 USER appuser
