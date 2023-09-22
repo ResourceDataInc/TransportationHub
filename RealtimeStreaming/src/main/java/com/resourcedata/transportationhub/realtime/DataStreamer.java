@@ -40,8 +40,6 @@ public class DataStreamer<T> implements Closeable {
     public static <T> void streamData(Stream<T> stream, Properties properties, RequestParams requestParams){
         try(Producer<String, T> producer = new KafkaProducer<>(properties)){
             final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, requestParams);
-            if (requestParams.numLoops != -1)
-                stream = stream.limit(requestParams.numLoops);
             stream.forEach(dataStreamer::produce);
         }
     }
