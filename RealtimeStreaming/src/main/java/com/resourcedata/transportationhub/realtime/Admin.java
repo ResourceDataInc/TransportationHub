@@ -19,7 +19,7 @@ public class Admin {
             ListTopicsResult listTopicsResult = client.listTopics();
             Set<String> existingTopics = listTopicsResult.names().get();
             if (!existingTopics.contains(topic)) {
-                List<NewTopic> singleTopic = Arrays.asList(new NewTopic(topic, Optional.empty(), Optional.empty()));
+                List<NewTopic> singleTopic = List.of(new NewTopic(topic, Optional.empty(), Optional.empty()));
                 client.createTopics(singleTopic).values().forEach((t, future) -> {
                     try {
                         future.get();
@@ -33,7 +33,7 @@ public class Admin {
             e.printStackTrace(System.err);
         }
     }
-    public static Properties buildProperties(RequestParams requestParams){
+    public static Properties buildProperties(CliArgs cliArgs){
         Properties properties = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try(InputStream input = classLoader.getResourceAsStream("producer.properties")){
@@ -43,7 +43,7 @@ public class Admin {
             System.exit(1);
         }
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        if(requestParams.dataClass.equals("GtfsRealtime")) {
+        if(cliArgs.dataClass.equals("GtfsRealtime")) {
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
         } else {
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class);
