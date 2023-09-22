@@ -63,6 +63,7 @@ function do_all(){
     stream_dynamic_data
     sleep 10
     setup_ksql
-    connect_snowflake
+    connect_snowflake_continuous
+    connect_snowflake_oneshot
     connect_s3
 }
