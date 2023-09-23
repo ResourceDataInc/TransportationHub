@@ -27,4 +27,3 @@ select
     vehicle_id
     ,vehicle_type
 from vehicletypes
-;
