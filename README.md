@@ -34,11 +34,13 @@ If you want to run select sections of the startup sequence, look in `sh/run.sh`.
 This shell script will do the following:
 
 1. Deploy all containers using docker compose and the `docker-compose.yml` file.
-2. Setup kafka topics.
-3. Initialize feeds to broker and schema registry.
-4. Deploy ksql ETL transformations in lexicographic order of file name.
-5. Deploy the Snowflake kafka connect sink.
-6. Continuously run the datastreamer for each data feed.
+2. Add static data sets.
+3. Setup kafka topics.
+4. Initialize feeds to broker and schema registry.
+5. Deploy ksql ETL transformations in lexicographic order of file name.
+6. Deploy the Snowflake kafka connect sink for continuous feeds.
+7. Deploy the Snowflake kafka connect sink for one time feeds.
+8. Deploy the S3 kafka connect sink.
 
 The containers can be stopped and associated data deleted with
 ```
