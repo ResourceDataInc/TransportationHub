@@ -174,7 +174,17 @@ Generated sources are produced from protobuf using the respective maven plugin. 
 
 The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
 
-The java code first gets a json or protobuf data object using a supplied `appID` request parameter in its http request.  The returned payload is returned as an array of bytes. If the user requests to write the payload to a file, it will be written.  Thereafter, the message is deserialized as a `FeedMessage` type object in the protobuf case defined in the gtfs protobuf [specification](https://developers.google.com/transit/gtfs-realtime/reference).  In the json case, the message is deserialized using the various classes defined in `com.google.transit.realtime`.
+The java code first gets a json or protobuf data object using a supplied `appID` request parameter in its http request.  The returned payload is returned as an array of bytes. If the user requests to write the payload to a file, it will be written.  Thereafter, the message is deserialized as a `FeedMessage` type object in the protobuf case defined in the gtfs protobuf [specification](https://developers.google.com/transit/gtfs-realtime/reference).  In the json case, the message is deserialized using the various classes defined in `com.google.transit.realtime`.  In either case, the use of the Java Stream package makes the logic more functional.  In addition, the use of generics unifies the final steps of stream processing as show below:
+
+```java
+    public static <T> void streamData(Stream<T> stream, Properties properties, CliArgs cliArgs){
+        try(Producer<String, T> producer = new KafkaProducer<>(properties)){
+            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, cliArgs);
+            stream.forEach(dataStreamer::produce);
+        }
+    }
+```
+
 Once the protobuf payload has been deserialized, it is then pushed by the `Producer` to kafka.  Note the configuration parameters `BOOTSTRAP_SERVERS_CONFIG` and `schema.registry.url` in `producer.properties`.  These are the locations of the broker and schema registry.  The port for the broker is set to the listener port `29092` which is different than the host network port `9092`.  If `9092` is used, communication with the broker will not occur.  
 The preset command given in the `dockerfile_datastreamer` ensures that the container stays open indefinitely.  Normally containers terminate if there is not an active command in process.
 ```
