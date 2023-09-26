@@ -21,9 +21,6 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
   * S3 - storing data on the cloud
   * Glue - data catalogs and ETL jobs
   * Athena - moderate sized queries
-  
-
-OThe main data streaming tool is Confluent Kafka and the main data warehousing tool is Snowflake.
 
 # Table of Contents
 1. [Running](#topic-1)
@@ -56,7 +53,7 @@ do_all
 If you want to run select sections of the startup sequence, look in `sh/run.sh`.
 This shell script will do the following:
 
-1. Deploy all containers using docker compose and the `docker-compose.yml` file.
+1. Deploy all containers using docker according to the `docker-compose.yml` file.
 2. Add static data sets.
 3. Setup kafka topics.
 4. Initialize feeds to broker and schema registry.
@@ -86,20 +83,20 @@ The various locally deployed docker containers are depicted as squares.  The com
 All the custom code written is in the `com.resourcedata.transportationhub.realtime` package.  The `com.google.transit.realtime` package contains POJO's that are used to send Json with JsonSchema. Generated sources are produced from protobuf using the respective maven plugin.  The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
 
 The java code first gets a json or protobuf data object using a supplied `appID` request parameter in its http request.  The returned payload is returned as an array of bytes. If the user requests to write the payload to a file, it will be written.  Thereafter, the message is deserialized as a `FeedMessage` type object in the protobuf case defined in the gtfs protobuf [specification](https://developers.google.com/transit/gtfs-realtime/reference).  In the json case, the message is deserialized using the various classes defined in `com.google.transit.realtime`.
-Once the protobuf payload has been deserialized, it is then pushed by the `Producer` to kafka.  Note the configuration parameters `BOOTSTRAP_SERVERS_CONFIG` and `schema.registry.url`.  These are the locations of the broker and schema registry.  The port for the broker is set to the listener port 29092 which is different than the host network port 9092.  If this port number is used, communication with the broker will not occur.  
+Once the protobuf payload has been deserialized, it is then pushed by the `Producer` to kafka.  Note the configuration parameters `BOOTSTRAP_SERVERS_CONFIG` and `schema.registry.url` in `producer.properties`.  These are the locations of the broker and schema registry.  The port for the broker is set to the listener port `29092` which is different than the host network port `9092`.  If `9092` is used, communication with the broker will not occur.  
 The preset command given in the `dockerfile_datastreamer` ensures that the container stays open indefinitely.  Normally containers terminate if there is not an active command in process.
 ```
 command: ["tail", "-f", "/dev/null"]
 ```
-The datastreamer is written as a maven package and is made to deploy into an alpine java docker container that contains both java runtimes and the sdk.  For more information, consult the `dockerfile_datastreamer` file.
+The datastreamer is written as a maven package and is made to deploy into an Ubuntu java docker container that contains both java runtimes and the sdk.  For more information, consult the `dockerfile_datastreamer` file.
 
 ### broker/schema-registry
 
-The broker is the data storage layer of kafka.  Each separate data stream is stored in a durable queue.  When using structured data such as protobuf or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  Each separate data queue is organized by topic.  The datastreamer container from above is a producer of data to kafka.  
+The broker is the data storage layer of kafka.  Each separate data stream is stored in a durable queue.  When using structured data such as json schema, protobuf, or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  Each separate data queue is organized by topic.  The datastreamer container from above is a producer of data to kafka.  
 
 ### realtime-visualizer
 
-The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information a Leaflet.js map.  In a locally deployed version, it can be seen on `https://localhost:8090`.
+The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information in a Leaflet.js map.  The `ksqldb-server` and ultimately the kafka broker backing it provides data to the realtime visaulizer. In a locally deployed version, it can be seen on `https://localhost:8090`.
 
 ### ksqldb-server
 
@@ -113,11 +110,11 @@ The ksqldb-cli provides a cli for issuing ksql requests.
 The control center provides a user interface for viewing everything happening in the kafka containers as well a way to supply ad-hoc configuration and ETL requests.  The control center can be accessed on a local container deployment at `https://localhost:9021`.
 
 ### connect
-The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.
+The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.
 
 ### snowflake
-Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory
+Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
 
 ### aws
 
-The second destination we will sending data is to a data lake in AWS.  What differentiates a data lake from a data warehouse such as snowflake is several things.  Data lakes are transparently based off of an object store and can allow heterogenous data sources easily without needed to store data in its own format.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this isnot a major downside.  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code written in in Spark. 
+The second destination we will sending data is S3 on AWS.  We will be using S3 as a data lake.  What differentiates a data lake from a data warehouse such as snowflake is transparent use of data on S3, allowing for heterogenous data sources natively.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this is not a major downside (Further technologies such as Delta Lake and Apache Iceberg can be leveraged for these purposes).  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code written in in Spark. 
