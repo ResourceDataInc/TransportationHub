@@ -54,7 +54,7 @@ The architecture of the pipeline is as follows, descriptions for all components 
 
 ### Trimet API
 
-The Transportation Hub warehouses data for Portland's local transit system, TriMet.  The starting point for data is the [GTFS api](https://developer.trimet.org/GTFS.shtml).  [json/XML](https://developer.trimet.org/ws_docs/) and [protobuf](https://www.transit.land/feeds/f-trimet~rt/) are streamed and buffered in this project.  
+The Transportation Hub warehouses data for Portland's local transit system, TriMet.  The starting point for data is the [GTFS api](https://developer.trimet.org/GTFS.shtml).  [json](https://developer.trimet.org/ws_docs/) and [protobuf](https://www.transit.land/feeds/f-trimet~rt/) are streamed and buffered in this project.  
 
 The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in blue.  Containers that have visual components that can be accessed in the browser are shown in red.  The yellow elements are in AWS.
 
@@ -81,6 +81,7 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 ### ksqldb-server
 
 ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. 
+[streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
 ### ksqldb-cli
 The ksqldb-cli provides a cli for issuing ksql requests. 
