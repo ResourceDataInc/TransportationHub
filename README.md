@@ -92,11 +92,16 @@ The datastreamer is written as a maven package and is made to deploy into an Ubu
 
 ### broker/schema-registry
 
-The broker is the data storage layer of kafka.  Each separate data stream is stored in a durable queue.  When using structured data such as json schema, protobuf, or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  
+The broker is the data storage layer of kafka.  Each separate data stream is stored in a durable queue. Each separate data queue is organized by topic.  The datastreamer container from above is a producer of data to kafka.  In our usage of kafka, we will only be using one partition per topic.  More partitions can be used in the distributed case for faster throughput.  A schematic of how a broker works with a topic on one partition is shown below:
+
+![topic](./Documentation/imgs/messagelog.png) 
+
+The messages from the topic are maintained in a queue regardless of the consumer's activity (unlike a queue service such as SQS).  Based on whichever occurs first of retention time exceeded or size exceeded, the oldest messages are deleted (in a LIFO manner). Consumers of topics, per session can decide from which point they want to read the queue; earliest, latest, or at a defined offset.
+
+When using structured data such as json schema, protobuf, or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  
 
 ![schema-registry](./Documentation/imgs/schema-registry-and-kafka)
 
-Each separate data queue is organized by topic.  The datastreamer container from above is a producer of data to kafka.  
 
 ### realtime-visualizer
 
@@ -117,7 +122,7 @@ The control center provides a user interface for viewing everything happening in
 ![control center](./Documentation/imgs/control_center.png)
 
 ### connect
-The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.
+The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.  Current connector configurations can be accessed from the control center under the connect section.
 
 ### snowflake
 Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
