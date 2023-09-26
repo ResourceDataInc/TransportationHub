@@ -7,6 +7,7 @@ class Vehicle {
         this.status = vehicle.row.columns[3];
         this.stopSequence = vehicle.row.columns[4];
         this.stopId = vehicle.row.columns[5];
+        this.routeId = vehicle.row.columns[6];
     }
 };
 
