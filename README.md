@@ -90,7 +90,7 @@ The various data formats used in this project each have their advantages and use
   "f2": [3,2,5],
   "pairs": {
     "key": "hello",
-    "value": "world
+    "value": "world"
   }
   "description": "this is a JSON file"
 }
