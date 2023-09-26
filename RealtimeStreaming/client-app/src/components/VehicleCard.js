@@ -25,10 +25,11 @@ export const VehicleCard = () => {
                 <hr></hr>
 
                 <div>
-                    {vehicle.status === 'IN_TRANSIT_TO' && <p><span className='text-success'>Currently in transit to stop </span>{vehicle.stopId}</p>}
-                    {vehicle.status === '' && <p><span className='text-success'>Currently in transit to stop </span>{vehicle.stopId}</p>}
-                    {vehicle.status === 'STOPPED_AT' && <p><span className='text-danger'>Currently sitting at stop </span>{vehicle.stopId}</p>}
+                    {vehicle.status === 'IN_TRANSIT_TO' && <p><span className='text-success'>Currently in transit to stop </span><span className='font-weight-bold'>{vehicle.stopId}</span></p>}
+                    {vehicle.status === '' && <p><span className='text-success'>Currently in transit to stop </span><span className='font-weight-bold'>{vehicle.stopId}</span></p>}
+                    {vehicle.status === 'STOPPED_AT' && <p><span className='text-danger'>Currently sitting at stop </span><span className='font-weight-bold'>{vehicle.stopId}</span></p>}
                     
+                    <p>Route Number: <span className='font-weight-bold'>{vehicle.routeId}</span></p>
                     <p>Latitude: {vehicle.latitude}</p>
                     <p>Longitude: {vehicle.longitude}</p>
                 </div>
