@@ -1,9 +1,25 @@
+with ve as (
+    select distinct
+        try_to_number(ve.value:VEHICLE:TRIP:TRIP_ID::text) as trip_id
+        ,try_to_number(ve.value:VEHICLE:TRIP:ROUTE_ID::text) as route_id
+    from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} v
+    ,lateral flatten(input => record_content) ve
+)
+, va as (
+    select distinct
+        try_to_number(va.record_content:VEHICLE:TRIPID::text) as trip_id
+        ,try_to_number(va.record_content:VEHICLE:ROUTENUMBER::text) as route_id
+        ,try_to_number(va.record_content:VEHICLE:DIRECTION::text) as direction_id
+    from {{ source('transport_hub', 'VEHICLESALTEXPLODED') }} va
+)
 select distinct
-    v.value:VEHICLE:TRIP:TRIP_ID::number(38,0) as trip_id
-    ,v.value:VEHICLE:TRIP:ROUTE_ID::number(38,0) as route_id
-    ,case when v.value:VEHICLE:TRIP:DIRECTION_ID::number(38,0) = 0 then 'Outbound'
-         when v.value:VEHICLE:TRIP:DIRECTION_ID::number(38,0) = 1 then 'Inbound'
+    ve.trip_id
+    ,ve.route_id
+    ,case
+        when va.direction_id = 0 then 'Outbound'
+        when va.direction_id = 1 then 'Inbound'
     end as route_direction
-from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} vp
-,lateral flatten(input => vp.record_content) v
-where trip_id is not null
+from ve
+join va on
+    ve.trip_id = va.trip_id
+    and ve.route_id = va.route_id
