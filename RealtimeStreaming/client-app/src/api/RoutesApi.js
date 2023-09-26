@@ -1,4 +1,4 @@
-import { yyyymmddFormat } from "../util/dateFormat";
+import { yyyymmddFormat, weekdayName } from "../util/dateUtil";
 
 export class RoutesApi {
     constructor(routeId, directionId) {
@@ -9,14 +9,14 @@ export class RoutesApi {
     #root = 'http://localhost:8088/query';
 
     async getRoute() {
-        const serviceIds = await this.getServiceIds();
+        const serviceIds = await this.getServiceIdsFromCalendarTable();
         const shapeId = await this.getShapeId(serviceIds);
         const routePath = await this.getRoutePath(shapeId);
 
         return routePath;
     }
 
-    async getServiceIds() {
+    async getServiceIdsFromCalendarDatesTable() {
         const date = yyyymmddFormat();
 
         const response = await fetch(`${this.#root}`, {
@@ -40,7 +40,34 @@ export class RoutesApi {
         };
         
         return serviceIds;
-    }
+    } 
+
+    async getServiceIdsFromCalendarTable() {
+        const date = yyyymmddFormat();
+        const weekday = weekdayName();
+
+        const response = await fetch(`${this.#root}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/vnd.ksql.v1+json',
+            },
+            body: JSON.stringify({
+                "ksql": `SELECT service_id FROM CalendarTable WHERE ${date} BETWEEN start_date AND end_date AND ${weekday} = 1;`,
+                "streamsProperties": {}
+            }),
+        });
+
+        const json = await response.json();
+        json.shift();
+        
+        const serviceIds = [];
+        for (let record of json) {
+            const serviceId = record.row.columns[0];
+            serviceIds.push(serviceId);
+        };
+        
+        return serviceIds;
+    } 
 
     serviceIdsString(serviceIds) {
         let serviceIdsString = '';
@@ -76,8 +103,9 @@ export class RoutesApi {
 
         const json = await response.json();
         json.shift();
-        
-        const shapeId = json[0]['row']['columns'][4];
+
+        const routeIndex = json.findIndex(x => x['row']['columns'][1] === this.routeId);
+        const shapeId = json[routeIndex]['row']['columns'][4];
         
         return shapeId; 
     }
