@@ -1,10 +1,9 @@
 with lambda_cte as (
     select distinct
-        rm.value:id::number(38,0) as route_id
-        ,rm.value:routeSubType::varchar as route_subtype
-        ,rm.value:routeColor::varchar as route_color
-    from {{ source('transport_hub', 'route_staging') }} r
-    ,lateral flatten(input => content) rm
+        r.record_content:id::number(38,0) as route_id
+        ,r.record_content:routeSubType::varchar as route_subtype
+        ,r.record_content:routeColor::varchar as route_color
+    from {{ source('transport_hub', 'routeconfig') }} r
 )
 , protobuf_cte as (
     select distinct 
