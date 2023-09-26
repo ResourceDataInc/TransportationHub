@@ -70,7 +70,7 @@ The containers can be stopped and associated data deleted with
 ## Overview
 
 The architecture of the pipeline is as follows, descriptions for all components pictured follow:
-![architecture](./Documentation/imgs/transportation_hub_v2.png).  Most discussion here will relate to files found in the RealtimeStreaming directory.
+![architecture](./Documentation/imgs/transportation_hub_v2.png)  Most discussion here will relate to files found in the `RealtimeStreaming` directory.
 
 ### Trimet API
 
@@ -101,6 +101,7 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 ### ksqldb-server
 
 ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. 
+
 ![streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
 ### ksqldb-cli
@@ -108,6 +109,8 @@ The ksqldb-cli provides a cli for issuing ksql requests.
 
 ### control-center
 The control center provides a user interface for viewing everything happening in the kafka containers as well a way to supply ad-hoc configuration and ETL requests.  The control center can be accessed on a local container deployment at `https://localhost:9021`.
+
+![control center](./Documentation/imgs/control_center.png)
 
 ### connect
 The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.
@@ -117,4 +120,4 @@ Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json`
 
 ### aws
 
-The second destination we will sending data is S3 on AWS.  We will be using S3 as a data lake.  What differentiates a data lake from a data warehouse such as snowflake is transparent use of data on S3, allowing for heterogenous data sources natively.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this is not a major downside (Further technologies such as Delta Lake and Apache Iceberg can be leveraged for these purposes).  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the glue crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code written in in Spark. 
+The second destination we will sending data is S3 on AWS.  We will be using S3 as a data lake.  What differentiates a data lake from a data warehouse such as snowflake is transparent use of data on S3, allowing for heterogenous data sources natively.  Data lakes, do not out of the box provide ACID transactions, but in a append only/write only scenario this is not a major downside (Further technologies such as Delta Lake and Apache Iceberg can be leveraged for these purposes).  A further advantage for a data lake is usually less cost as the management of data is less.  In our case, data is buffered into S3 using the S3SinkConnector provided by confluent.  The settings for buffering are controlled in `S3SinkConfig.json`.  In order to surface data for use in analytics and ETL jobs, the AWS Glue crawler must be run over S3 periodically.  Initially, the crawler will import the schema from parquet files, and infer a schema from csv files.  The crawler will add data as tables to the Glue database.  Additionally, as new partitions are added, the crawler will add those additional partitions.  Up to a moderate level of complexity, Athena is a good tool of choice for running queries over this table data.  Once materialization of transformations is desired for much more complicated usecases, a Glue ETL job can be run with code written in Spark. 
