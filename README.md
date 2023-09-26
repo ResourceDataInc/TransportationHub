@@ -1,6 +1,29 @@
 # Transportation Hub
 
-The Transportation Hub is RDI's internal data streaming and data warehousing project to test new tools and functionalities in those tools.  The main data streaming tool is Confluent Kafka and the main data warehousing tool is Snowflake.
+The Transportation Hub is RDI's internal data streaming and data warehousing project to test new tools and functionalities in those tools.  Several technologies are used here including:
+
+* Docker Compose - bringing up multiple containers on the same local network
+* WSL - linux on Windows
+* Shell Scripts - running commands on containers
+* Python - small text file dataframe operations
+* Java - data requests on trimet API and data writes to kafka broker 
+* Confluent
+  * Kafka Broker - durable queues and stream processing
+  * Schema Registry - track schema's for data inputs, also used for serializing and deserializing binary data 
+  * Control Center - viewing all streaming operations 
+  * Ksqldb - streaming ETL
+  * Connect - configuring output data destinations
+* React - javascript web development framework
+* React Leaflet - react components for leaflet maps
+* Snowflake - data warehouse operations
+* DBT - framework for writing ETL operations in Snowflake
+* AWS 
+  * S3 - storing data on the cloud
+  * Glue - data catalogs and ETL jobs
+  * Athena - moderate sized queries
+  
+
+OThe main data streaming tool is Confluent Kafka and the main data warehousing tool is Snowflake.
 
 # Table of Contents
 1. [Running](#topic-1)
@@ -81,7 +104,7 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 ### ksqldb-server
 
 ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. 
-[streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
+![streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
 ### ksqldb-cli
 The ksqldb-cli provides a cli for issuing ksql requests. 
