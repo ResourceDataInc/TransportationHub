@@ -21,9 +21,6 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
   * S3 - storing data on the cloud
   * Glue - data catalogs and ETL jobs
   * Athena - moderate sized queries
-  
-
-OThe main data streaming tool is Confluent Kafka and the main data warehousing tool is Snowflake.
 
 # Table of Contents
 1. [Running](#topic-1)
