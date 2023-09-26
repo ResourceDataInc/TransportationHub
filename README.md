@@ -80,15 +80,98 @@ The Transportation Hub warehouses data for Portland's local transit system, TriM
 
 #### json, json schema, protobuf, parquet
 
-The various data formats used in this project each have their advantages and use cases, and it is worth pointing them out.  When we refer to schema changes, we mean, addition or removal of fields and changes of field data types. 
+The various data formats used in this project each have their advantages and use cases, and it is worth pointing them out.  When we refer to schema changes, we mean, addition or removal of fields and changes of field data types. We will show samples of each just to get a sense of what each format entails.
 
 * json - the simplest one because it is human readable, can be confounding for a consumer of data.  First, json is usually large and takes longer to transmit as a result.  Secondly, schema changes are difficult to adapt to.  When the data is consumed the assumption is that the schema will not change.  Inevitably, this assumption does not hold true and problems follow.  The only solution for the consumer is to maintain their own manually constructed schema, and take action when non-conforming messages with new schema come in.  Thus schema adaptation is data driven.  A third problem is that traversal of schema is slow because string parsing must occur in order to find data.  The need for human readable json is merely a choice of which machine translation layer will be used to view data.
 
-* json schema - if the producer can provide a schema, at least the adaptation to new schema is producer driven.  Nonetheless, the other two problems of json, lack of compression and slow traversal persist.
+```json
+{
+  "f1": 2,
+  "f2": [3,2,5],
+  "pairs": {
+    "key": "hello",
+    "value": "world
+  }
+  "description": "this is a JSON file"
+}
+```
+
+* json schema - if the producer can provide a schema, at least the adaptation to new schema is producer driven.  Nonetheless, the other two problems of json, lack of compression and slow traversal persist.  The schema itself does tend to be on the more verbose side and harder to understand.  This is why we serialized with Jackson as opposed to writing json schema.
+
+```json
+{
+  "$id": "https://example.com/test.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Test",
+  "type": "object",
+  "required": [
+    "f1"
+  ],
+  "properties": {
+    "f1": {
+      "type": "number"
+    },
+    "f2": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "pairs": {
+      "type": "object",
+      "required": [
+        "key",
+        "value"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}
+```
 
 * protobuf - is a great format for single records.  It is compressed, all messages must conform to a schema and thus schema evolution is straightforward, and because it is in a binary format, it is relatively easy to traverse the data.  It's only downside is that it is not human-readable.  This is usually not a problem because Protobuf is almost always an intermediate data format not used for reading data.
 
+```c++
+message Test {
+    required int32 f1 = 1;
+    repeated int32 f2 = 2;
+    repeated Pair pairs = 3;
+    optional string description = 4;
+}
+
+message Pair {
+    required string key = 1;
+    required string value = 2;
+}
+```
+
 * parquet - is a column oriented format that is fantastic as an end data format, as large aggregate queries are faster, due to physically close columnar data orientation and projection.  Converting between multiple schematized messages and parquet is relatively straightforward since each has a schema and translations between schema are straightforward.  We use parquet in this project exclusively in S3.
+
+```c++
+message schema {
+  required int32 f1;
+  optional group f2 (LIST) {
+    repeated group list {
+      optional int32 element;
+    }
+  }
+  optional group pairs {
+    required binary key (STRING);
+    required binary value (STRING);
+  }
+  optional binary description (STRING);
+}
+```
 
 ### datastreamer
 
