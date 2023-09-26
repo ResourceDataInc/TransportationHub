@@ -100,7 +100,7 @@ The messages from the topic are maintained in a queue regardless of the consumer
 
 When using structured data such as json schema, protobuf, or avro, a schema registry is necessary to assist with serializing/deserializing data as well as evolving schema. The schema registry and broker work together to handle all read and write requests.  
 
-![schema-registry](./Documentation/imgs/schema-registry-and-kafka)
+![schema-registry](./Documentation/imgs/schema-registry-and-kafka.png)
 
 
 ### realtime-visualizer
