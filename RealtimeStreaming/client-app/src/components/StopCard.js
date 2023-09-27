@@ -26,7 +26,7 @@ export const StopCard = () => {
                 <hr></hr>
                 
                 <div>
-                    <p className="card-text">Stop {stop.id}</p>
+                    <p className="card-text">Stop ID: <span className='font-weight-bold'>{stop.id}</span></p>
                     <p className="card-text">{stop.arrivalDelay !== null && `Last bus's arrival delay: ${stop.arrivalDelay} seconds`}</p>
                     <p className="card-text">{stop.departureDelay !== null && `Last bus's departure delay: ${stop.departureDelay} seconds`}</p>
                 </div>
