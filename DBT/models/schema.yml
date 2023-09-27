@@ -10,8 +10,36 @@ sources:
       - name: VEHICLEENTITIESEXPLODED
       - name: TRIPENTITIESEXPLODEDSTOPSEXPLODED
       - name: VEHICLESALTEXPLODED
+      - name: gtfs_stop_times
+      - name: gtfs_routes
+      - name: gtfs_agency
 
 models:
+  - name: agencies
+    description: "Dimensional table for transportation agencies."
+    columns:
+      - name: agency_id
+        description: "ID for an agency. Primary key of this table."
+        tests:
+          - unique
+          - not_null
+      - name: agency_name
+        description: "Name of the agency."
+      - name: agency_name_desc
+        description: "Long name of the agency."
+      - name: email_address
+        description: "Email address for the agency."
+      - name: phone_number
+        description: "Phone number for the agency."
+      - name: language
+        description: "Primary language for the agency."
+      - name: timezone
+        description: "Operating timezone for the agency."
+      - name: website_url
+        description: "Website URL for the agency."
+      - name: fare_website_url
+        description: "Fare website URL for the agency."
+
   - name: routes
     description: "Dimensional table for TriMet routes."
     columns:
@@ -24,6 +52,12 @@ models:
         description: "The type of the route."
       - name: route_subtype
         description: "The subtype of the route."
+      - name: agency_name
+        description: "Name of the agency operating the route."
+        tests:
+          - relationships:
+              to: ref('agencies')
+              field: agency_name 
       - name: route_color
         description: "The color of the route."
       - name: route_desc
@@ -200,3 +234,32 @@ models:
               field: stop_location_id
       - name: current_status
         description: "Status of the vehicle, whether it is stopped at or in transit to the current stop ID."
+  
+  - name: stop_times
+    description: "Fact table for stop times."
+    columns:
+      - name: stop_time_id
+        description: "ID for the stop time. Primary key of this table."
+        tests:
+          - not_null
+          - unique
+      - name: trip_id
+        description: "ID for the trip."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('trips')
+              field: trip_id
+      - name: trip_stop_sequence
+        description: "Stop sequence on the trip."
+        tests:
+          - not_null
+      - name: stop_location_id
+        description: "Stop location ID."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stops')
+              field: stop_location_id
+      - name: arrival_time
+        description: "Arrival time at the stop."
