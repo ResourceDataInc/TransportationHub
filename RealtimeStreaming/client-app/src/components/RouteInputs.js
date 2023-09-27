@@ -12,7 +12,7 @@ export const RouteInputs = () => {
     return (
         <div className=''>
             <form>
-                <label htmlFor='routeIdInput'>Route ID:</label>
+                <label htmlFor='routeIdInput'>Route Number:</label>
                 <input
                     className='mx-2'
                     type='number'

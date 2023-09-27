@@ -5,6 +5,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { VehicleMarker } from '../components/VehicleMarker';
 import { StopMarker } from '../components/StopMarker';
 import { RouteLine } from '../components/RouteLine';
+import { OfficeMarker } from '../components/OfficeMarker';
 import { SetMapProperties } from '../components/SetMapProperties';
 import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
@@ -14,6 +15,7 @@ import Stop from '../models/stop';
 
 // Leaflet Default Marker Setup
 import L from 'leaflet';
+import { RouteInputs } from '../components/RouteInputs';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -39,6 +41,7 @@ export const Map = () => {
     return (
         <div className='row'>
             <div className='col-12'>
+                <RouteInputs/>
                 <MapContainer
                     center={[45.517, -122.683]}
                     zoom={14}
@@ -73,6 +76,7 @@ export const Map = () => {
                     })}
 
                     <RouteLine/>
+                    <OfficeMarker/>
                 </MapContainer>
             </div>
         </div>
