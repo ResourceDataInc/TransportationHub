@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { RouteInputs } from '../components/RouteInputs';
 import { Map } from './Map';
 import { Cards } from './Cards';
 import { useSelector } from 'react-redux';
@@ -19,13 +20,21 @@ export const Main = () => {
     }, [vehicleCard, stopCard]);
 
     return (
-        <div className='row'>
-            <div className={displayCard ? 'col-9' : 'col-12'}>
-                <Map/>
+        <div>
+            <div className='row'>
+                <div className={displayCard ? 'col-9' : 'col-12'}>
+                    <RouteInputs/>
+                </div>   
             </div>
-            <div className={displayCard ? 'col-3': ''}>
-                <Cards/>
-            </div> 
+            
+            <div className='row'>
+                <div className={displayCard ? 'col-9' : 'col-12'}>
+                    <Map/>
+                </div>
+                <div className={displayCard ? 'col-3': ''}>
+                    <Cards/>
+                </div> 
+            </div>
         </div>
     )
 };

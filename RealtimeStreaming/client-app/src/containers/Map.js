@@ -15,7 +15,6 @@ import Stop from '../models/stop';
 
 // Leaflet Default Marker Setup
 import L from 'leaflet';
-import { RouteInputs } from '../components/RouteInputs';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -41,7 +40,6 @@ export const Map = () => {
     return (
         <div className='row'>
             <div className='col-12'>
-                <RouteInputs/>
                 <MapContainer
                     center={[45.517, -122.683]}
                     zoom={14}
