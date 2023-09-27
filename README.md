@@ -324,7 +324,7 @@ CREATE STREAM VehicleStopConnectorExp
 EMIT CHANGES;
 ```
 
-In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js) can be seen in the visualizer app.
+In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js#L13) can be seen in the visualizer app.
 
 ```sql
 CREATE TABLE VehiclesLatest
