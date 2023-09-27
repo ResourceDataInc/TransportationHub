@@ -69,11 +69,9 @@ The containers can be stopped and associated data deleted with
 
 ## Overview
 
-This project demonstrates the [lambda architecture](https://en.wikipedia.org/Lambda_architecture).  
+This project demonstrates the [lambda architecture](https://en.wikipedia.org/Lambda_architecture).  Data is fed into a message queue, and consumed by a speed layer and batch processing layer simultaneously.  Because messages are sent in batches to the batch processing layer, higher latency is introduced.  However, the batch processing layer will contain much higher volumes of data, and can processing queries over a longer history.  In contrast, the speed layer will process messages immediately, and make messages available to queries with much less latency.  The speed layer does not normally retain a large volume of messages.  
 
 ![lambda diagram](./Documentation/imgs/lambda_architecture.png)
-
-Data is fed into a message queue, and consumed by a speed layer and batch processing layer simultaneously.  Because messages are sent in batches to the batch processing layer, higher latency is introduced.  However, the batch processing layer will contain much higher volumes of data, and can processing queries over a longer history.  In contrast, the speed layer will process messages immediately, and make messages available to queries with much less latency.  The speed layer does not normally retain a large volume of messages.  
 
 In our project the:
 * message queue is a Kafka broker
