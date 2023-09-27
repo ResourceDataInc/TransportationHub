@@ -303,11 +303,11 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 
 ### ksqldb-server
 
-ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. 
+ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. The current flow of streaming transformations is shown below: 
 
 ![streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
-One the ksql queries used in the pipeline is shown below as an example.  We are joining the stream `VehicleEntitiesExploded` against the table `StopsTable`.  It should be noted that this query generates a stream.  A stream is an append only unbounded sequence of data.  The kafka topic `VehicleStopConnectorExp` backs this stream as a persistence layer.  It should be noted that here we are also creating an additional key to be used for a join upstream.  ksql only supports joins against single keys, so this is our way of supporting multi key joins. 
+One of the ksql queries used in the pipeline is shown below as an example.  We are joining the stream `VehicleEntitiesExploded` against the table `StopsTable`.  It should be noted that this query generates a stream.  A stream is an append only unbounded sequence of data.  The kafka topic `VehicleStopConnectorExp` backs this stream as a persistence layer.  It should be noted that here we are also creating an additional key to be used for a join upstream.  ksql only supports joins against single keys, so this is our way of supporting multi key joins. 
 
 ```sql
 CREATE STREAM VehicleStopConnectorExp
@@ -344,7 +344,7 @@ CREATE TABLE VehiclesLatest
         GROUP BY entity->id
 EMIT CHANGES;
 ```
-
+An in-depth discussion showing the difference between streams and tables is given by [confluent](https://www.confluent.io/blog/kafka-streams-tables-part-1-event-streaming/).
 ### ksqldb-cli
 The ksqldb-cli provides a cli for issuing ksql requests. 
 
