@@ -12,7 +12,7 @@ with stop_times as (
     from {{ source('transport_hub', 'gtfs_stop_times') }}
 )
 select
-    row_number() over (order by s.trip_id, s.trip_stop_sequence) as stop_time_id
+    row_number() over (order by s.trip_id, s.trip_stop_sequence) as stop_schedule_id
     ,s.trip_id
     ,s.trip_stop_sequence
     ,s.stop_location_id
