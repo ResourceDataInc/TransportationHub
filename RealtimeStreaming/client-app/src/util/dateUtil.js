@@ -8,3 +8,10 @@ export const yyyymmddFormat = () => {
     const yyyymmdd = y + m + d;
     return yyyymmdd;
 };
+
+export const weekdayName = () => {
+    const weekday = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const d = new Date();
+    let day = weekday[d.getDay()];
+    return day;
+};
