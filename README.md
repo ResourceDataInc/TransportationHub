@@ -307,6 +307,44 @@ ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handle
 
 ![streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
+One the ksql queries used in the pipeline is shown below as an example.  We are joining the stream `VehicleEntitiesExploded` against the table `StopsTable`.  It should be noted that this query generates a stream.  A stream is an append only unbounded sequence of data.  The kafka topic `VehicleStopConnectorExp` backs this stream as a persistence layer.  It should be noted that here we are also creating an additional key to be used for a join upstream.  ksql only supports joins against single keys, so this is our way of supporting multi key joins. 
+
+```sql
+CREATE STREAM VehicleStopConnectorExp
+    WITH (KAFKA_TOPIC='VehicleStopConnectorExp', VALUE_FORMAT='PROTOBUF')
+    AS
+    SELECT
+        s.stop_id as stop_id,
+        concat(v.entity->vehicle->trip->trip_id,'_',cast(s.stop_sequence as string)) as trip_seq_id,
+        s.stop_lat as stop_lat,
+        s.stop_lon as stop_lon,
+        s.stop_name as stop_name
+    FROM VehicleEntitiesExploded v
+    JOIN StopsTable s ON s.stop_id = v.entity->vehicle->stop_id
+EMIT CHANGES;
+```
+
+In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js) can be seen in the visualizer app.
+
+```sql
+CREATE TABLE VehiclesLatest
+  WITH (KAFKA_TOPIC='VehiclesLatest', VALUE_FORMAT='PROTOBUF')
+    AS SELECT
+                entity->id as vehicle_id,
+                LATEST_BY_OFFSET(entity->vehicle->position->latitude) as latitude,
+                LATEST_BY_OFFSET(entity->vehicle->position->longitude) as longitude,
+                LATEST_BY_OFFSET(entity->vehicle->current_status) as current_status,
+                LATEST_BY_OFFSET(entity->vehicle->current_stop_sequence) as current_stop_sequence,
+                LATEST_BY_OFFSET(entity->vehicle->stop_id) as stop_id,
+                LATEST_BY_OFFSET(entity->vehicle->trip->route_id) as route_id,
+                LATEST_BY_OFFSET(entity->vehicle->timestamp) as timestmp,
+                LATEST_BY_OFFSET(entity->vehicle->position->bearing) as bearing,
+                LATEST_BY_OFFSET(entity->vehicle->position->speed) as speed
+        FROM VehicleEntitiesExploded
+        GROUP BY entity->id
+EMIT CHANGES;
+```
+
 ### ksqldb-cli
 The ksqldb-cli provides a cli for issuing ksql requests. 
 
@@ -319,7 +357,7 @@ The control center provides a user interface for viewing everything happening in
 The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.  Current connector configurations can be accessed from the control center under the connect section.
 
 ### snowflake
-Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
+Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs defined with [DBT](./DBT/README.md) than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
 
 ### aws
 
