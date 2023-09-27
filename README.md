@@ -69,10 +69,19 @@ The containers can be stopped and associated data deleted with
 
 ## Overview
 
-Most discussion here will relate to files found in the `RealtimeStreaming` directory.  The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in blue.  Containers that have visual components that can be accessed in the browser are shown in red.  The yellow elements are in AWS.
+This project demonstrates the [lambda architecture](https://en.wikipedia.org/Lambda_architecture).  Data is fed into a message queue, and consumed by a speed layer and batch processing layer simultaneously.  Because messages are sent in batches to the batch processing layer, higher latency is introduced.  However, the batch processing layer will contain much higher volumes of data, and can process queries that run over a longer history.  In contrast, the speed layer will process messages immediately, and make messages available to queries with much less latency.  The speed layer does not normally retain a large volume of messages.  
 
-The architecture of the pipeline is as follows, descriptions for all components pictured follow:
+![lambda diagram](./Documentation/imgs/lambda_architecture.png)
+
+In our project the:
+* message queue is a Kafka broker
+* speed layer processing is performed by the ksqldb sql flow backed by kafka topics
+* batch processing is performed by Snowflake and alternately on AWS by S3, Glue, and Athena
+
+The configurations in the kafka connector determine the basis upon which messages are buffered to the batch processing layer.  The architecture of the pipeline is as follows, descriptions for all components pictured follow:
 ![architecture](./Documentation/imgs/transportation_hub_v2.png)
+
+The various locally deployed docker containers are depicted as squares.  The components that are deployed on Snowflake are shown in blue.  Containers that have visual components that can be accessed in the browser are shown in red.  The yellow elements are in AWS.  Most references to files are with respect to the `RealtimeStreaming` directory.
 
 ### Trimet API
 
