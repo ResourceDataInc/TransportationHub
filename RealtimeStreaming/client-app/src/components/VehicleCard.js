@@ -30,8 +30,8 @@ export const VehicleCard = () => {
                     {vehicle.status === 'STOPPED_AT' && <p><span className='text-danger'>Currently sitting at stop </span><span className='font-weight-bold'>{vehicle.stopId}</span></p>}
                     
                     <p>Route Number: <span className='font-weight-bold'>{vehicle.routeId}</span></p>
-                    <p>Latitude: {vehicle.latitude.toFixed(3)}</p>
-                    <p>Longitude: {vehicle.longitude.toFixed(3)}</p>
+                    <p>Latitude: {vehicle.latitude.toFixed(5)}</p>
+                    <p>Longitude: {vehicle.longitude.toFixed(5)}</p>
                 </div>
             </div>
         </div>
