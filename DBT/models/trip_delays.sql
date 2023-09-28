@@ -5,7 +5,7 @@
 }}
 
 with stop_times as (
-    select
+    select distinct
         to_timestamp(record_content:ENTITY:VEHICLE:TIMESTAMP) as timestamp
         ,try_to_number(record_content:ENTITY:VEHICLE:TRIP:TRIP_ID::text) as trip_id
         ,try_to_number(record_content:ENTITY:VEHICLE:CURRENT_STOP_SEQUENCE::text) as current_stop_sequence
@@ -13,7 +13,7 @@ with stop_times as (
         ,try_to_number(record_content:ENTITY:VEHICLE:STOP_ID::text) as stop_id
     from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} v
 )
-,trip_delays as (select 
+,trip_delays as (select distinct
     to_timestamp(t.record_content:TS) as timestamp
     ,try_to_number(t.record_content:TRIP_ID::text) as trip_id
     ,try_to_number(t.record_content:STOP_TIME_UPDATE:STOP_SEQUENCE::text) as trip_stop_sequence
