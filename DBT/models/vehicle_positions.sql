@@ -1,3 +1,9 @@
+{{
+    config(
+        materialized='incremental'
+    )
+}}
+
 with vehicle_positions as (
     select distinct
         to_timestamp(v.value:VEHICLE:TIMESTAMP) as timestamp
@@ -18,6 +24,11 @@ with vehicle_positions as (
 )
 select
     row_number() over (order by vehicle_id, timestamp) as vehicle_position_id
+    ,year(to_date(timestamp)) as year
+    ,month(to_date(timestamp)) as month
+    ,day(to_date(timestamp)) as day
+    ,dayname(to_date(timestamp)) as day_of_week
+    ,to_time(timestamp) as time
     ,timestamp
     ,vehicle_id
     ,latitude
@@ -29,3 +40,7 @@ select
     ,stop_id as stop_location_id
     ,current_status
 from vehicle_positions
+
+{% if is_incremental() %}
+    where timestamp >= (select max(timestamp) from {{ this }})
+{% endif %}

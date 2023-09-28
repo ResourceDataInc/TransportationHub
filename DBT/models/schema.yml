@@ -162,6 +162,26 @@ models:
         tests:
           - not_null
           - unique
+      - name: year
+        description: "Year for the trip delay."
+        tests:
+          - not_null
+      - name: month
+        description: "Month for the trip delay."
+        tests:
+          - not_null
+      - name: day
+        description: "Day for the trip delay."
+        tests:
+          - not_null
+      - name: day_of_week
+        description: "Day of the week for the trip delay."
+        tests:
+          - not_null
+      - name: time
+        description: "Time for the trip delay."
+        tests:
+          - not_null
       - name: timestamp
         description: "Timestamp for the trip delay."
         tests:
@@ -195,6 +215,26 @@ models:
         tests:
           - not_null
           - unique
+      - name: year
+        description: "Year for the vehicle position."
+        tests:
+          - not_null
+      - name: month
+        description: "Month for the vehicle position."
+        tests:
+          - not_null
+      - name: day
+        description: "Day for the vehicle position."
+        tests:
+          - not_null
+      - name: day_of_week
+        description: "Day of the week for the vehicle position."
+        tests:
+          - not_null
+      - name: time
+        description: "Time for the vehicle position."
+        tests:
+          - not_null
       - name: timestamp
         description: "Timestamp for the vehicle position."
         tests:
@@ -235,10 +275,10 @@ models:
       - name: current_status
         description: "Status of the vehicle, whether it is stopped at or in transit to the current stop ID."
   
-  - name: stop_times
+  - name: stop_schedule
     description: "Fact table for stop times."
     columns:
-      - name: stop_time_id
+      - name: stop_schedule_id
         description: "ID for the stop time. Primary key of this table."
         tests:
           - not_null
