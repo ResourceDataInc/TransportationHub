@@ -53,9 +53,9 @@ export const VehicleMarker = ({ vehicle }) => {
                 icon={iconColorAndSize()} 
                 eventHandlers={markerEvents}
             >
-                <Popup>
+                {/* <Popup>
                     <p>This is vehicle number {id}</p>
-                </Popup>
+                </Popup> */}
             </Marker>
         </div>
     )
