@@ -40,14 +40,14 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 ## Running
 
 1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.
-2. Enter the appid obtained in `src/main/resources/producer.properties`.
+2. Enter the appid obtained in `sh/run-trimet.sh` for the `APPID` variable.
 3. An ssh key must be generated for communicating with snowflake. For directions on setting this up, consult the snowflake [reference](https://docs.snowflake.com/en/user-guide/key-pair-auth).  Note, the `ALTER USER` step must be performed by someone with `ACCOUNTADMIN` credentials.  The ssh key will factor into correct settings for the various snowflake connect configurations (SnowflakeSinkConfig.json, SnowflakeSingleSinkConfig.json).  Additionally, to configure the S3 connector for kafka (S3SinkConfig.json), aws access credentials, namely `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` must be obtained. 
 4. The main requirement for running the realtime pipeline is [docker desktop](https://www.docker.com/products/docker-desktop/) with [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run it from linux assuming a windows workstation. 
  
 The realtime component of the pipeline is launched from a linux shell prompt as follows:
 ```
 cd RealtimeStreaming
-source sh/run.sh
+source sh/run-trimet.sh
 do_all
 ```
 If you want to run select sections of the startup sequence, look in `sh/run.sh`.
@@ -184,6 +184,38 @@ message schema {
 
 ### datastreamer
 
+
+The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
+
+```
+Usage: gtfs-streamer [-fhV] -b=<bootstrapServers> -d=<dataClass>
+                     [-n=<numLoops>] -r=<schemaRegistry> -t=<topic> -u=<url>
+                     [-w=<waitTimeMs>] [-p=<String=String>[,
+                     <String=String>...]]...
+streams gtfs realtime data to a confluent kafka broker and schema registry
+  -b, --bootstrap-servers=<bootstrapServers>
+                        hostname:port
+  -d, --data-class=<dataClass>
+                        Valid values: ResultSetAlert, ResultSetRoute,
+                          ResultSetVehicle, GtfsRealtime
+  -f                    file writes of each request payload requested, default
+                          is false
+  -h, --help            Show this help message and exit.
+  -n=<numLoops>         number of get requests to make, -1 (default) for
+                          infinite (stream)
+  -p, --get-parameters=<String=String>[,<String=String>...]
+                        additional parameters for the get request in form
+                          key1=value1,key2=value2,...
+  -r, --schema-registry=<schemaRegistry>
+                        http://hostname:port
+  -t, --topic=<topic>   topic to stream data to
+  -u, --url=<url>       url https://<hostname>/<ext>/<servicename>
+  -V, --version         Print version information and exit.
+  -w, --wait-time=<waitTimeMs>
+                        wait time in ms between successive get requests,
+                          default (1000)
+```
+
 All the custom code written is in the `com.resourcedata.transportationhub.realtime` package.  The `com.google.transit.realtime` package contains POJO's that are used to send Json with JsonSchema.  An example is shown below:
 
 ```java
@@ -264,17 +296,16 @@ Generated sources are produced from protobuf using the respective maven plugin. 
             </plugin>
 ```
 
-The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
 
 The java code first gets a json or protobuf data object using a supplied `appID` request parameter in its http request.  The returned payload is returned as an array of bytes. If the user requests to write the payload to a file, it will be written.  Thereafter, the message is deserialized as a `FeedMessage` type object in the protobuf case defined in the gtfs protobuf [specification](https://developers.google.com/transit/gtfs-realtime/reference).  In the json case, the message is deserialized using the various classes defined in `com.google.transit.realtime`.  In either case, the use of the Java Stream package makes the logic more functional.  In addition, the use of generics unifies the final steps of stream processing as show below:
 
 ```java
-    public static <T> void streamData(Stream<T> stream, Properties properties, CliArgs cliArgs){
-        try(Producer<String, T> producer = new KafkaProducer<>(properties)){
-            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, cliArgs);
-            stream.forEach(dataStreamer::produce);
-        }
+public static <T> void streamData(Stream<T> stream, Properties properties, String topic){
+    try(Producer<String, T> producer = new KafkaProducer<>(properties)){
+        final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, topic);
+        stream.forEach(dataStreamer::produce);
     }
+}
 ```
 
 Once the protobuf payload has been deserialized, it is then pushed by the `Producer` to kafka.  Note the configuration parameters `BOOTSTRAP_SERVERS_CONFIG` and `schema.registry.url` in `producer.properties`.  These are the locations of the broker and schema registry.  The port for the broker is set to the listener port `29092` which is different than the host network port `9092`.  If `9092` is used, communication with the broker will not occur.  
@@ -303,10 +334,48 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 
 ### ksqldb-server
 
-ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. 
+ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. The current flow of streaming transformations is shown below: 
 
 ![streaming ETL](./Documentation/imgs/transportation_hub_streaming_etl.png)
 
+One of the ksql queries used in the pipeline is shown below as an example.  We are joining the stream `VehicleEntitiesExploded` against the table `StopsTable`.  It should be noted that this query generates a stream.  A stream is an append only unbounded sequence of data.  The kafka topic `VehicleStopConnectorExp` backs this stream as a persistence layer.  It should be noted that here we are also creating an additional key to be used for a join upstream.  ksql only supports joins against single keys, so this is our way of supporting multi key joins. 
+
+```sql
+CREATE STREAM VehicleStopConnectorExp
+    WITH (KAFKA_TOPIC='VehicleStopConnectorExp', VALUE_FORMAT='PROTOBUF')
+    AS
+    SELECT
+        s.stop_id as stop_id,
+        concat(v.entity->vehicle->trip->trip_id,'_',cast(s.stop_sequence as string)) as trip_seq_id,
+        s.stop_lat as stop_lat,
+        s.stop_lon as stop_lon,
+        s.stop_name as stop_name
+    FROM VehicleEntitiesExploded v
+    JOIN StopsTable s ON s.stop_id = v.entity->vehicle->stop_id
+EMIT CHANGES;
+```
+
+In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->vehicle->vehicle->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js#L13) can be seen in the visualizer app.
+
+```sql
+CREATE TABLE VehiclesLatest
+  WITH (KAFKA_TOPIC='VehiclesLatest', VALUE_FORMAT='PROTOBUF')
+    AS SELECT
+                entity->vehicle->vehicle->id as vehicle_id,
+                LATEST_BY_OFFSET(entity->vehicle->position->latitude) as latitude,
+                LATEST_BY_OFFSET(entity->vehicle->position->longitude) as longitude,
+                LATEST_BY_OFFSET(entity->vehicle->current_status) as current_status,
+                LATEST_BY_OFFSET(entity->vehicle->current_stop_sequence) as current_stop_sequence,
+                LATEST_BY_OFFSET(entity->vehicle->stop_id) as stop_id,
+                LATEST_BY_OFFSET(entity->vehicle->trip->route_id) as route_id,
+                LATEST_BY_OFFSET(entity->vehicle->timestamp) as timestmp,
+                LATEST_BY_OFFSET(entity->vehicle->position->bearing) as bearing,
+                LATEST_BY_OFFSET(entity->vehicle->position->speed) as speed
+        FROM VehicleEntitiesExploded
+        GROUP BY entity->vehicle->vehicle->id
+EMIT CHANGES;
+```
+An in-depth discussion showing the difference between streams and tables is given by [confluent](https://www.confluent.io/blog/kafka-streams-tables-part-1-event-streaming/).
 ### ksqldb-cli
 The ksqldb-cli provides a cli for issuing ksql requests. 
 
@@ -319,7 +388,7 @@ The control center provides a user interface for viewing everything happening in
 The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.  Current connector configurations can be accessed from the control center under the connect section.
 
 ### snowflake
-Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
+Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs defined with [DBT](./DBT/README.md) than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
 
 ### aws
 

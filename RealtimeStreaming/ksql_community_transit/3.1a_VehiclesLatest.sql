@@ -1,7 +1,7 @@
 CREATE TABLE VehiclesLatest
   WITH (KAFKA_TOPIC='VehiclesLatest', VALUE_FORMAT='PROTOBUF')
     AS SELECT
-                entity->id as vehicle_id,
+                entity->vehicle->vehicle->id as vehicle_id,
                 LATEST_BY_OFFSET(entity->vehicle->position->latitude) as latitude,
                 LATEST_BY_OFFSET(entity->vehicle->position->longitude) as longitude,
                 LATEST_BY_OFFSET(entity->vehicle->current_status) as current_status,
@@ -12,5 +12,5 @@ CREATE TABLE VehiclesLatest
                 LATEST_BY_OFFSET(entity->vehicle->position->bearing) as bearing,
                 LATEST_BY_OFFSET(entity->vehicle->position->speed) as speed
         FROM VehicleEntitiesExploded 
-        GROUP BY entity->id 
+        GROUP BY entity->vehicle->vehicle->id 
 EMIT CHANGES;
