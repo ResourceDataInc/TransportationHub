@@ -61,6 +61,11 @@
             <version>3.24.3</version>
         </dependency>
         <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.7.5</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>RELEASE</version>
@@ -84,7 +89,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.resourcedata.transportationhub.realtime.DataStreamer</mainClass>
+                            <mainClass>com.resourcedata.transportationhub.realtime.GtfsStreamer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
