@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-APPID=***REMOVED***
+APPID=<enter your app id here>
 BOOTSTRAP_SERVERS=broker:29092
 SCHEMA_REGISTRY=http://schema-registry:8081
 KSQL_DIR=ksql_trimet
