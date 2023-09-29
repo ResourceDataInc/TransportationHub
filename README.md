@@ -355,13 +355,13 @@ CREATE STREAM VehicleStopConnectorExp
 EMIT CHANGES;
 ```
 
-In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js#L13) can be seen in the visualizer app.
+In contrast, a table is a key value store that contains the latest state for any given key.  In our example below, a vehicle id `entity->vehicle->vehicle->id` is the key, and for every vehicle, we are showing the latest state of various properties of the vehicle in this table.  The query `SELECT * FROM VEHICLESLATEST` will then show this latest state.  In fact this [exact query](./RealtimeStreaming/client-app/src/api/VehiclesApi.js#L13) can be seen in the visualizer app.
 
 ```sql
 CREATE TABLE VehiclesLatest
   WITH (KAFKA_TOPIC='VehiclesLatest', VALUE_FORMAT='PROTOBUF')
     AS SELECT
-                entity->id as vehicle_id,
+                entity->vehicle->vehicle->id as vehicle_id,
                 LATEST_BY_OFFSET(entity->vehicle->position->latitude) as latitude,
                 LATEST_BY_OFFSET(entity->vehicle->position->longitude) as longitude,
                 LATEST_BY_OFFSET(entity->vehicle->current_status) as current_status,
@@ -372,7 +372,7 @@ CREATE TABLE VehiclesLatest
                 LATEST_BY_OFFSET(entity->vehicle->position->bearing) as bearing,
                 LATEST_BY_OFFSET(entity->vehicle->position->speed) as speed
         FROM VehicleEntitiesExploded
-        GROUP BY entity->id
+        GROUP BY entity->vehicle->vehicle->id
 EMIT CHANGES;
 ```
 An in-depth discussion showing the difference between streams and tables is given by [confluent](https://www.confluent.io/blog/kafka-streams-tables-part-1-event-streaming/).
