@@ -1,5 +1,11 @@
+{{
+    config(
+        materialized='incremental'
+    )
+}}
+
 with stop_times as (
-    select
+    select distinct
         to_timestamp(record_content:ENTITY:VEHICLE:TIMESTAMP) as timestamp
         ,try_to_number(record_content:ENTITY:VEHICLE:TRIP:TRIP_ID::text) as trip_id
         ,try_to_number(record_content:ENTITY:VEHICLE:CURRENT_STOP_SEQUENCE::text) as current_stop_sequence
@@ -7,7 +13,7 @@ with stop_times as (
         ,try_to_number(record_content:ENTITY:VEHICLE:STOP_ID::text) as stop_id
     from {{ source('transport_hub', 'VEHICLEENTITIESEXPLODED') }} v
 )
-,trip_delays as (select 
+,trip_delays as (select distinct
     to_timestamp(t.record_content:TS) as timestamp
     ,try_to_number(t.record_content:TRIP_ID::text) as trip_id
     ,try_to_number(t.record_content:STOP_TIME_UPDATE:STOP_SEQUENCE::text) as trip_stop_sequence
@@ -16,7 +22,12 @@ from {{ source('transport_hub', 'TRIPENTITIESEXPLODEDSTOPSEXPLODED') }} t
 )
 select distinct
     row_number() over (order by t.trip_id, t.timestamp) as trip_delay_id
-    ,t.timestamp
+    ,year(to_date(t.timestamp)) as year
+    ,month(to_date(t.timestamp)) as month
+    ,day(to_date(t.timestamp)) as day
+    ,dayname(to_date(t.timestamp)) as day_of_week
+    ,to_time(t.timestamp) as time
+    ,t.timestamp as timestamp
     ,t.trip_id
     ,t.trip_stop_sequence
     ,s.stop_id as stop_location_id
@@ -26,3 +37,7 @@ join trip_delays t on
     s.timestamp = t.timestamp and
     s.trip_id = t.trip_id and
     s.current_stop_sequence = t.trip_stop_sequence
+
+{% if is_incremental() %}
+    where t.timestamp >= (select max(timestamp) from {{ this }})
+{% endif %}
