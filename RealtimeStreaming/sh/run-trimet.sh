@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-APPID=1C3939B80D87BDB332D2D6318
+APPID=<enter your app id here>
 BOOTSTRAP_SERVERS=broker:29092
 SCHEMA_REGISTRY=http://schema-registry:8081
 KSQL_DIR=ksql_trimet
