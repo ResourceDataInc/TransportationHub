@@ -47,7 +47,7 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 The realtime component of the pipeline is launched from a linux shell prompt as follows:
 ```
 cd RealtimeStreaming
-source sh/run.sh
+source sh/run-trimet.sh
 do_all
 ```
 If you want to run select sections of the startup sequence, look in `sh/run.sh`.
@@ -184,6 +184,38 @@ message schema {
 
 ### datastreamer
 
+
+The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
+
+```
+Usage: gtfs-streamer [-fhV] -b=<bootstrapServers> -d=<dataClass>
+                     [-n=<numLoops>] -r=<schemaRegistry> -t=<topic> -u=<url>
+                     [-w=<waitTimeMs>] [-p=<String=String>[,
+                     <String=String>...]]...
+streams gtfs realtime data to a confluent kafka broker and schema registry
+  -b, --bootstrap-servers=<bootstrapServers>
+                        hostname:port
+  -d, --data-class=<dataClass>
+                        Valid values: ResultSetAlert, ResultSetRoute,
+                          ResultSetVehicle, GtfsRealtime
+  -f                    file writes of each request payload requested, default
+                          is false
+  -h, --help            Show this help message and exit.
+  -n=<numLoops>         number of get requests to make, -1 (default) for
+                          infinite (stream)
+  -p, --get-parameters=<String=String>[,<String=String>...]
+                        additional parameters for the get request in form
+                          key1=value1,key2=value2,...
+  -r, --schema-registry=<schemaRegistry>
+                        http://hostname:port
+  -t, --topic=<topic>   topic to stream data to
+  -u, --url=<url>       url https://<hostname>/<ext>/<servicename>
+  -V, --version         Print version information and exit.
+  -w, --wait-time=<waitTimeMs>
+                        wait time in ms between successive get requests,
+                          default (1000)
+```
+
 All the custom code written is in the `com.resourcedata.transportationhub.realtime` package.  The `com.google.transit.realtime` package contains POJO's that are used to send Json with JsonSchema.  An example is shown below:
 
 ```java
@@ -264,17 +296,16 @@ Generated sources are produced from protobuf using the respective maven plugin. 
             </plugin>
 ```
 
-The custom java application was written to consume data from the selected trimet api feed and push to kafka. The application is driven by command line arguments.
 
 The java code first gets a json or protobuf data object using a supplied `appID` request parameter in its http request.  The returned payload is returned as an array of bytes. If the user requests to write the payload to a file, it will be written.  Thereafter, the message is deserialized as a `FeedMessage` type object in the protobuf case defined in the gtfs protobuf [specification](https://developers.google.com/transit/gtfs-realtime/reference).  In the json case, the message is deserialized using the various classes defined in `com.google.transit.realtime`.  In either case, the use of the Java Stream package makes the logic more functional.  In addition, the use of generics unifies the final steps of stream processing as show below:
 
 ```java
-    public static <T> void streamData(Stream<T> stream, Properties properties, CliArgs cliArgs){
-        try(Producer<String, T> producer = new KafkaProducer<>(properties)){
-            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, cliArgs);
-            stream.forEach(dataStreamer::produce);
-        }
+public static <T> void streamData(Stream<T> stream, Properties properties, String topic){
+    try(Producer<String, T> producer = new KafkaProducer<>(properties)){
+        final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, topic);
+        stream.forEach(dataStreamer::produce);
     }
+}
 ```
 
 Once the protobuf payload has been deserialized, it is then pushed by the `Producer` to kafka.  Note the configuration parameters `BOOTSTRAP_SERVERS_CONFIG` and `schema.registry.url` in `producer.properties`.  These are the locations of the broker and schema registry.  The port for the broker is set to the listener port `29092` which is different than the host network port `9092`.  If `9092` is used, communication with the broker will not occur.  
