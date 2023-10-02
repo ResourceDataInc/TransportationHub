@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
+APPID=<enter your app id here>
+BOOTSTRAP_SERVERS=broker:29092
+SCHEMA_REGISTRY=http://schema-registry:8081
+KSQL_DIR=ksql_trimet
+
 function startup_containers(){
     docker compose up -d
 }
 
-function post_static_data(){ 
+function set_short_term_broker_data_retention(){
     docker exec broker kafka-configs --bootstrap-server broker:9092 -entity-type brokers --entity-default --alter --add-config log.retention.ms=36000000
+}
+
+function post_static_data(){ 
     docker exec datastreamer wget https://developer.trimet.org/schedule/gtfs.zip
     docker exec datastreamer unzip gtfs.zip -d gtfs
     docker cp py/gtfs_script.py datastreamer:/javafiles
@@ -24,17 +32,18 @@ function post_static_data(){
 }
 
 
-function stream_dynamic_data(){
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 vehicles ResultSetVehicle 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/v2 alerts ResultSetAlert 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 routeConfig ResultSetRoute 1000 false 1 
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/gtfs VehiclePositions GtfsRealtime 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 TripUpdate GtfsRealtime 1000 false -1 &
-    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar https://developer.trimet.org ws/V1 FeedSpecAlerts GtfsRealtime 1000 false -1 &
+function stream_dynamic_data {
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/gtfs/VehiclePositions --get-parameters appID=$APPID --data-class GtfsRealtime --topic VehiclePositions &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/V1/TripUpdate --get-parameters appID=$APPID --data-class GtfsRealtime  --topic TripUpdate &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/V1/FeedSpecAlerts --get-parameters appID=$APPID --data-class GtfsRealtime --topic FeedSpecAlerts &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/v2/vehicles --get-parameters appID=$APPID --data-class ResultSetVehicle --topic vehicles &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/v2/alerts --get-parameters appID=$APPID --data-class ResultSetAlert --topic alerts &
+    docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url https://developer.trimet.org/ws/V1/routeConfig --get-parameters appID=${APPID},dir=yes,stops=yes,json=true --data-class ResultSetRoute -n 1 --topic routeConfig
 }
 
+
 function setup_ksql(){
-    for f in ksql/*.sql; do
+    for f in ${KSQL_DIR}/*.sql; do
     docker cp $f ksqldb-cli:/home/appuser
     rawfile=`basename $f`
     docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f $rawfile
@@ -63,7 +72,4 @@ function do_all(){
     stream_dynamic_data
     sleep 10
     setup_ksql
-    connect_snowflake_continuous
-    connect_snowflake_oneshot
-    connect_s3
 }

@@ -22,48 +22,45 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
-import java.util.Properties;
+import java.util.Map;
+import java.util.Objects;
 
 public class DataGenerator {
-    private final Properties properties;
-    private final CliArgs cliArgs;
+    private final GtfsStreamer cli;
     private int numLoops;
     private final HttpGet request;
     private final LinkedList<Route> existingRoutes;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public DataGenerator(CliArgs cliArgs, Properties properties){
-        this.cliArgs = cliArgs;
-        this.numLoops = cliArgs.numLoops;
-        this.properties = properties;
+    public DataGenerator(GtfsStreamer cli){
+        this.cli = cli;
+        this.numLoops = cli.numLoops;
         this.request = setupRequest();
         this.existingRoutes = new LinkedList<>();
     }
     private HttpGet setupRequest(){
-        HttpGet httpGet = new HttpGet(cliArgs.link);
+        HttpGet httpGet = new HttpGet(cli.url.link);
         try {
             URIBuilder uriBuilder = new URIBuilder(httpGet.getURI());
             URI uri = null;
-            if(cliArgs.dataClass.equals("ResultSetRoute")){
-                uri = uriBuilder
-                        .addParameter("appID", properties.getProperty("appID"))
-                        .addParameter("dir","yes")
-                        .addParameter("stops","yes")
-                        .addParameter("json", "true")
-                        .build();
+            if(cli.getParameters != null) {
+                for (Map.Entry<String, String> entry : cli.getParameters.entrySet()) {
+                    uriBuilder = uriBuilder.addParameter(entry.getKey(), entry.getValue());
+                }
             }
-            else {
-                uri = uriBuilder
-                        .addParameter("appID", properties.getProperty("appID"))
-                        .build();
-            }
+            uri = uriBuilder.build();
             httpGet.setURI(uri);
         } catch (URISyntaxException e) {
             e.printStackTrace(System.err);
             System.exit(1);
         }
-        if(cliArgs.dataClass.equals("GtfsRealtime")) httpGet.setHeader("Content-Type", "application/x-protobuf");
+        if(Objects.requireNonNull(cli.dataClass) == DataClass.GtfsRealtime) httpGet.setHeader("Content-Type", "application/x-protobuf");
         else httpGet.setHeader("Content-Type", "application/json");
         return httpGet;
+    }
+    static class UnsuccessfulHttpRequestException extends RuntimeException {
+        public UnsuccessfulHttpRequestException(String errorMessage){
+            super(errorMessage);
+        }
     }
     private byte[] getHttpResponse() throws IOException {
         byte[] result = null;
@@ -71,10 +68,15 @@ public class DataGenerator {
             CloseableHttpResponse response = client.execute(this.request);
             StatusLine statusLine = response.getStatusLine();
             final int statusCode = statusLine.getStatusCode();
-            assert statusCode == HttpStatus.SC_OK;
+            if(statusCode != HttpStatus.SC_OK) throw new UnsuccessfulHttpRequestException("request not successful with code: " + statusCode);
             result = EntityUtils.toByteArray(response.getEntity());
             return result;
-        } catch (ConnectionClosedException err){
+        }
+        catch (UnsuccessfulHttpRequestException r) {
+            r.printStackTrace(System.err);
+            System.exit(1);
+        }
+        catch (ConnectionClosedException err){
             err.printStackTrace(System.err);
         }
         return result;
@@ -82,12 +84,12 @@ public class DataGenerator {
     private byte[] processResponse(){
         byte[] response = null;
         try {
-            if(cliArgs.numLoops == -1 || this.numLoops > 0) {
+            if(cli.numLoops == -1 || this.numLoops > 0) {
                 response = getHttpResponse();
-                if (cliArgs.fileWriteRequested)
-                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cliArgs.name + "-"+ this.numLoops +".bin"), response);
-                Thread.sleep(cliArgs.waitTimeMs);
-                if(cliArgs.numLoops != -1) this.numLoops--;
+                if (cli.fileWriteRequested)
+                    FileUtils.writeByteArrayToFile(new File("gtfs-rt-" + cli.url.service+ "-"+ this.numLoops +".bin"), response);
+                Thread.sleep(cli.waitTimeMs);
+                if(cli.numLoops != -1) this.numLoops--;
             } else {
                 System.exit(0);
             }
