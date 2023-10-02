@@ -8,8 +8,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -33,17 +31,12 @@ public class Admin {
             e.printStackTrace(System.err);
         }
     }
-    public static Properties buildProperties(CliArgs cliArgs){
+    public static Properties buildProperties(GtfsStreamer gtfsStreamer){
         Properties properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try(InputStream input = classLoader.getResourceAsStream("producer.properties")){
-            properties.load(input);
-        } catch (IOException ioError){
-            ioError.printStackTrace(System.err);
-            System.exit(1);
-        }
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, gtfsStreamer.bootstrapServers);
+        properties.put("schema.registry.url", gtfsStreamer.schemaRegistry);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        if(cliArgs.dataClass.equals("GtfsRealtime")) {
+        if (Objects.requireNonNull(gtfsStreamer.dataClass) == DataClass.GtfsRealtime) {
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
         } else {
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class);

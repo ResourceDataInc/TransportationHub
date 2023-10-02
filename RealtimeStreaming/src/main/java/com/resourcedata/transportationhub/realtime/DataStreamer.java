@@ -1,8 +1,4 @@
 package com.resourcedata.transportationhub.realtime;
-import com.google.transit.realtime.GtfsRealtime.FeedMessage;
-import com.google.transit.realtime.ResultSetAlert;
-import com.google.transit.realtime.ResultSetRoute.RouteSet.Route;
-import com.google.transit.realtime.ResultSetVehicle;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -13,15 +9,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 public class DataStreamer<T> implements Closeable {
-    private final CliArgs cliArgs;
+    private final String topic;
     private final Producer<String, T> producer;
-    public DataStreamer(final Producer<String, T> producer, final CliArgs cliArgs){
+    public DataStreamer(final Producer<String, T> producer, final String topic){
         this.producer = producer;
-        this.cliArgs = cliArgs;
+        this.topic = topic;
     }
     public void produce(T message){
         if(message != null) {
-            final ProducerRecord<String, T> producerRecord = new ProducerRecord<>(cliArgs.name, cliArgs.name, message);
+            final ProducerRecord<String, T> producerRecord = new ProducerRecord<>(topic, topic, message);
             try {
                 producer.send(producerRecord, (recordMetadata, exception) -> {
 
@@ -37,47 +33,11 @@ public class DataStreamer<T> implements Closeable {
         }
     }
     public void close() { producer.close(); }
-    public static <T> void streamData(Stream<T> stream, Properties properties, CliArgs cliArgs){
+    public static <T> void streamData(Stream<T> stream, Properties properties, String topic){
         try(Producer<String, T> producer = new KafkaProducer<>(properties)){
-            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, cliArgs);
+            final DataStreamer<T> dataStreamer = new DataStreamer<>(producer, topic);
             stream.forEach(dataStreamer::produce);
         }
     }
-    public static void main(String[] args){
-        CliArgs cliArgs = new CliArgs();
-        cliArgs.baseUrl = args[0];
-        cliArgs.ext = args[1];
-        cliArgs.name = args[2];
-        cliArgs.dataClass = args[3];
-        cliArgs.waitTimeMs = Integer.parseInt(args[4]);
-        cliArgs.fileWriteRequested = Boolean.parseBoolean(args[5]);
-        cliArgs.numLoops = Integer.parseInt(args[6]);
-        cliArgs.makeLink();
 
-        Properties properties = Admin.buildProperties(cliArgs);
-        DataGenerator dataGenerator = new DataGenerator(cliArgs, properties);
-        Admin.createTopic(properties, cliArgs.name);
-
-        switch(cliArgs.dataClass){
-            case "GtfsRealtime":
-                Stream<FeedMessage> protoStream = Stream.generate(dataGenerator::generateProto);
-                streamData(protoStream, properties, cliArgs);
-                break;
-            case "ResultSetVehicle":
-                Stream<ResultSetVehicle> jsonVehicleStream = Stream.generate(dataGenerator::generateResultSetVehicle);
-                streamData(jsonVehicleStream, properties, cliArgs);
-                break;
-            case "ResultSetAlert":
-                Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
-                streamData(jsonAlertStream, properties, cliArgs);
-                break;
-            case "ResultSetRoute":
-                Stream<Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
-                streamData(jsonRouteStream, properties, cliArgs);
-                break;
-            default:
-                System.err.println("No such class "+cliArgs.dataClass+" defined");
-                break;
-        }
-    }
 }
