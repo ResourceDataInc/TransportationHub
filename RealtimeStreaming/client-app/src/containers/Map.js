@@ -5,6 +5,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { VehicleMarker } from '../components/VehicleMarker';
 import { StopMarker } from '../components/StopMarker';
 import { RouteLine } from '../components/RouteLine';
+import { OfficeMarker } from '../components/OfficeMarker';
 import { SetMapProperties } from '../components/SetMapProperties';
 import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
@@ -73,6 +74,7 @@ export const Map = () => {
                     })}
 
                     <RouteLine/>
+                    <OfficeMarker/>
                 </MapContainer>
             </div>
         </div>
