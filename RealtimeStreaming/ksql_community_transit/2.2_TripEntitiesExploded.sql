@@ -1,5 +1,1 @@
-CREATE STREAM TripEntitiesExploded
-  WITH (KAFKA_TOPIC='TripEntitiesExploded', VALUE_FORMAT='PROTOBUF')
-    AS SELECT EXPLODE(entity) as entity
-        FROM Trips 
-EMIT CHANGES;
+../ksql_trimet/2.2_TripEntitiesExploded.sql

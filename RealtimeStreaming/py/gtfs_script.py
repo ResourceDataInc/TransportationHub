@@ -4,12 +4,18 @@ import pandas as pd
 from pandas import DataFrame
 from typing import List, Set, Any
 
-STOPS = pd.read_csv("gtfs/stops.txt",dtype={"stop_id": str})
-TRIPS = pd.read_csv("gtfs/trips.txt")
-STOP_TIMES = pd.read_csv("gtfs/stop_times.txt", dtype={"stop_id":str})
-SHAPES = pd.read_csv("gtfs/shapes.txt")
-CALENDAR_DATES = pd.read_csv("gtfs/calendar_dates.txt")
-CALENDAR = pd.read_csv("gtfs/calendar.txt")
+STOPS_COLS = {"stop_id": str, "stop_lat": float, "stop_lon": float, "stop_name": str}
+STOPS = pd.read_csv("gtfs/stops.txt",usecols = STOPS_COLS.keys(), dtype=STOPS_COLS)
+TRIPS_COLS = {"route_id": str,"trip_id": str, "service_id": str, "direction_id": int, "shape_id": str}
+TRIPS = pd.read_csv("gtfs/trips.txt",usecols=TRIPS_COLS.keys(), dtype=TRIPS_COLS)
+STOP_TIMES_COLS = {"trip_id": str, "stop_id": str, "stop_sequence": int}
+STOP_TIMES = pd.read_csv("gtfs/stop_times.txt", usecols=STOP_TIMES_COLS.keys(), dtype=STOP_TIMES_COLS)
+SHAPES_COLS = {"shape_id": str, "shape_pt_lat": float, "shape_pt_lon": float}
+SHAPES = pd.read_csv("gtfs/shapes.txt", )
+CALENDAR_DATES_COLS = {"service_id": str, "date": int, "exception_type": int} 
+CALENDAR_DATES = pd.read_csv("gtfs/calendar_dates.txt", usecols=CALENDAR_DATES_COLS.keys(), dtype=CALENDAR_DATES_COLS)
+CALENDAR_COLS = {"service_id": str, "monday": int, "tuesday": int, "wednesday": int, "thursday": int, "friday": int, "saturday": int, "sunday": int, "start_date": int, "end_date": int}
+CALENDAR = pd.read_csv("gtfs/calendar.txt", usecols=CALENDAR_COLS.keys(), dtype=CALENDAR_COLS)
 
 def remove_others(df: DataFrame, columns: Set[Any]) -> DataFrame:
     cols_total: Set[Any] = set(df.columns)
