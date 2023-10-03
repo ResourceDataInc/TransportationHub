@@ -40,7 +40,7 @@ function stream_dynamic_data {
 
 function setup_ksql(){
     for f in ${KSQL_DIR}/*.sql; do
-    docker cp $f ksqldb-cli:/home/appuser
+    docker cp -L $f ksqldb-cli:/home/appuser
     rawfile=`basename $f`
     docker exec ksqldb-cli ksql http://ksqldb-server:8088 -f $rawfile
     done
