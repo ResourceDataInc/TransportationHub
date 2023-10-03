@@ -1,7 +1,1 @@
-CREATE SOURCE TABLE RoutePathsTable (
-shape_id STRING PRIMARY KEY,
-route_path ARRAY<ARRAY<DOUBLE>>
-)
-WITH (
-    KAFKA_TOPIC = 'Shapes', KEY_FORMAT='KAFKA', VALUE_FORMAT='JSON'
-);
+../ksql_trimet/1.6_RoutePathsTable.sql
