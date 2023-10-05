@@ -145,15 +145,14 @@ services:
       - broker
       - schema-registry
     build:
-      context: .
-      dockerfile: dockerfile_datastreamer
+      context: ./java/DataStreamer
     command: ["tail", "-f", "/dev/null"]
     volumes:
       - shared-data:/shared-data
       
   react-js-ui:
     build:
-      context: ./client-app
+      context: ./js/client-app
     links:
       - ksqldb-cli
     environment:
