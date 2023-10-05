@@ -2,7 +2,7 @@
 
 BOOTSTRAP_SERVERS=broker:29092
 SCHEMA_REGISTRY=http://schema-registry:8081
-KSQL_DIR=ksql_community_transit
+KSQL_DIR=ksql/community_transit
 
 function startup_containers(){
     docker compose up -d
