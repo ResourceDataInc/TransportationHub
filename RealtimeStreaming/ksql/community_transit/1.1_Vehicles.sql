@@ -1,1 +1,1 @@
-../ksql_trimet/1.1_Vehicles.sql
+../trimet/1.1_Vehicles.sql

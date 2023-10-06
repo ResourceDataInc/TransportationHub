@@ -1,1 +1,1 @@
-../ksql_trimet/2.3_AlertEntitiesExploded.sql
+../trimet/2.3_AlertEntitiesExploded.sql
