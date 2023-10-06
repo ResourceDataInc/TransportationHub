@@ -1,1 +1,1 @@
-../ksql_trimet/1.4_StopsTable.sql
+../trimet/1.4_StopsTable.sql

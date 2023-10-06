@@ -1,1 +1,1 @@
-../ksql_trimet/2.1_VehicleEntitiesExploded.sql
+../trimet/2.1_VehicleEntitiesExploded.sql

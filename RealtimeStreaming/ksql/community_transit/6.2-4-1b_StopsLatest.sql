@@ -1,1 +1,1 @@
-../ksql_trimet/6.2-4-1b_StopsLatest.sql
+../trimet/6.2-4-1b_StopsLatest.sql

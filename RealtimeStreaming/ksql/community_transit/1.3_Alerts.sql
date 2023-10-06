@@ -1,1 +1,1 @@
-../ksql_trimet/1.3_Alerts.sql
+../trimet/1.3_Alerts.sql

@@ -1,1 +1,1 @@
-../ksql_trimet/4.4-1_VehicleStopConnectorExp.sql
+../trimet/4.4-1_VehicleStopConnectorExp.sql
