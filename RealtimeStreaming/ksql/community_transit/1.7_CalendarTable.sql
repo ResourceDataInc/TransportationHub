@@ -1,1 +1,1 @@
-../ksql_trimet/1.7_CalendarTable.sql
+../trimet/1.7_CalendarTable.sql

@@ -1,1 +1,1 @@
-../ksql_trimet/2.2_TripEntitiesExploded.sql
+../trimet/2.2_TripEntitiesExploded.sql

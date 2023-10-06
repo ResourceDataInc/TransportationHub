@@ -1,1 +1,1 @@
-../ksql_trimet/1.6_RoutePathsTable.sql
+../trimet/1.6_RoutePathsTable.sql

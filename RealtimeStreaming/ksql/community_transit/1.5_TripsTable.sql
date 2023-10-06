@@ -1,1 +1,1 @@
-../ksql_trimet/1.5_TripsTable.sql
+../trimet/1.5_TripsTable.sql
