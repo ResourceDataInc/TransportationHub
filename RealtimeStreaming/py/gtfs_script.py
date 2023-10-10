@@ -16,6 +16,8 @@ CALENDAR_DATES_COLS = {"service_id": str, "date": int, "exception_type": int}
 CALENDAR_DATES = pd.read_csv("gtfs/calendar_dates.txt", usecols=CALENDAR_DATES_COLS.keys(), dtype=CALENDAR_DATES_COLS)
 CALENDAR_COLS = {"service_id": str, "monday": int, "tuesday": int, "wednesday": int, "thursday": int, "friday": int, "saturday": int, "sunday": int, "start_date": int, "end_date": int}
 CALENDAR = pd.read_csv("gtfs/calendar.txt", usecols=CALENDAR_COLS.keys(), dtype=CALENDAR_COLS)
+ROUTES_COLS = {"route_id": str, "route_long_name": str, "route_color": str, "route_text_color": str}
+ROUTES = pd.read_csv("gtfs/routes.txt", usecols=ROUTES_COLS.keys(), dtype=ROUTES_COLS)
 
 def remove_others(df: DataFrame, columns: Set[Any]) -> DataFrame:
     cols_total: Set[Any] = set(df.columns)
@@ -57,6 +59,7 @@ def make_route_data_json():
     shapes_keep = remove_others(SHAPES, {"shape_id","shape_pt_lat","shape_pt_lon"})
     trips_keep.drop_duplicates(keep="first", inplace=True)
     make_shapes_file(shapes_keep, "shapes.kafka.txt")
+    write_to_json(ROUTES, "routes.kafka.txt") 
     write_to_json(trips_keep, "trips.kafka.txt") 
     write_to_json(CALENDAR, "calendar.kafka.txt")
     write_to_json(CALENDAR_DATES, "calendar_dates.kafka.txt")
