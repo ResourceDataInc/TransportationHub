@@ -8,6 +8,8 @@ CREATE STREAM StopEventsAnnotated
         v.stop_lat as stop_lat,
         v.stop_lon as stop_lon,
         v.stop_name as stop_name,
+        v.route_id as route_id,
+        v.direction_id as direction_id,
         t.stop_time_update as stop_time_update,
         t.ts as ts
     FROM VehicleStopConnectorExp v

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { RouteInputs } from '../components/RouteInputs';
 import { Map } from './Map';
 import { Cards } from './Cards';
 import { useSelector } from 'react-redux';
 import { selectSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { selectSelectedStop } from '../store/stops/stopsSlice';
+import { RouteInputs } from '../components/RouteInputs';
 
 export const Main = () => {
     const vehicleCard = useSelector(selectSelectedVehicle);
@@ -24,9 +24,8 @@ export const Main = () => {
             <div className='row'>
                 <div className={displayCard ? 'col-9' : 'col-12'}>
                     <RouteInputs/>
-                </div>   
+                </div>
             </div>
-            
             <div className='row'>
                 <div className={displayCard ? 'col-9' : 'col-12'}>
                     <Map/>

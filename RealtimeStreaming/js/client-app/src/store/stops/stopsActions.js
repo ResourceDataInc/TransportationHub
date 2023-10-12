@@ -3,9 +3,9 @@ import { StopsApi } from "../../api/StopsApi";
 
 export const getAllStops = createAsyncThunk(
     'stops/getAllStops',
-    async () => {
+    async (request) => {
         const api = new StopsApi();
-        const data = await api.getAllStops();
+        const data = await api.getAllStops(request);
         return data;
     }
 );
