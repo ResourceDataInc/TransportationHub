@@ -86,10 +86,6 @@ export class RoutesApi {
 
     async getShapeId(serviceIds) {
         const serviceIdsString = this.serviceIdsString(serviceIds)
-
-        console.log(`route id = ${this.routeId}`);
-        console.log(`direction id = ${this.directionId}`);
-
         const response = await fetch(`${this.#root}`, {
             method: 'POST',
             headers: {

@@ -3,42 +3,20 @@ export class VehiclesApi {
 
     #root = 'http://localhost:8088/query';
 
-    async getVehicles() {
+    async getVehicles(request) {
         const response = await fetch(`${this.#root}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/vnd.ksql.v1+json',
             },
             body: JSON.stringify({
-                "ksql": "SELECT * FROM VEHICLESLATEST;",
+                "ksql": `SELECT * FROM VEHICLESLATEST WHERE ROUTE_ID = '${request.routeId}' AND DIRECTION_ID = ${request.directionId};`,
                 "streamsProperties": {}
             }),
         });
 
         const json = await response.json();
-        console.log(json);
-        
-        const header = json.shift();
-        //console.log(header);
 
-        return json;
-    }
-
-    async getVehiclesOnRoute(routeId) {
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT * FROM VEHICLESLATEST WHERE ROUTE_ID = '${routeId}';`,
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        console.log(json);
-        
         const header = json.shift();
         //console.log(header);
 
