@@ -14,13 +14,15 @@ const options = {
                     5,                  // [4] CURRENT_STOP_SEQUENCE: BigInt
                     '8374',             // [5] STOP_ID: String
                     '90',               // [6] ROUTE_ID: String
-                    1694712350          // [7] TIMESTMP: BigInt
+                    '0',                // [7] DIRECTION_ID: BigInt
+                    1694712350,         // [8] TIMESTAMP: BigInt
+                    35.2,               // [9] BEARING: Double
+                    25.2,               // [10] SPEED: Double
                 ],
             },
         }],
         selectedVehicleId: null,
         selectedVehicle: null,
-        selectedRouteId: null,
     },
     reducers: {
         setSelectedVehicleId(state, action) {
@@ -41,29 +43,14 @@ const options = {
             state.selectedVehicleId = null;
             state.selectedVehicle = null;
         },
-
-        setSelectedRouteId(state, action) {
-            state.selectedRouteId = action.payload;
-        },
-
-        clearSelectedRouteId(state) {
-            state.selectedRouteId = null;
-        },
     },
     extraReducers: (builder) => {
         builder.addCase(getVehicles.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
                 return;
             };
-            
-            if (state.selectedRouteId !== null){
-                state.vehicles = action.payload.filter(x => x.row.columns[6] === state.selectedRouteId);
-                return;
-            };
 
             state.vehicles = action.payload;
-
-            console.log(`There are ${state.vehicles.length} buses in the state`);
         });
     },
 };
@@ -78,6 +65,4 @@ export const {
     setSelectedVehicleId,
     setSelectedVehicle,
     clearSelectedVehicle,
-    setSelectedRouteId,
-    clearSelectedRouteId,
 } = vehiclesSlice.actions;

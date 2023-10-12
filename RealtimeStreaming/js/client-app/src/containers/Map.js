@@ -1,5 +1,5 @@
 import 'leaflet/dist/leaflet.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { VehicleMarker } from '../components/VehicleMarker';
@@ -10,8 +10,11 @@ import { SetMapProperties } from '../components/SetMapProperties';
 import { selectVehicles, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { getVehicles } from '../store/vehicles/vehiclesActions';
 import { selectStops, setSelectedStop } from '../store/stops/stopsSlice';
+import { selectRouteId, selectDirectionId } from '../store/selection/selectionSlice'
 import Vehicle from '../models/vehicle';
 import Stop from '../models/stop';
+import { LatLng } from 'leaflet';
+import store from '../store/store'
 
 // Leaflet Default Marker Setup
 import L from 'leaflet';
@@ -26,23 +29,29 @@ export const Map = () => {
     const dispatch = useDispatch();
     const vehicles = useSelector(selectVehicles);
     const stops = useSelector(selectStops);
-
+    const routeId =  useSelector(selectRouteId);
+    const directionId = useSelector(selectDirectionId);
     useEffect(() => {
-        const postionChangeInterval = setInterval(() => {
-            dispatch(getVehicles());
+        const request = {
+            routeId: routeId,
+            directionId: directionId,
+        }
+        const positionChangeInterval = setInterval(() => {
+            dispatch(getVehicles(request));
             dispatch(setSelectedVehicle());
             dispatch(setSelectedStop());
         }, 1000);
 
-        return () => clearInterval(postionChangeInterval);
-    }, []); 
+        return () => clearInterval(positionChangeInterval);
+    }, [dispatch, routeId, directionId]);
 
     return (
         <div className='row'>
             <div className='col-12'>
                 <MapContainer
-                    center={[45.517, -122.683]}
-                    zoom={14}
+                    id="main-map"
+                    center={[47.879, -122.238]}
+                    zoom={10}
                     scrollWheelZoom={true}
                     className='map-container mx-auto border border-dark'
                 >
