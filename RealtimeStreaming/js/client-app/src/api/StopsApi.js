@@ -1,7 +1,6 @@
 import sqlQuery  from './GeneralApi';
 
 export class StopsApi {
-    constructor() {}
 
     async getAllStops(request) {
         let ksql;
