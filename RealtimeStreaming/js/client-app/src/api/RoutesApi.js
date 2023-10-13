@@ -1,4 +1,5 @@
 import { yyyymmddFormat, weekdayName } from "../util/dateUtil";
+import sqlQuery from "./GeneralApi";
 
 export class RoutesApi {
     constructor(routeId, directionId) {
@@ -18,21 +19,8 @@ export class RoutesApi {
 
     async getServiceIdsFromCalendarDatesTable() {
         const date = yyyymmddFormat();
-
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT * FROM CALENDARDATESTABLE WHERE DATE = ${date};`,
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        json.shift();
-        
+        const ksql = `SELECT * FROM CALENDARDATESTABLE WHERE DATE = ${date};`;
+        const json = await sqlQuery(ksql);
         const serviceIds = [];
         for (let record of json) {
             const serviceId = record.row.columns[1];
@@ -45,27 +33,13 @@ export class RoutesApi {
     async getServiceIdsFromCalendarTable() {
         const date = yyyymmddFormat();
         const weekday = weekdayName();
-
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT service_id FROM CalendarTable WHERE ${date} BETWEEN start_date AND end_date AND ${weekday} = 1;`,
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        json.shift();
-        
+        const ksql =  `SELECT service_id FROM CalendarTable WHERE ${date} BETWEEN start_date AND end_date AND ${weekday} = 1;`;
+        const json = await sqlQuery(ksql);
         const serviceIds = [];
         for (let record of json) {
             const serviceId = record.row.columns[0];
             serviceIds.push(serviceId);
         };
-        
         return serviceIds;
     } 
 
@@ -86,20 +60,8 @@ export class RoutesApi {
 
     async getShapeId(serviceIds) {
         const serviceIdsString = this.serviceIdsString(serviceIds)
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT * FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND ${serviceIdsString};`,
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        json.shift();
-
+        const ksql = `SELECT * FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND ${serviceIdsString};`;
+        const json = await sqlQuery(ksql);
         const routeIndex = json.findIndex(x => x['row']['columns'][1] === this.routeId);
         const shapeId = json[routeIndex]['row']['columns'][4];
         
@@ -107,20 +69,8 @@ export class RoutesApi {
     }
 
     async getRoutePath(shapeId) {
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT * FROM  ROUTEPATHSTABLE WHERE SHAPE_ID = '${shapeId}';`,
-                "streamsProperties": {}
-            }),
-        });
-        
-        const json = await response.json();
-        json.shift();
-        
+        const ksql = `SELECT * FROM  ROUTEPATHSTABLE WHERE SHAPE_ID = '${shapeId}';`;
+        const json = await sqlQuery(ksql);
         const routePath = json[0]['row']['columns'][1];
 
         return routePath;
