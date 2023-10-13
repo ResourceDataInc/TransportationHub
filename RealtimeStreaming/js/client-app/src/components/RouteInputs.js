@@ -103,8 +103,8 @@ export const RouteInputs = () => {
                     name='directionIdInput'
                     form='interactive'
                 >
-                <option value='0'selected>inbound</option>
-                <option value='1'>outbound</option>
+                <option value='0'selected>0</option>
+                <option value='1'>1</option>
                 </select>
             </form>
         </div>

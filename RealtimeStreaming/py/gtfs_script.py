@@ -45,11 +45,7 @@ def make_stops_data_json():
     df.drop(columns=["trip_id"], inplace=True)
     df.drop_duplicates(keep="first", inplace=True)
     df = df.reindex(sorted(df.columns), axis=1)
-    with open("stops.kafka.txt","w") as f:
-        for _, row in df.iterrows():
-            stop_id=row["stop_id"]
-            row.drop(labels=["stop_id"], inplace=True)
-            f.write(stop_id+"\t"+row.to_json()+"\n")
+    write_to_json(df, "stops.kafka.txt")
 
 def make_shapes_file(df: DataFrame, shape_file_path: str) -> DataFrame:
     df["combined_coords"]=df[["shape_pt_lat","shape_pt_lon"]].values.tolist()

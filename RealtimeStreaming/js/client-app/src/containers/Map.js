@@ -74,7 +74,7 @@ export const Map = () => {
                         const stopInstance = new Stop(stop);
                         return (
                             <StopMarker
-                                key={`${stop.row.columns[0]}`}
+                                key={`stop-${stopInstance.index}`}
                                 stop={stopInstance}
                             />
                         )
