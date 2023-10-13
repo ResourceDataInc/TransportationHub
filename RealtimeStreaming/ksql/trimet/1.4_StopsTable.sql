@@ -1,7 +1,8 @@
 CREATE SOURCE TABLE StopsTable (
-stop_id STRING PRIMARY KEY,
+index STRING PRIMARY KEY,
 direction_id INT,
 route_id STRING,
+stop_id STRING,
 stop_lat double,
 stop_lon double,
 stop_name STRING,
