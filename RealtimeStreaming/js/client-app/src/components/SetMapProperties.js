@@ -40,7 +40,7 @@ export const SetMapProperties = () => {
                 west: westBound,
             };
 
-            dispatch(getStopsWithinMapBounds(bounds));
+            // dispatch(getStopsWithinMapBounds(bounds));
         }, 1000);
 
         return () => clearInterval(stopsChangeInterval);
