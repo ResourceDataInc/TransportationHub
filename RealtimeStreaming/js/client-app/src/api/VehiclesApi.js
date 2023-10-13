@@ -1,7 +1,6 @@
 import sqlQuery  from './GeneralApi';
 
 export class VehiclesApi {
-    constructor() {}
 
     async getVehicles(request) {
         let ksql;

@@ -1,26 +1,27 @@
-import { Marker, Popup } from 'react-leaflet';
+import { Marker } from 'react-leaflet';
 import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import "leaflet-rotatedmarker";
 
 export const VehicleMarker = ({ vehicle }) => {
     const {
         id,
         position,
         status,
+        bearing,
     } = vehicle;
 
     const selectedVehicleId = useSelector(selectSelectedVehicleId)
     const dispatch = useDispatch();
-
     const iconColorAndSize = () => {
         let iconSize;
         if (selectedVehicleId === id) {
-            iconSize = 27;
+            iconSize = 30;
         } else {
-            iconSize = 17;
+            iconSize = 20;
         };
 
         switch (status) {
@@ -45,18 +46,17 @@ export const VehicleMarker = ({ vehicle }) => {
             updateCard();
         },
     };
-
+    const rotationAngle = (bearing-90).toString();
+    // const rotationAngle = '0';
     return (
         <div>
             <Marker 
                 position={position} 
                 icon={iconColorAndSize()} 
                 eventHandlers={markerEvents}
-            >
-                {/* <Popup>
-                    <p>This is vehicle number {id}</p>
-                </Popup> */}
-            </Marker>
+                rotationAngle={rotationAngle}
+                rotationOrigin='center center'
+            />
         </div>
     )
 };
