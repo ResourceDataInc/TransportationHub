@@ -29,6 +29,13 @@ def write_to_json(df: DataFrame, path: str):
         for index, row in df.iterrows():
             f.write(str(index)+"\t"+row.to_json()+"\n")
 
+def write_trips(df: DataFrame, path: str):
+    with open(path, "w") as f:
+        for _, row in df.iterrows():
+            trip_id = row["trip_id"] 
+            del row["trip_id"] 
+            f.write(trip_id+"\t"+row.to_json()+"\n")
+
 def make_stops_data_json():
     stops_keep = remove_others(STOPS, {"stop_id","stop_lat","stop_lon","stop_name"})
     stop_times_keep = remove_others(STOP_TIMES, {"trip_id","stop_id", "stop_sequence"})
@@ -55,12 +62,12 @@ def make_shapes_file(df: DataFrame, shape_file_path: str) -> DataFrame:
 
 
 def make_route_data_json():
-    trips_keep = remove_others(TRIPS, {"route_id","service_id","direction_id","shape_id"})
+    trips_keep = remove_others(TRIPS, {"route_id","service_id","trip_id","direction_id","shape_id"})
     shapes_keep = remove_others(SHAPES, {"shape_id","shape_pt_lat","shape_pt_lon"})
     trips_keep.drop_duplicates(keep="first", inplace=True)
     make_shapes_file(shapes_keep, "shapes.kafka.txt")
     write_to_json(ROUTES, "routes.kafka.txt") 
-    write_to_json(trips_keep, "trips.kafka.txt") 
+    write_trips(trips_keep, "trips.kafka.txt") 
     write_to_json(CALENDAR, "calendar.kafka.txt")
     write_to_json(CALENDAR_DATES, "calendar_dates.kafka.txt")
 
