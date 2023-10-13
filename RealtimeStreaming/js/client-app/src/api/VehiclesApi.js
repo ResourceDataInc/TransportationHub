@@ -1,47 +1,12 @@
+import sqlQuery  from './GeneralApi';
+
 export class VehiclesApi {
     constructor() {}
 
-    #root = 'http://localhost:8088/query';
-
-    async getVehicles() {
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": "SELECT * FROM VEHICLESLATEST;",
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        console.log(json);
-        
-        const header = json.shift();
-        //console.log(header);
-
-        return json;
-    }
-
-    async getVehiclesOnRoute(routeId) {
-        const response = await fetch(`${this.#root}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.ksql.v1+json',
-            },
-            body: JSON.stringify({
-                "ksql": `SELECT * FROM VEHICLESLATEST WHERE ROUTE_ID = '${routeId}';`,
-                "streamsProperties": {}
-            }),
-        });
-
-        const json = await response.json();
-        console.log(json);
-        
-        const header = json.shift();
-        //console.log(header);
-
-        return json;
+    async getVehicles(request) {
+        let ksql;
+        if(!request.routeId || !request.directionId) ksql= 'SELECT * FROM VEHICLESLATEST;';
+        else ksql = `SELECT * FROM VEHICLESLATEST WHERE ROUTE_ID = '${request.routeId}' AND DIRECTION_ID = ${request.directionId};`;
+        return sqlQuery(ksql);
     }
 };

@@ -3,19 +3,9 @@ import { VehiclesApi } from '../../api/VehiclesApi';
 
 export const getVehicles = createAsyncThunk(
     'buses/getVehicles',
-    async () => {
+    async (request) => {
         const api = new VehiclesApi();
-        const data = await api.getVehicles();
+        const data = await api.getVehicles(request);
         return data;
     }
 );
-
-export const getVehiclesOnRoute = createAsyncThunk(
-    'buses/getVehiclesOnRoute',
-    async (routeId) => {
-        const api = new VehiclesApi();
-        const data = await api.getVehiclesOnRoute(routeId);
-        return data;
-    }
-);
-

@@ -9,7 +9,9 @@ CREATE TABLE StopsLatest
         LATEST_BY_OFFSET(stop_name) as stop_name,
         LATEST_BY_OFFSET(vehicle_id) as vehicle_id,
         LATEST_BY_OFFSET(stop_time_update) as stop_time_update,
-        LATEST_BY_OFFSET(ts) as ts
+        LATEST_BY_OFFSET(ts) as ts,
+        LATEST_BY_OFFSET(route_id) as route_id,
+        LATEST_BY_OFFSET(direction_id) as direction_id
     FROM StopEventsAnnotated
     GROUP BY stop_id
 EMIT CHANGES;

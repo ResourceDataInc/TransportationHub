@@ -28,7 +28,9 @@ const options = {
                             'UNCERTAINTY': 0,
                         },
                     },
-                    1694709653                  // [7] TIMESTMP: BigInt
+                    1694709653,                 // [7] TS: BigInt
+                    '123',                      // [8] ROUTE_ID: String
+                    0,                          // [9] DIRECTION_ID: BigInt
                 ],
             },
         }],
@@ -62,8 +64,6 @@ const options = {
             } else {
                 state.stops = action.payload;
             }; 
-
-            console.log(`There are ${state.stops.length} stops in the state`);
         });
 
         builder.addCase(getStopsWithinMapBounds.fulfilled, (state, action) => {
