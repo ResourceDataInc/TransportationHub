@@ -4,9 +4,10 @@ import { selectSelectedStopId, setSelectedStopId, setSelectedStop } from '../sto
 
 export const StopMarker = ({ stop }) => {
     const { 
-        id,
+        index,
         position, 
         address,
+        id,
     } = stop;
 
     const selectedStopId = useSelector(selectSelectedStopId)
@@ -20,13 +21,13 @@ export const StopMarker = ({ stop }) => {
         fillOpacity: 1,
     };
 
-    if (selectedStopId === id) {
+    if (selectedStopId === index) {
         radius = 7;
         pathOptions.fillColor = 'red';
     }
     
     const updateCard = () => {
-        dispatch(setSelectedStopId(id));
+        dispatch(setSelectedStopId(index));
         dispatch(setSelectedStop());
     };
 
@@ -35,7 +36,7 @@ export const StopMarker = ({ stop }) => {
             updateCard();
         },
     };
-
+    const hover = id+': '+address
     return (
         <CircleMarker
             center={position}
@@ -45,7 +46,7 @@ export const StopMarker = ({ stop }) => {
         >
             <Tooltip>
                 <br></br>
-                <p>{address}</p>
+                <p>{hover}</p>
             </Tooltip>
         </CircleMarker>
     );

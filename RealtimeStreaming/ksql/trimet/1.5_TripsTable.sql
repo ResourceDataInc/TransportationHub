@@ -1,5 +1,5 @@
 CREATE SOURCE TABLE TripsTable (
-index STRING PRIMARY KEY,
+trip_id STRING PRIMARY KEY,
 route_id STRING,
 service_id STRING,
 direction_id INT,

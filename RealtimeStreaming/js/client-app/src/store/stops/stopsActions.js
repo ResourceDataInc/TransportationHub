@@ -1,6 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { StopsApi } from "../../api/StopsApi";
 
+export const getAllStopEvents = createAsyncThunk(
+    'stops/getAllStops',
+    async (request) => {
+        const api = new StopsApi();
+        const data = await api.getAllStopEvents(request);
+        return data;
+    }
+);
+
 export const getAllStops = createAsyncThunk(
     'stops/getAllStops',
     async (request) => {
