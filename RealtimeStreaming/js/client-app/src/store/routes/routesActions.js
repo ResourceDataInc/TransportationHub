@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RoutesApi } from "../../api/RoutesApi";
+import { GeneralApi } from "../../api/GeneralApi";
 
 export const getRoute = createAsyncThunk(
     'routes/getRoute',
@@ -14,5 +15,13 @@ export const getRoute = createAsyncThunk(
         };
 
         return routeData;
+    }
+);
+
+export const getAllRoutes = createAsyncThunk(
+    'routes/getAllRoutes',
+    async () => {
+        const api = new GeneralApi();
+        return api.getAllRoutes();
     }
 );
