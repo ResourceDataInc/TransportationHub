@@ -1,23 +1,15 @@
 class Stop {
     constructor(stop) {
-        this.id = stop.row.columns[0];
-        this.latitude = stop.row.columns[2];
-        this.longitude = stop.row.columns[3];
-        this.position = [stop.row.columns[2], stop.row.columns[3]];
-        this.address = stop.row.columns[4];
-
-        if (stop.row.columns[6]['ARRIVAL'] === null) {
-            this.arrivalDelay = null
-        } else {
-            this.arrivalDelay = stop.row.columns[6]['ARRIVAL']['DELAY']; 
-        };
-
-        if (stop.row.columns[6]['DEPARTURE'] === null) {
-            this.departureDelay = null
-        } else {
-            this.departureDelay = stop.row.columns[6]['DEPARTURE']['DELAY']; 
-        };
+        this.index = stop.row.columns[0]
+        this.directionId = stop.row.columns[1]
+        this.routeId = stop.row.columns[2]
+        this.id = stop.row.columns[3];
+        this.latitude = stop.row.columns[4];
+        this.longitude = stop.row.columns[5];
+        this.position = [this.latitude, this.longitude];
+        this.address = stop.row.columns[6];
+        this.sequence = stop.row.columns[7];
     }
 };
 
-export default Stop;
+export default Stop

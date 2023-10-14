@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllStops, getStopsWithinMapBounds } from "./stopsActions";
+import { getAllStopEvents, getAllStops, getStopsWithinMapBounds } from "./stopsActions";
 
 const options = {
     name: 'stops',
     initialState: {
-        stops: [{
+        stopEvents: [{
             row: {
                 columns: [
                     '123',                      // [0] STOP_ID: String
@@ -31,6 +31,20 @@ const options = {
                     1694709653,                 // [7] TS: BigInt
                     '123',                      // [8] ROUTE_ID: String
                     0,                          // [9] DIRECTION_ID: BigInt
+                ],
+            },
+        }],
+        stops: [{
+            row: {
+                columns: [
+                    0,                     // [0] INDEX: String
+                    1,                     // [1] DIRECTION_ID: Int
+                    '15',                  // [2] ROUTE_ID: String
+                    '13238',               // [3] STOP_ID: String
+                    45.546127,             // [4] STOP_LAT: Double
+                    -122.719019,           // [5] STOP_LON: Double
+                    '3300 Block NW 35th',  // [6] STOP_NAME: String
+                    6,                     // [7] STOP_SEQUENCE: Int
                 ],
             },
         }],
@@ -63,7 +77,7 @@ const options = {
                 return;
             } else {
                 state.stops = action.payload;
-            }; 
+            };
         });
 
         builder.addCase(getStopsWithinMapBounds.fulfilled, (state, action) => {

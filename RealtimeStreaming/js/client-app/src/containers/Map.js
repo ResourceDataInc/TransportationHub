@@ -1,5 +1,5 @@
 import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { VehicleMarker } from '../components/VehicleMarker';
@@ -13,8 +13,6 @@ import { selectStops, setSelectedStop } from '../store/stops/stopsSlice';
 import { selectRouteId, selectDirectionId } from '../store/selection/selectionSlice'
 import Vehicle from '../models/vehicle';
 import Stop from '../models/stop';
-import { LatLng } from 'leaflet';
-import store from '../store/store'
 
 // Leaflet Default Marker Setup
 import L from 'leaflet';
@@ -66,17 +64,17 @@ export const Map = () => {
                         const vehicleInstance = new Vehicle(vehicle);
                         return (
                             <VehicleMarker
-                                key={`${vehicle.row.columns[0]}`}
+                                key={`${vehicleInstance.id}`}
                                 vehicle={vehicleInstance}
                             />
                         )
                     })}
-                    
+
                     {stops.map((stop) => {
                         const stopInstance = new Stop(stop);
                         return (
                             <StopMarker
-                                key={`${stop.row.columns[0]}`}
+                                key={`stop-${stopInstance.index}`}
                                 stop={stopInstance}
                             />
                         )
