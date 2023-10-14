@@ -3,7 +3,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './containers/Header';
 import { Main } from './containers/Main';
-import { Map } from './containers/Map';
 import { Footer } from './containers/Footer';
 
 function App() {
