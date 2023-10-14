@@ -72,15 +72,6 @@ const options = {
         },
     },
     extraReducers: (builder) => {
-        /*
-        builder.addCase(getAllStopEvents.fulfilled, (state, action) => {
-            if (action.payload === null || action.payload.length <= 0) {
-                return;
-            } else {
-                state.stopEvents = action.payload;
-            }; 
-        });
-        */
         builder.addCase(getAllStops.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
                 return;
