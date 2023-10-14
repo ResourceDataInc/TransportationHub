@@ -1,62 +1,29 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSelection } from '../store/selection/selectionSlice'
-import { getRoute } from '../store/routes/routesActions';
+import { getRoute, getAllRoutes } from '../store/routes/routesActions';
+import { selectAllRoutes } from '../store/routes/routesSlice';
 import { getAllStops } from '../store/stops/stopsActions'
 import { getVehicles } from '../store/vehicles/vehiclesActions';
 
-function sqlRequest(query){
-    let data = {
-        "ksql": query,
-        "streamsProperties": {}
-    }
-    let json_array;
-    let xhr = new XMLHttpRequest();
-    xhr.onload = () => {
-        if(xhr.status >=200 && xhr.status < 300) json_array = JSON.parse(xhr.responseText);
-    }
-    xhr.open('POST','http://localhost:8088/query', false);
-    xhr.setRequestHeader("accept",'application/vnd.ksql.v1+json');
-    xhr.send(JSON.stringify(data));
-    json_array.shift();
-    return json_array;
-}
-
-function getRoutes(){
-    const columns = new Map();
-    columns.set("route_id",0);
-    columns.set("route_long_name", 1);
-    columns.set("route_color", 2);
-    const columns_sql = Array.from(columns.keys()).join(",");
-    const query = `SELECT ${columns_sql} FROM RoutesTable;`;
-    const routes = sqlRequest(query);
-    const output_data = []
-    for (let record of routes) {
-        output_data.push(
-            {
-                id: record.row.columns[columns.get("route_id")],
-                name: record.row.columns[columns.get("route_long_name")],
-                color: record.row.columns[columns.get("route_color")],
-            });
-    }
-    return output_data;
-}
-
 export const RouteInputs = () => {
-    const routes = getRoutes();
-    const initialRouteId = routes[0].id;
-    const initialColor = routes[0].color;
-    const [routeIdInput, setRouteIdInput] = useState(initialRouteId);
+    const [routeIdInput, setRouteIdInput] = useState('0');
     const [directionIdInput, setDirectionIdInput] = useState('0');
-    const [colorInput, setColorInput] = useState(initialColor);
+    const [colorInput, setColorInput] = useState('red');
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getAllRoutes());
+    }, []);
+    const routes = useSelector(selectAllRoutes);
 
     let route_input_menu = []
     let options = []
-    options.push(<option value=''></option>);
+    options.push(<option value='' key='default'></option>);
     for(let route of routes) {
         const combinedValue = route.id+":"+route.color;
-        options.push(<option value={combinedValue}>{route.id}: {route.name}</option>);
+        options.push(<option value={combinedValue} key={combinedValue}>
+            {route.id}: {route.name}
+        </option>);
     }
     route_input_menu.push(<label htmlFor='routes'>Route:</label>);
     route_input_menu.push(<select
@@ -103,7 +70,7 @@ export const RouteInputs = () => {
                     name='directionIdInput'
                     form='interactive'
                 >
-                <option value='0'selected>0</option>
+                <option value='0'>0</option>
                 <option value='1'>1</option>
                 </select>
             </form>

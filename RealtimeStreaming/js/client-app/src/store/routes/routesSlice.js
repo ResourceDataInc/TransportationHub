@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getRoute } from "./routesActions";
+import { getRoute, getAllRoutes } from "./routesActions";
 
 const options = {
     name: 'routes',
@@ -22,12 +22,16 @@ const options = {
             state.selectedRouteDirection = Number(action.payload.direction);
             state.selectedRoutePositions = action.payload.positions;
         });
+        builder.addCase(getAllRoutes.fulfilled, (state, action) => {
+            state.routes = action.payload;
+        });
     },
 };
 
 const routesSlice = createSlice(options);
 
 export default routesSlice.reducer;
-export const selectSelectedRouteId = (state) => state.routes.selectedRouteId;
-export const selectSelectedRoutePositions = (state) => state.routes.selectedRoutePositions;
+export const selectSelectedRouteId = state => state.routes.selectedRouteId;
+export const selectSelectedRoutePositions = state => state.routes.selectedRoutePositions;
+export const selectAllRoutes = state => state.routes.routes;
 export const { clearRouteData } = routesSlice.actions;
