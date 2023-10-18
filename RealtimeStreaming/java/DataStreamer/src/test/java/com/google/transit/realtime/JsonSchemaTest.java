@@ -1,18 +1,17 @@
+package com.google.transit.realtime;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import com.google.transit.realtime.*;
+import org.junit.jupiter.api.Test;
 import com.google.common.io.Resources;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonSchemaTest {
     @Test
-    public void alerts_serde() throws IOException {
+    public void alertsSerde() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String expected = Resources.toString(Resources.getResource("sample_alerts.json"), StandardCharsets.UTF_8);
         ResultSetAlert resultSetAlert = objectMapper.readValue(expected, ResultSetAlert.class);
@@ -21,7 +20,7 @@ public class JsonSchemaTest {
         assertEquals(expected, actual);
     }
     @Test
-    public void routes_serde() throws IOException {
+    public void routesSerde() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String expected = Resources.toString(Resources.getResource("sample_routes.json"), StandardCharsets.UTF_8);
         ResultSetRoute resultSetRoute = objectMapper.readValue(expected, ResultSetRoute.class);
@@ -30,7 +29,7 @@ public class JsonSchemaTest {
         assertEquals(expected, actual);
     }
     @Test
-    public void vehicles_serde() throws IOException {
+    public void vehiclesSerde() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String expected = Resources.toString(Resources.getResource("sample_vehicles.json"), StandardCharsets.UTF_8);
         ResultSetVehicle resultSetVehicle = objectMapper.readValue(expected, ResultSetVehicle.class);
