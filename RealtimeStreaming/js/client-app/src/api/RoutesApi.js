@@ -10,9 +10,10 @@ export class RoutesApi {
     #root = 'http://localhost:8088/query';
 
     async getRoute() {
-        const serviceIds = await this.getServiceIdsFromCalendarTable();
-        const shapeId = await this.getShapeId(serviceIds);
-        const routePath = await this.getRoutePath(shapeId);
+        const serviceIds1 = await this.getServiceIdsFromCalendarTable();
+        const serviceIds2 = await this.getServiceIdsFromCalendarDatesTable();
+        const shapeIds = await this.getShapeId(serviceIds1.concat(serviceIds2));
+        const routePath = await this.getRoutePath(shapeIds);
 
         return routePath;
     }
@@ -43,36 +44,22 @@ export class RoutesApi {
         return serviceIds;
     } 
 
-    serviceIdsString(serviceIds) {
-        let serviceIdsString = '';
-
-        for(let i = 0; i < serviceIds.length; i++) {
-            if (i === serviceIds.length -1) {
-                serviceIdsString += (`SERVICE_ID = '${serviceIds[i]}'`);
-                break;
-            };
-
-            serviceIdsString += (`SERVICE_ID = '${serviceIds[i]}' OR `);
-        };
-
-        return serviceIdsString;
-    }
-
     async getShapeId(serviceIds) {
-        const serviceIdsString = this.serviceIdsString(serviceIds)
-        const ksql = `SELECT * FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND ${serviceIdsString};`;
+        const serviceIdsString = serviceIds.map(e => "'"+e+"'").join(',')
+        const ksql = `SELECT SHAPE_ID FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND SERVICE_ID IN (${serviceIdsString});`;
         const json = await sqlQuery(ksql);
-        const routeIndex = json.findIndex(x => x['row']['columns'][1] === this.routeId);
-        const shapeId = json[routeIndex]['row']['columns'][4];
-        
-        return shapeId; 
+        const shapeIds = json.map(e => e.row.columns[0])
+        let uniqueShapeIds = {}
+        for(let shapeId of shapeIds){
+            uniqueShapeIds[shapeId] = 1;
+        }
+        return Object.keys(uniqueShapeIds);
     }
 
-    async getRoutePath(shapeId) {
-        const ksql = `SELECT * FROM  ROUTEPATHSTABLE WHERE SHAPE_ID = '${shapeId}';`;
+    async getRoutePath(shapeIds) {
+        const shapeIdsString = shapeIds.map(e => "'"+e+"'").join(',')
+        const ksql = `SELECT ROUTE_PATH FROM  ROUTEPATHSTABLE WHERE SHAPE_ID IN (${shapeIdsString});`;
         const json = await sqlQuery(ksql);
-        const routePath = json[0]['row']['columns'][1];
-
-        return routePath;
+        return json.map(e => e.row.columns[0]);
     }
 };
