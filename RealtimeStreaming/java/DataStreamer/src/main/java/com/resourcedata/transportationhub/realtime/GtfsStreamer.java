@@ -3,11 +3,14 @@ import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.ResultSetAlert;
 import com.google.transit.realtime.ResultSetRoute;
 import com.google.transit.realtime.ResultSetVehicle;
+import net.snowflake.ingest.internal.apache.parquet.filter2.predicate.Operators;
+import org.apache.http.impl.client.HttpClients;
 import picocli.CommandLine.Command;
 import picocli.CommandLine;
 import picocli.CommandLine.ITypeConverter;
 import picocli.CommandLine.Option;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.Map;
@@ -73,25 +76,31 @@ public class GtfsStreamer implements Callable<Integer> {
     }
     public Integer call() throws Exception {
         Properties properties = Admin.buildProperties(this);
-        DataGenerator dataGenerator = new DataGenerator(this);
-        Admin.createTopic(properties, topic);
-        switch(dataClass){
-            case GtfsRealtime:
-                Stream<GtfsRealtime.FeedMessage> protoStream = Stream.generate(dataGenerator::generateProto);
-                DataStreamer.streamData(protoStream, properties, topic);
-                break;
-            case ResultSetVehicle:
-                Stream<ResultSetVehicle> jsonVehicleStream = Stream.generate(dataGenerator::generateResultSetVehicle);
-                DataStreamer.streamData(jsonVehicleStream, properties, topic);
-                break;
-            case ResultSetAlert:
-                Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
-                DataStreamer.streamData(jsonAlertStream, properties, topic);
-                break;
-            case ResultSetRoute:
-                Stream<ResultSetRoute.RouteSet.Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
-                DataStreamer.streamData(jsonRouteStream, properties, topic);
-                break;
+        try(DataGenerator dataGenerator = new DataGenerator(this)) {
+            Admin.createTopic(properties, topic);
+            switch (dataClass) {
+                case GtfsRealtime:
+                    Stream<GtfsRealtime.FeedMessage> protoStream = Stream.generate(dataGenerator::generateProto);
+                    DataStreamer.streamData(protoStream, properties, topic);
+                    break;
+                case ResultSetVehicle:
+                    Stream<ResultSetVehicle> jsonVehicleStream = Stream.generate(dataGenerator::generateResultSetVehicle);
+                    DataStreamer.streamData(jsonVehicleStream, properties, topic);
+                    break;
+                case ResultSetAlert:
+                    Stream<ResultSetAlert> jsonAlertStream = Stream.generate(dataGenerator::generateResultSetAlert);
+                    DataStreamer.streamData(jsonAlertStream, properties, topic);
+                    break;
+                case ResultSetRoute:
+                    Stream<ResultSetRoute.RouteSet.Route> jsonRouteStream = Stream.generate(dataGenerator::generateRoute);
+                    DataStreamer.streamData(jsonRouteStream, properties, topic);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + dataClass);
+            }
+        }
+        catch (DataGenerator.NoMoreDataException e){
+           return 0;
         }
         return 0;
     }
