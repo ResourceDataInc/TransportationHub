@@ -48,7 +48,7 @@ export const Map = () => {
             <div className='col-12'>
                 <MapContainer
                     id="main-map"
-                    center={[47.879, -122.238]}
+                    center={[45.5139, -122.67923]}
                     zoom={10}
                     scrollWheelZoom={true}
                     className='map-container mx-auto border border-dark'
