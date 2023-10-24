@@ -16,6 +16,8 @@ export class GeneralApi {
 }
 
 async function sqlQuery(sqlStatement) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 10000);
     const root = 'http://localhost:8088/query';
     const response = await fetch(root, {
         method: 'POST',
@@ -26,7 +28,9 @@ async function sqlQuery(sqlStatement) {
             "ksql": sqlStatement,
             "streamsProperties": {}
         }),
+        signal: controller.signal
     });
+    clearTimeout(id);
     const json = await response.json();
     json.shift();
     return json;

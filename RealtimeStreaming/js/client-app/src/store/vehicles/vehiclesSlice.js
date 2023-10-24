@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getVehicles } from './vehiclesActions';
+import { getVehicles, getVehicleUpdates } from './vehiclesActions';
 
 const options = {
     name: 'vehicles',
@@ -23,6 +23,7 @@ const options = {
         }],
         selectedVehicleId: null,
         selectedVehicle: null,
+        selectedVehicleUpdates: [],
     },
     reducers: {
         setSelectedVehicleId(state, action) {
@@ -42,6 +43,10 @@ const options = {
         clearSelectedVehicle(state) {
             state.selectedVehicleId = null;
             state.selectedVehicle = null;
+            state.selectedVehicleUpdates = [];
+        },
+        clearSelectedVehicleUpdates(state) {
+            state.selectedVehicleUpdates = [];
         },
     },
     extraReducers: (builder) => {
@@ -52,6 +57,12 @@ const options = {
 
             state.vehicles = action.payload;
         });
+        builder.addCase(getVehicleUpdates.fulfilled, (state, action) => {
+            if (action.payload === null || action.payload.length <= 0) {
+                state.selectedVehicleUpdates = [];
+            };
+            state.selectedVehicleUpdates = action.payload;
+        })
     },
 };
 
@@ -61,6 +72,7 @@ export default vehiclesSlice.reducer;
 export const selectVehicles = state => state.vehicles.vehicles;
 export const selectSelectedVehicleId = state => state.vehicles.selectedVehicleId;
 export const selectSelectedVehicle = state => state.vehicles.selectedVehicle;
+export const selectedVehicleUpdates = state => state.vehicles.selectedVehicleUpdates;
 export const { 
     setSelectedVehicleId,
     setSelectedVehicle,
