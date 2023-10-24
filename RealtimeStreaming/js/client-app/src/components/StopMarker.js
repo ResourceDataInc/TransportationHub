@@ -33,7 +33,7 @@ export const StopMarker = ({ stop }) => {
 
     const markerEvents = {
         click: () => {
-            updateCard();
+            // updateCard();
         },
     };
     const hover = id+': '+address

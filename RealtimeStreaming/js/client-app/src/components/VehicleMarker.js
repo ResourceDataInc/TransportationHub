@@ -3,7 +3,7 @@ import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle} from '../store/vehicles/vehiclesSlice';
 import { RotatedMarker } from './RotatedMarker'
 
 export const VehicleMarker = ({ vehicle }) => {
@@ -13,6 +13,8 @@ export const VehicleMarker = ({ vehicle }) => {
         status,
         bearing,
         stopId,
+        stopSequence,
+        directionId,
     } = vehicle;
     const selectedVehicleId = useSelector(selectSelectedVehicleId)
     const dispatch = useDispatch();
@@ -39,6 +41,7 @@ export const VehicleMarker = ({ vehicle }) => {
     const updateCard = () => {
         dispatch(setSelectedVehicleId(id));
         dispatch(setSelectedVehicle());
+
     };
 
     const markerEvents = {
