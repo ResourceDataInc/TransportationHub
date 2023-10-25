@@ -8,7 +8,7 @@ class Vehicle {
         this.stopSequence = vehicle.row.columns[4];
         this.stopId = vehicle.row.columns[5];
         this.routeId = vehicle.row.columns[6];
-        this.direction_id = vehicle.row.columns[7];
+        this.directionId = vehicle.row.columns[7];
         this.timestamp = vehicle.row.columns[8];
         this.bearing = vehicle.row.columns[9];
         this.speed = vehicle.row.columns[10];
