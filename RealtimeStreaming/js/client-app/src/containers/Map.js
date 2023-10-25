@@ -23,6 +23,8 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
+export const updateInterval = 5000;
+
 export const Map = () => {
     const dispatch = useDispatch();
     const vehicles = useSelector(selectVehicles);
@@ -38,7 +40,7 @@ export const Map = () => {
             dispatch(getVehicles(request));
             dispatch(setSelectedVehicle());
             dispatch(setSelectedStop());
-        }, 1000);
+        }, updateInterval);
 
         return () => clearInterval(positionChangeInterval);
     }, [dispatch, routeId, directionId]);

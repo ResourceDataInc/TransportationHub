@@ -34,7 +34,10 @@ export class RoutesApi {
     async getServiceIdsFromCalendarTable() {
         const date = yyyymmddFormat();
         const weekday = weekdayName();
-        const ksql =  `SELECT service_id FROM CalendarTable WHERE ${date} BETWEEN start_date AND end_date AND ${weekday} = 1;`;
+        const ksql =  `
+        SELECT service_id 
+        FROM CalendarTable
+        WHERE ${date} BETWEEN start_date AND end_date AND ${weekday} = 1;`;
         const json = await sqlQuery(ksql);
         const serviceIds = [];
         for (let record of json) {
@@ -46,7 +49,10 @@ export class RoutesApi {
 
     async getShapeId(serviceIds) {
         const serviceIdsString = serviceIds.map(e => "'"+e+"'").join(',')
-        const ksql = `SELECT SHAPE_ID FROM TRIPSTABLE WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND SERVICE_ID IN (${serviceIdsString});`;
+        const ksql = `
+        SELECT SHAPE_ID
+        FROM TRIPSTABLE
+        WHERE ROUTE_ID = '${this.routeId}' AND DIRECTION_ID = ${this.directionId} AND SERVICE_ID IN (${serviceIdsString});`;
         const json = await sqlQuery(ksql);
         const shapeIds = json.map(e => e.row.columns[0])
         let uniqueShapeIds = {}
