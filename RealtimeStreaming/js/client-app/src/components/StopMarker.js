@@ -26,23 +26,12 @@ export const StopMarker = ({ stop }) => {
         pathOptions.fillColor = 'red';
     }
     
-    const updateCard = () => {
-        dispatch(setSelectedStopId(index));
-        dispatch(setSelectedStop());
-    };
-
-    const markerEvents = {
-        click: () => {
-            // updateCard();
-        },
-    };
     const hover = id+': '+address
     return (
         <CircleMarker
             center={position}
             radius={radius}
             pathOptions={pathOptions}
-            eventHandlers={markerEvents}
         >
             <Tooltip>
                 <br></br>

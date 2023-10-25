@@ -3,7 +3,7 @@ import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle} from '../store/vehicles/vehiclesSlice';
+import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle, clearSelectedVehicle} from '../store/vehicles/vehiclesSlice';
 import { RotatedMarker } from './RotatedMarker'
 
 export const VehicleMarker = ({ vehicle }) => {
@@ -38,30 +38,26 @@ export const VehicleMarker = ({ vehicle }) => {
         };
     };
 
-    const updateCard = () => {
-        dispatch(setSelectedVehicleId(id));
-        dispatch(setSelectedVehicle());
-
-    };
-
     const markerEvents = {
-        click: () => {
-            updateCard();
+        mouseover: () => {
+            dispatch(setSelectedVehicleId(id));
+            dispatch(setSelectedVehicle());
         },
     };
+
     const rotationAngle = (bearing-90).toString();
     return ( <div>
             <RotatedMarker
                 position={position}
                 icon={iconColorAndSize()}
-                eventHandlers={markerEvents}
                 rotationAngle={rotationAngle}
                 rotationOrigin='center center'
+                eventHandlers={markerEvents}
             >
 
             <Tooltip>
                 <br></br>
-                <p>{id}: {status} {stopId}</p>
+                <p>{id}</p>
             </Tooltip>
             </RotatedMarker>
         </div>
