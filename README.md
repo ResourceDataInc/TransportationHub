@@ -38,7 +38,7 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 
 ## Running
 
-1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.
+1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.  Enter the app id into `RealtimeStreaming/sh/run-trimet.sh`.
 2. Enter the appid obtained in `sh/run-trimet.sh` for the `APPID` variable.
 3. An ssh key must be generated for communicating with snowflake. For directions on setting this up, consult the snowflake [reference](https://docs.snowflake.com/en/user-guide/key-pair-auth).  Note, the `ALTER USER` step must be performed by someone with `ACCOUNTADMIN` credentials.  The ssh key will factor into correct settings for the various snowflake connect configurations (SnowflakeSinkConfig.json, SnowflakeSingleSinkConfig.json).  Additionally, to configure the S3 connector for kafka (S3SinkConfig.json), aws access credentials, namely `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` must be obtained. 
 4. The main requirement for running the realtime pipeline is [docker desktop](https://www.docker.com/products/docker-desktop/) with [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run it from linux assuming a windows workstation. 
@@ -333,6 +333,14 @@ The realtime-visualizer provides a user interface for displaying realtime data. 
 
 ![visualizer](./Documentation/imgs/realtime_visualizer.png)
 
+The visualizer is powered by `React`,`react-leaflet`, and `react-redux`.
+
+Prominent features include:
+* route selection
+* updated vehicle locations color coded by status and rotated to reflect current orientation
+* bus delay statuses tabulated
+
+
 ### ksqldb-server
 
 ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. The current flow of streaming transformations is shown below: 
@@ -379,7 +387,7 @@ EMIT CHANGES;
 An in-depth discussion showing the difference between streams and tables is given by [confluent](https://www.confluent.io/blog/kafka-streams-tables-part-1-event-streaming/).
 
 ### ksqldb-cli
-The ksqldb-cli provides a cli for issuing ksql requests.  A ksql interactive session can be started using the alias `ksql`.  Example commands are show below:
+The ksqldb-cli provides a cli for issuing ksql requests.  A ksql interactive session can be started using the alias `ksql`.  Example commands are show below:  Consult the official ksql reference [here](https://docs.ksqldb.io/en/latest/reference/).
 
 ```
 ksql> SHOW TABLES;
@@ -394,7 +402,8 @@ ksql> SHOW TABLES;
  TRIPSTABLE         | Trips          | KAFKA      | JSON         | false
  VEHICLESLATEST     | VehiclesLatest | KAFKA      | PROTOBUF     | false
 ----------------------------------------------------------------------------
-
+```
+```
 ksql> SHOW STREAMS;
 
  Stream Name                       | Kafka Topic                       | Key Format | Value Format | Windowed
@@ -412,7 +421,8 @@ ksql> SHOW STREAMS;
  VEHICLESALT                       | vehicles                          | KAFKA      | JSON_SR      | false
  VEHICLESALTEXPLODED               | VehiclesAltExploded               | KAFKA      | PROTOBUF     | false
 --------------------------------------------------------------------------------------------------------------
-
+```
+```
 ksql> DESCRIBE VEHICLESLATEST EXTENDED;
 
 Name                 : VEHICLESLATEST
@@ -505,6 +515,8 @@ Max lag              : 0
 -------------------------------------------------------
  0         | 0            | 7192767    | 7192767 | 0
 -------------------------------------------------------
+```
+```
 ksql> SELECT * FROM VEHICLESLATEST EMIT CHANGES;
 +--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
 |VEHICLE_|LATITUDE|LONGITUD|CURRENT_|CURRENT_|STOP_ID |ROUTE_ID|DIRECTIO|TIMESTAM|BEARING |SPEED   |TRIP_ID |
