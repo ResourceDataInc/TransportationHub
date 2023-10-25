@@ -38,7 +38,7 @@ function stream_dynamic_data {
     docker exec datastreamer java -jar /javafiles/target/RealtimeStreaming-jar-with-dependencies.jar --bootstrap-servers broker:29092 --schema-registry http://schema-registry:8081 --url http://s3.amazonaws.com/commtrans-realtime-prod/alerts.pb --data-class GtfsRealtime --topic FeedSpecAlerts & 
 }
 
-
+alias ksql="docker exec -it ksqldb-cli ksql http://ksqldb-server:8088"
 
 function setup_ksql(){
     for f in ${KSQL_DIR}/*.sql; do
