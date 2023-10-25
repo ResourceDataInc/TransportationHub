@@ -53,6 +53,8 @@ function setup_ksql(){
     done
 }
 
+alias ksql="docker exec -it ksqldb-cli ksql http://ksqldb-server:8088"
+
 function connect_snowflake_continuous(){
     docker cp SnowflakeSinkConfig.json connect:/home/appuser
     docker exec connect curl -X POST -H "Content-Type: application/json" --data @SnowflakeSinkConfig.json http://localhost:8083/connectors
