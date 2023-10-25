@@ -1,18 +1,20 @@
-import { Tooltip } from 'react-leaflet';
+import { Tooltip, useMap } from 'react-leaflet';
 import { redBusIcon } from '../assets/leafletIcons/redBusIcon';
 import { greenBusIcon } from '../assets/leafletIcons/greenBusIcon';
 import { greyBusIcon } from '../assets/leafletIcons/greyBusIcon';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle } from '../store/vehicles/vehiclesSlice';
+import { selectSelectedVehicleId, setSelectedVehicleId, setSelectedVehicle, clearSelectedVehicle} from '../store/vehicles/vehiclesSlice';
 import { RotatedMarker } from './RotatedMarker'
 
-export const VehicleMarker = ({ vehicle }) => {
+export const VehicleMarker = ({ vehicle, centerChanger, clickNotifier }) => {
     const {
         id,
         position,
         status,
         bearing,
         stopId,
+        stopSequence,
+        directionId,
     } = vehicle;
     const selectedVehicleId = useSelector(selectSelectedVehicleId)
     const dispatch = useDispatch();
@@ -35,30 +37,33 @@ export const VehicleMarker = ({ vehicle }) => {
                 return greyBusIcon(iconSize);
         };
     };
-
-    const updateCard = () => {
-        dispatch(setSelectedVehicleId(id));
-        dispatch(setSelectedVehicle());
-    };
-
+    const changeCenter = () => centerChanger({lat: position[0], lng: position[1]});
     const markerEvents = {
-        click: () => {
-            updateCard();
+        mouseover: () => {
+            dispatch(setSelectedVehicleId(id));
+            dispatch(setSelectedVehicle());
         },
+        click: () => {
+            centerChanger({lat: position[0], lng: position[1]});
+            clickNotifier(true);
+            setTimeout(()=> {
+                clickNotifier(false);
+            },50);
+        }
     };
+    
     const rotationAngle = (bearing-90).toString();
     return ( <div>
             <RotatedMarker
                 position={position}
                 icon={iconColorAndSize()}
-                eventHandlers={markerEvents}
                 rotationAngle={rotationAngle}
                 rotationOrigin='center center'
+                eventHandlers={markerEvents}
             >
-
             <Tooltip>
                 <br></br>
-                <p>{id}: {status} {stopId}</p>
+                <p>{id}</p>
             </Tooltip>
             </RotatedMarker>
         </div>

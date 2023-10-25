@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Map } from './Map';
-import { Cards } from './Cards';
+import { Status } from './Status';
 import { useSelector } from 'react-redux';
 import { selectSelectedVehicle } from '../store/vehicles/vehiclesSlice';
 import { selectSelectedStop } from '../store/stops/stopsSlice';
@@ -22,16 +22,16 @@ export const Main = () => {
     return (
         <div>
             <div className='row'>
-                <div className={displayCard ? 'col-9' : 'col-12'}>
+                <div className='col-8'>
                     <RouteInputs/>
                 </div>
             </div>
             <div className='row'>
-                <div className={displayCard ? 'col-9' : 'col-12'}>
+                <div className='col-8'>
                     <Map/>
                 </div>
-                <div className={displayCard ? 'col-3': ''}>
-                    <Cards/>
+                <div className='col-4'>
+                    <Status/>
                 </div> 
             </div>
         </div>
