@@ -23,3 +23,16 @@
   border-width: 5px;
   border-radius: 5%;
 }
+
+table, th, td {
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #DBDADA;
+}
+
+tr{
+  background-color: #FFFFFF;
+}

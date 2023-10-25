@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getVehicles, getVehicleUpdates } from './vehiclesActions';
+import { getVehicles, getTripUpdates } from './vehiclesActions';
 
 const options = {
     name: 'vehicles',
@@ -57,7 +57,7 @@ const options = {
 
             state.vehicles = action.payload;
         });
-        builder.addCase(getVehicleUpdates.fulfilled, (state, action) => {
+        builder.addCase(getTripUpdates.fulfilled, (state, action) => {
             if (action.payload === null || action.payload.length <= 0) {
                 state.selectedVehicleUpdates = [];
             };
