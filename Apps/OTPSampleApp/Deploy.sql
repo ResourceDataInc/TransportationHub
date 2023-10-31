@@ -72,7 +72,7 @@ grant select on view OTPSAMPLEAPPPKG.STAGE_CONTENT.V_VESSEL_STOP_TIME_POSITIONS
 //put file:///<root_folder>/src/manifest.yml @OTPSAMPLEAPPPKG.STAGE_CONTENT.OTPSAMPLEAPPPKG_STAGE overwrite=true auto_compress=false;
 //put file:///<root_folder>/src/scripts/setup.sql @OTPSAMPLEAPPPKG.STAGE_CONTENT.OTPSAMPLEAPPPKG_STAGE/scripts overwrite=true auto_compress=false;
 //put file:///<root_folder>/src/readme.md @OTPSAMPLEAPPPKG.STAGE_CONTENT.OTPSAMPLEAPPPKG_STAGE overwrite=true auto_compress=false;
-//put file:///<root_folder>/src/OTPSampleApp.py @OTPSAMPLEAPPPKG.STAGE_CONTENT.OTPSAMPLEAPPPKG_STAGE/src overwrite=true auto_compress=false;
+//put file:///<root_folder>/src/OTPSampleAppPackaged.py @OTPSAMPLEAPPPKG.STAGE_CONTENT.OTPSAMPLEAPPPKG_STAGE/src overwrite=true auto_compress=false;
 // syntax to remove a file:
 //remove @otpsampleapppkg.stage_content.otpsampleapppkg_stage setup.sql;
 
