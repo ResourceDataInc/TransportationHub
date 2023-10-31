@@ -14,8 +14,17 @@ connection_info = {
 
 # session = Session.builder.configs(st.secrets["connections.snowpark"]).create()
 
-conn = st.experimental_connection("snowpark")
+try:
+    conn = st.experimental_connection("snowpark") #this is deprecated after 4/1/2024
+    print ('connected!')
+    #conn = st.connection("snowflake")
+except Exception as ex:
+    print('bad connection info?:' + str(ex))
+
+
+# Put a couple small sample data frames on the page
 session = get_active_session()
+st.write('Connected!')
 
 agencies = conn.query("select * from TRANSPORTATION_HUB.HUB.AGENCIES")
 st.dataframe(agencies, use_container_width=True)
