@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllStopEvents, getAllStops, getStopsWithinMapBounds } from "./stopsActions";
+import { getAllStops, getStopsWithinMapBounds } from "./stopsActions";
 
 const options = {
     name: 'stops',

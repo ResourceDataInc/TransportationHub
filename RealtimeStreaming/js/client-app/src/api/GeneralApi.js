@@ -1,6 +1,11 @@
 export class GeneralApi {
     async getAllRoutes() {
-        const query = 'SELECT route_id, route_long_name, route_color FROM RoutesTable;';
+        const query = `
+        SELECT 
+            route_id, 
+            route_long_name, 
+            route_color 
+        FROM RoutesTable;`;
         const routes = await sqlQuery(query);
         const output_data = []
         for (let record of routes) {
@@ -15,7 +20,9 @@ export class GeneralApi {
     }
 }
 
-async function sqlQuery(sqlStatement) {
+async function sqlQuery(sqlStatement, timeout=300000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
     const root = 'http://localhost:8088/query';
     const response = await fetch(root, {
         method: 'POST',
@@ -26,7 +33,9 @@ async function sqlQuery(sqlStatement) {
             "ksql": sqlStatement,
             "streamsProperties": {}
         }),
+        signal: controller.signal
     });
+    clearTimeout(id);
     const json = await response.json();
     json.shift();
     return json;
