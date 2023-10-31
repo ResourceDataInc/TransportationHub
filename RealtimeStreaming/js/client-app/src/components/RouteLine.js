@@ -14,10 +14,15 @@ export const RouteLine = () => {
         return;
     };
 
-    return (
-        <Polyline
-            positions={selectedRoutePositions}
-            pathOptions={pathOptions}
-        ></Polyline>
-    )
+    let polyLines = [];
+    for(let route of selectedRoutePositions){
+        polyLines.push(
+            <Polyline
+                positions={route}
+                pathOptions={pathOptions}
+            >
+            </Polyline>
+         );
+    }
+    return polyLines;
 };
