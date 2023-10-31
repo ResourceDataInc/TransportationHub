@@ -58,7 +58,7 @@ This illustrates the ability to display a 'local' streamlit app in an account th
 
 ## Native App Framework
 To package the solution as a Native App that could be shared between snowflake accounts, follow the recipe outlined in `Deploy.sql`.
-Be sure to include OTPSampleAppPackaged.py in the application package (and NOT `OTPSampleApp.py`)
+Be sure to include `OTPSampleAppPackaged.py` in the application package (and NOT `OTPSampleApp.py`)
 Note that one of the benefits of the Native App Framwork is that data products can be shared across accounts to any account 
 on the Snowflake platform that provide access to data without having to physically move the supporting data. To support this, however, 
 a three-step process is required to share the data from a database within an account to the application:
