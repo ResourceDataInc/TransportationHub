@@ -14,6 +14,7 @@ st.write(
 )
 
 # Get the current credentials
+conn = st.experimental_connection("snowpark")
 session = get_active_session()
 
 # Get the Vehicle Stop Time data
@@ -21,7 +22,7 @@ avg_delay_qry = "select LOCAL_DATE,ROUTE_ID,ROUTE_TYPE,ROUTE_DESC,VEHICLE_ID,VEH
         ,STOP_SEQUENCE,STOP_DESC,ROUTE_DIRECTION \
         ,ROUND(AVG(TIMESTAMP_DELAY), 0) as AVG_TIMESTAMP_DELAY \
         ,ROUND(AVG(AVG_DELAY), 0) AS AVG_REPORTED_DELAY \
-    from TRANSPORTATION_HUB.HUB.VESSEL_STOP_TIME_POSITIONS \
+    from CORE.V_VESSEL_STOP_TIME_POSITIONS \
     group by LOCAL_DATE,ROUTE_ID,ROUTE_TYPE,ROUTE_DESC,VEHICLE_ID,VEHICLE_TYPE,STOP_LOCATION_ID \
     ,STOP_SEQUENCE,STOP_DESC,ROUTE_DIRECTION \
     order by STOP_SEQUENCE"
