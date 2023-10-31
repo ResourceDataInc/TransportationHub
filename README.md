@@ -32,14 +32,13 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
    4. [realtime-visualizer](#realtime-visualizer)
    5. [ksqldb-server](#ksqldb-server)
    6. [ksqldb-cli](#ksqldb-cli)
-   7. [control-center](#control-center)
-   8. [connect](#connect)
-   9. [snowflake](#snowflake)
-   10. [aws](#aws)
+   7. [connect](#connect)
+   8. [snowflake](#snowflake)
+   9. [aws](#aws)
 
 ## Running
 
-1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.
+1. An appid is required from trimet.  [Register](https://developer.trimet.org/appid/registration/) your contact information to get one.  They will send the appid in an email.  Enter the app id into `RealtimeStreaming/sh/run-trimet.sh`.
 2. Enter the appid obtained in `sh/run-trimet.sh` for the `APPID` variable.
 3. An ssh key must be generated for communicating with snowflake. For directions on setting this up, consult the snowflake [reference](https://docs.snowflake.com/en/user-guide/key-pair-auth).  Note, the `ALTER USER` step must be performed by someone with `ACCOUNTADMIN` credentials.  The ssh key will factor into correct settings for the various snowflake connect configurations (SnowflakeSinkConfig.json, SnowflakeSingleSinkConfig.json).  Additionally, to configure the S3 connector for kafka (S3SinkConfig.json), aws access credentials, namely `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` must be obtained. 
 4. The main requirement for running the realtime pipeline is [docker desktop](https://www.docker.com/products/docker-desktop/) with [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) to run it from linux assuming a windows workstation. 
@@ -332,6 +331,16 @@ When using structured data such as json schema, protobuf, or avro, a schema regi
 
 The realtime-visualizer provides a user interface for displaying realtime data. The realtime-visualizer consists of a React.js application that makes requests to the ksqldb-server, and plots returned information in a Leaflet.js map.  The `ksqldb-server` and ultimately the kafka broker backing it provides data to the realtime visaulizer. In a locally deployed version, it can be seen on `https://localhost:8090`.
 
+![visualizer](./Documentation/imgs/realtime_visualizer.png)
+
+The visualizer is powered by `React`,`react-leaflet`, and `react-redux`.
+
+Prominent features include:
+* route selection
+* updated vehicle locations color coded by status and rotated to reflect current orientation
+* bus delay statuses tabulated
+
+
 ### ksqldb-server
 
 ksql is kafka's most accessible, realtime ETL language. The ksqldb-server handles all ETL requests. The current flow of streaming transformations is shown below: 
@@ -376,18 +385,162 @@ CREATE TABLE VehiclesLatest
 EMIT CHANGES;
 ```
 An in-depth discussion showing the difference between streams and tables is given by [confluent](https://www.confluent.io/blog/kafka-streams-tables-part-1-event-streaming/).
+
 ### ksqldb-cli
-The ksqldb-cli provides a cli for issuing ksql requests. 
+The ksqldb-cli provides a cli for issuing ksql requests.  A ksql interactive session can be started using the alias `ksql`.  Example commands are show below:  Consult the official ksql reference [here](https://docs.ksqldb.io/en/latest/reference/).
 
-### control-center
-The control center provides a user interface for viewing everything happening in the kafka containers as well a way to supply ad-hoc configuration and ETL requests.  The control center can be accessed on a local container deployment at `https://localhost:9021`.
+```
+ksql> SHOW TABLES;
 
-![control center](./Documentation/imgs/control_center.png)
+ Table Name         | Kafka Topic    | Key Format | Value Format | Windowed
+----------------------------------------------------------------------------
+ CALENDARDATESTABLE | CalendarDates  | KAFKA      | JSON         | false
+ CALENDARTABLE      | Calendar       | KAFKA      | JSON         | false
+ ROUTEPATHSTABLE    | Shapes         | KAFKA      | JSON         | false
+ ROUTESTABLE        | Routes         | KAFKA      | JSON         | false
+ STOPSTABLE         | Stops          | KAFKA      | JSON         | false
+ TRIPSTABLE         | Trips          | KAFKA      | JSON         | false
+ VEHICLESLATEST     | VehiclesLatest | KAFKA      | PROTOBUF     | false
+----------------------------------------------------------------------------
+```
+```
+ksql> SHOW STREAMS;
+
+ Stream Name                       | Kafka Topic                       | Key Format | Value Format | Windowed
+--------------------------------------------------------------------------------------------------------------
+ ALERTENTITIESEXPLODED             | AlertEntitiesExploded             | KAFKA      | PROTOBUF     | false
+ ALERTS                            | FeedSpecAlerts                    | KAFKA      | PROTOBUF     | false
+ ALERTSALT                         | alerts                            | KAFKA      | JSON_SR      | false
+ ALERTSALTEXPLODED                 | AlertsAltExploded                 | KAFKA      | PROTOBUF     | false
+ KSQL_PROCESSING_LOG               | default_ksql_processing_log       | KAFKA      | JSON         | false
+ TRIPENTITIESEXPLODED              | TripEntitiesExploded              | KAFKA      | PROTOBUF     | false
+ TRIPENTITIESEXPLODEDSTOPSEXPLODED | TripEntitiesExplodedStopsExploded | KAFKA      | PROTOBUF     | false
+ TRIPS                             | TripUpdate                        | KAFKA      | PROTOBUF     | false
+ VEHICLEENTITIESEXPLODED           | VehicleEntitiesExploded           | KAFKA      | PROTOBUF     | false
+ VEHICLES                          | VehiclePositions                  | KAFKA      | PROTOBUF     | false
+ VEHICLESALT                       | vehicles                          | KAFKA      | JSON_SR      | false
+ VEHICLESALTEXPLODED               | VehiclesAltExploded               | KAFKA      | PROTOBUF     | false
+--------------------------------------------------------------------------------------------------------------
+```
+```
+ksql> DESCRIBE VEHICLESLATEST EXTENDED;
+
+Name                 : VEHICLESLATEST
+Type                 : TABLE
+Timestamp field      : Not set - using <ROWTIME>
+Key format           : KAFKA
+Value format         : PROTOBUF
+Kafka topic          : VehiclesLatest (partitions: 1, replication: 1)
+Statement            : CREATE TABLE VEHICLESLATEST WITH (CLEANUP_POLICY='compact', KAFKA_TOPIC='VehiclesLatest', PARTITIONS=1, REPLICAS=1, RETENTION_MS=604800000, VALUE_FORMAT='PROTOBUF') AS SELECT
+  V.ENTITY->VEHICLE->VEHICLE->ID VEHICLE_ID,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->LATITUDE) LATITUDE,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->LONGITUDE) LONGITUDE,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->CURRENT_STATUS) CURRENT_STATUS,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->CURRENT_STOP_SEQUENCE) CURRENT_STOP_SEQUENCE,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->STOP_ID) STOP_ID,
+  LATEST_BY_OFFSET(T.ROUTE_ID) ROUTE_ID,
+  LATEST_BY_OFFSET(T.DIRECTION_ID) DIRECTION_ID,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->TIMESTAMP) TIMESTAMP,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->BEARING) BEARING,
+  LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->SPEED) SPEED,
+  LATEST_BY_OFFSET(T.TRIP_ID) TRIP_ID
+FROM VEHICLEENTITIESEXPLODED V
+INNER JOIN TRIPSTABLE T ON ((T.TRIP_ID = V.ENTITY->VEHICLE->TRIP->TRIP_ID))
+GROUP BY V.ENTITY->VEHICLE->VEHICLE->ID
+EMIT CHANGES;
+
+ Field                 | Type
+--------------------------------------------------------
+ VEHICLE_ID            | VARCHAR(STRING)  (primary key)
+ LATITUDE              | DOUBLE
+ LONGITUDE             | DOUBLE
+ CURRENT_STATUS        | VARCHAR(STRING)
+ CURRENT_STOP_SEQUENCE | BIGINT
+ STOP_ID               | VARCHAR(STRING)
+ ROUTE_ID              | VARCHAR(STRING)
+ DIRECTION_ID          | INTEGER
+ TIMESTAMP             | BIGINT
+ BEARING               | DOUBLE
+ SPEED                 | DOUBLE
+ TRIP_ID               | VARCHAR(STRING)
+--------------------------------------------------------
+
+Queries that write from this TABLE
+-----------------------------------
+CTAS_VEHICLESLATEST_33 (RUNNING) : CREATE TABLE VEHICLESLATEST WITH (CLEANUP_POLICY='compact', KAFKA_TOPIC='VehiclesLatest', PARTITIONS=1, REPLICAS=1, RETENTION_MS=604800000, VALUE_FORMAT='PROTOBUF') AS SELECT   V.ENTITY->VEHICLE->VEHICLE->ID VEHICLE_ID,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->LATITUDE) LATITUDE,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->LONGITUDE) LONGITUDE,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->CURRENT_STATUS) CURRENT_STATUS,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->CURRENT_STOP_SEQUENCE) CURRENT_STOP_SEQUENCE,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->STOP_ID) STOP_ID,   LATEST_BY_OFFSET(T.ROUTE_ID) ROUTE_ID,   LATEST_BY_OFFSET(T.DIRECTION_ID) DIRECTION_ID,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->TIMESTAMP) TIMESTAMP,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->BEARING) BEARING,   LATEST_BY_OFFSET(V.ENTITY->VEHICLE->POSITION->SPEED) SPEED,   LATEST_BY_OFFSET(T.TRIP_ID) TRIP_ID FROM VEHICLEENTITIESEXPLODED V INNER JOIN TRIPSTABLE T ON ((T.TRIP_ID = V.ENTITY->VEHICLE->TRIP->TRIP_ID)) GROUP BY V.ENTITY->VEHICLE->VEHICLE->ID EMIT CHANGES;
+
+For query topology and execution plan please run: EXPLAIN <QueryId>
+
+Runtime statistics by host
+-------------------------
+ Host               | Metric           | Value      | Last Message
+-------------------------------------------------------------------------------
+ ksqldb-server:8088 | messages-per-sec |        388 | 2023-10-25T21:44:15.418Z
+ ksqldb-server:8088 | total-messages   |    7047872 | 2023-10-25T21:44:15.418Z
+-------------------------------------------------------------------------------
+(Statistics of the local KSQL server interaction with the Kafka topic VehiclesLatest)
+
+Consumer Groups summary:
+
+Consumer Group       : _confluent-ksql-default_query_CTAS_VEHICLESLATEST_33
+
+Kafka topic          : _confluent-ksql-default_query_CTAS_VEHICLESLATEST_33-Join-repartition
+Max lag              : 433
+
+ Partition | Start Offset | End Offset | Offset  | Lag
+-------------------------------------------------------
+ 0         | 7185246      | 7188282    | 7187849 | 433
+-------------------------------------------------------
+
+Kafka topic          : Trips
+Max lag              : 0
+
+ Partition | Start Offset | End Offset | Offset | Lag
+------------------------------------------------------
+ 0         | 0            | 64119      | 64119  | 0
+------------------------------------------------------
+
+Kafka topic          : _confluent-ksql-default_query_CTAS_VEHICLESLATEST_33-Aggregate-GroupBy-repartition
+Max lag              : 425
+
+ Partition | Start Offset | End Offset | Offset  | Lag
+-------------------------------------------------------
+ 0         | 7042738      | 7047872    | 7047447 | 425
+-------------------------------------------------------
+
+Kafka topic          : VehicleEntitiesExploded
+Max lag              : 0
+
+ Partition | Start Offset | End Offset | Offset  | Lag
+-------------------------------------------------------
+ 0         | 0            | 7192767    | 7192767 | 0
+-------------------------------------------------------
+```
+```
+ksql> SELECT * FROM VEHICLESLATEST EMIT CHANGES;
++--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|VEHICLE_|LATITUDE|LONGITUD|CURRENT_|CURRENT_|STOP_ID |ROUTE_ID|DIRECTIO|TIMESTAM|BEARING |SPEED   |TRIP_ID |
+|ID      |        |E       |STATUS  |STOP_SEQ|        |        |N_ID    |P       |        |        |        |
+|        |        |        |        |UENCE   |        |        |        |        |        |        |        |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|233     |45.53004|-122.653|STOPPED_|29      |8343    |100     |0       |16982512|90.0    |0.0     |12957121|
+|        |83703613|67889404|AT      |        |        |        |        |16      |        |        |        |
+|        |3       |297     |        |        |        |        |        |        |        |        |        |
+|103     |45.53004|-122.653|STOPPED_|29      |8343    |100     |0       |16982512|90.0    |0.0     |12957121|
+|        |83703613|67889404|AT      |        |        |        |        |16      |        |        |        |
+|        |3       |297     |        |        |        |        |        |        |        |        |        |
+|201     |45.51786|-122.676|IN_TRANS|22      |8336    |100     |0       |16982512|110.0   |0.0     |12957122|
+|        |42272949|86462402|IT_TO   |        |        |        |        |05      |        |        |        |
+|        |2       |344     |        |        |        |        |        |        |        |        |        |
+...
+```
 
 ### connect
+
 The kafka connect plugin is a suite of tools for connecting outside data sources as sinks and sources, places for sending and getting data respectively.  In our case, we are sending the data to snowflake and S3.  The only customization we make to the regular kafka connect container is to install the snowflake connector by copying the jar file for snowflake connect app along with bouncycastle, which is needed for decrypting ssh passphrases.  The snowflake sink connector is configured using `SnowflakeSinkConfig.json`.  Current connector configurations can be accessed from the control center under the connect section.
 
 ### snowflake
+
 Select topics, specified in the "topics" field of the `SnowflakeSinkConfig.json` file are sent to snowflake staging tables.  S3 data can also be used as inputs for Snowflake data.  A range of ETL jobs defined with [DBT](./DBT/README.md) than transforms that input data to a form that is appropriate for BI reporting in the hub tables.  The ETL sql code for Snowflake is defined in the `DBT` directory.
 
 ### aws
