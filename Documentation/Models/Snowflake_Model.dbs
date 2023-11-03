@@ -313,7 +313,8 @@
 			</fk>
 		</table>
 		<table name="DKLAS" prior="TABLE" >
-			<column name="FDASFSAF" type="boolean" jt="16" />
+			<column name="FDASFSAF_RICK" type="boolean" jt="16" />
+			<column name="NEW_COLUMN" type="datetime" jt="91" />
 			<column name="KDSJAF" type="binary" length="23" jt="-2" />
 		</table>
 		<table name="FAM_FARE_REVENUE" >
