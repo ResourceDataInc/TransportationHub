@@ -314,6 +314,7 @@
 		</table>
 		<table name="DKLAS" prior="TABLE" >
 			<column name="FDASFSAF" type="boolean" jt="16" />
+			<column name="KDSJAF" type="binary" length="23" jt="-2" />
 		</table>
 		<table name="FAM_FARE_REVENUE" >
 			<comment><![CDATA[FARE REVENUES USED BY FARE ALLOCATION MODEL (FAM).]]></comment>
