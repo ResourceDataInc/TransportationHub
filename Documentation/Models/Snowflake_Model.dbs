@@ -5636,6 +5636,7 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 			<comment><![CDATA[Testing the git integration]]></comment>
 			<column name="ID" type="integer" jt="4" mandatory="y" />
 			<column name="DESCR" type="varchar" jt="12" />
+			<column name="NAME" type="varchar" length="100" jt="12" />
 			<index name="PK_GIT_TEST_ID" unique="PRIMARY_KEY" >
 				<column name="ID" />
 			</index>
@@ -14163,7 +14164,7 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_PT_CONTRACT_FUNCTION_ALLOCATIONS" color="C1D8EE" x="1008" y="416" />
 		<entity schema="RAD.DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="2320" y="592" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="336" y="992" />
-		<entity schema="NEXUS.METADATA" name="GIT_TEST" color="C1D8EE" x="1808" y="1168" />
+		<entity schema="NEXUS.METADATA" name="GIT_TEST" color="C1D8EE" x="1696" y="1072" />
 		<entity schema="RAD.DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1776" y="96" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1440" y="416" />
 		<group name="RAD" color="00FF00" >
