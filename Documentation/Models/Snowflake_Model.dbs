@@ -313,7 +313,8 @@
 			</fk>
 		</table>
 		<table name="DKLAS" prior="TABLE" >
-			<column name="FDASFSAF" type="boolean" jt="16" />
+			<column name="FDASFSAF_RICK" prior="FDASFSAF" type="boolean" jt="16" />
+			<column name="NEW_COLUMN" type="datetime" jt="91" />
 		</table>
 		<table name="FAM_FARE_REVENUE" >
 			<comment><![CDATA[FARE REVENUES USED BY FARE ALLOCATION MODEL (FAM).]]></comment>
@@ -14167,7 +14168,7 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_PT_CONTRACT_FUNCTION_ALLOCATIONS" color="C1D8EE" x="1008" y="416" />
 		<entity schema="RAD.DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="2320" y="592" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="336" y="992" />
-		<entity schema="NEXUS.DM_ALLOCATIONS" name="DKLAS" color="C1D8EE" x="304" y="400" />
+		<entity schema="NEXUS.DM_ALLOCATIONS" name="DKLAS" color="C1D8EE" x="160" y="464" />
 		<entity schema="NEXUS.METADATA" name="GIT_TEST" color="C1D8EE" x="1696" y="1072" />
 		<entity schema="RAD.DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1776" y="96" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1440" y="416" />
