@@ -5632,6 +5632,14 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 			<pre_script><![CDATA[create or replace SEQUENCE METADATA.ETL_LOG_SEQ start with 1 increment by 1
 ]]></pre_script>
 		</table>
+		<table name="GIT_TEST" prior="RICK" >
+			<comment><![CDATA[Testing the git integration]]></comment>
+			<column name="ID" type="integer" jt="4" mandatory="y" />
+			<column name="DESCR" type="varchar" jt="12" />
+			<index name="PK_GIT_TEST_ID" unique="PRIMARY_KEY" >
+				<column name="ID" />
+			</index>
+		</table>
 		<table name="TEST_RESULTS" prior="TABLE" >
 			<comment><![CDATA[CONTAINS RESULTS OF AUTOMATED TEST FRAMEWORK REPRESENTING TEST FAILURES]]></comment>
 			<column name="JOB_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" >
@@ -14139,8 +14147,8 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 		<entity schema="NEXUS.DM_DIMENSIONS" name="CAM_ALLOCATION_METRICS" color="C13939" x="640" y="992" />
 		<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_METRIC_VALUES" color="C1D8EE" x="2320" y="800" />
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_ALLOCATION_METRIC_VALUES" color="3986C1" x="1008" y="1248" />
-		<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_RULES" color="C1D8EE" x="1984" y="800" />
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_ALLOCATION_RULES" color="C1D8EE" x="640" y="704" />
+		<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_RULES" color="C1D8EE" x="1776" y="752" />
 		<entity schema="RAD.ALLOCATIONS" name="CAM_EXCLUSIONS" color="C1D8EE" x="2624" y="592" />
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_EXCLUSIONS" color="C1D8EE" x="640" y="1248" />
 		<entity schema="RAD.ALLOCATIONS" name="CAM_F30_TEMPLATE" color="C1D8EE" x="2896" y="592" />
@@ -14155,13 +14163,13 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 		<entity schema="NEXUS.DM_ALLOCATIONS" name="CAM_PT_CONTRACT_FUNCTION_ALLOCATIONS" color="C1D8EE" x="1008" y="416" />
 		<entity schema="RAD.DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="2320" y="592" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="CAM_SERVICE_POOLS" color="C13939" x="336" y="992" />
+		<entity schema="NEXUS.METADATA" name="GIT_TEST" color="C1D8EE" x="1808" y="1168" />
 		<entity schema="RAD.DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1776" y="96" />
 		<entity schema="NEXUS.DM_DIMENSIONS" name="NTD_FUNCTIONS" color="C13939" x="1440" y="416" />
 		<group name="RAD" color="00FF00" >
 			<entity schema="RAD.DIMENSIONS" name="CAM_ALLOCATION_METRICS" />
 			<entity schema="RAD.DIMENSIONS" name="CAM_SERVICE_POOLS" />
 			<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_METRIC_VALUES" />
-			<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_RULES" />
 			<entity schema="RAD.ALLOCATIONS" name="CAM_EXCLUSIONS" />
 			<entity schema="RAD.ALLOCATIONS" name="CAM_FIXED_ALLOCATIONS" />
 			<entity schema="RAD.ALLOCATIONS" name="CAM_F30_TEMPLATE" />
@@ -14172,6 +14180,7 @@ APTS.OPD_V_TRIP_TPI.]]></comment>
 			<entity schema="RAD.ALLOCATIONS" name="CAM_FUNCTION_ALLOCATIONS" />
 			<entity schema="RAD.DIMENSIONS" name="NTD_FUNCTIONS" />
 			<entity schema="RAD.ALLOCATIONS" name="CAM_PT_CONTRACT_FUNCTION_ALLOCATIONS" />
+			<entity schema="RAD.ALLOCATIONS" name="CAM_ALLOCATION_RULES" />
 		</group>
 		<group name="NEXUS" color="0000FF" >
 			<entity schema="NEXUS.DM_DIMENSIONS" name="CAM_SERVICE_POOLS" />
