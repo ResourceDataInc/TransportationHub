@@ -45,8 +45,11 @@ def sysadmin_view():
             Use the Data Viewer to view the existing data in the Example Data Set.
                 
         """)
+
     with data_entry_tab:
         with st.form(key="entry_form", clear_on_submit=True):
+            
+            # Columns to demonstrate side-by-side input forms
             col1, col2 = st.columns(2)
             with col1:
                 disruption_type = st.selectbox(
@@ -58,11 +61,13 @@ def sysadmin_view():
                     label="Number of passengers affected",
                     step=1
                 )
+
             routes_affected = st.multiselect(
                 label="Routes affected",
                 options=route_list,
                 format_func=lambda id: "Route " + str(id)
             )
+
             service_cancelled = st.checkbox(
                 label="Service cancelled",
                 value=False
@@ -89,6 +94,7 @@ def sysadmin_view():
             st.markdown("**required*")
 
             if submit_entry:
+                # Convert the values to a single row dataframe. Exclude `EVENT_UID` because it is auto-incrementing by table definition.
                 new_row = {
                     'DISRUPTION_TYPE': [disruption_type],
                     'PASSENGERS_AFFECTED': [passengers_affected],
@@ -101,6 +107,7 @@ def sysadmin_view():
                 new_row_df = pd.DataFrame(new_row)
 
                 with st.spinner("Writing data..."):
+                    # Append the new row to the table.
                     conn.write_pandas(
                         df=new_row_df,
                         database="CT_DEMO",
@@ -109,9 +116,9 @@ def sysadmin_view():
                     )
                     st.success("Data row inserted!")
                     time.sleep(0.5)
+                # Clear cache and rerun the app to show the updated dataframe with the new row in other tabs.
                 st.cache_data.clear()
                 st.rerun()
-
 
     with data_editor_tab:
         with st.form(key="edit_form"):
@@ -148,6 +155,8 @@ def sysadmin_view():
 
             if submit_edit:
                 with st.spinner("Editing data..."):
+                    # Data editor doesn't inherently know what rows and values changed from the original state.
+                    # For each row in the dataframe, execute an update statement, regardless of whether it changed.
                     df_dict = df_editor.to_dict()
                     for row_num in df_dict['EVENT_UID']:
                         uid = df_dict['EVENT_UID'][row_num]
@@ -193,6 +202,7 @@ def sysadmin_view():
 
     with data_viewer_tab:
         st.write(conn.query(table_query))
+        # Demonstrate expanders and simple viz.
         with st.expander("Passengers affected by disruption type",expanded=False):
             disruption_passenger_affect = conn.query(table_query).groupby('DISRUPTION_TYPE').sum('PASSENGERS_AFFECTED')['PASSENGERS_AFFECTED']
             st.bar_chart(disruption_passenger_affect)
@@ -203,7 +213,9 @@ def sysadmin_view():
                 "EVENT_DATE": "Date"
             })
             st.plotly_chart(fig)
+        
     with file_uploader:
+        # Demonstrate simple file uplaoding
         uploaded_file = st.file_uploader("Upload a .csv file")
         if uploaded_file is not None:
             st.balloons()
@@ -211,8 +223,10 @@ def sysadmin_view():
             st.write(df)
 
 def developer_view():
+    # Demonstrate role based views/UI
     st.write("Developer unable to access")
 
+# Update role
 with st.form(key="role_form"):
     role = st.selectbox('Role',options=['SYSADMIN','DEVELOPER'])
     role_update = st.form_submit_button("Change role")
