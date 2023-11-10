@@ -2,3 +2,4 @@
 dbt_prod/
 dbt_packages/
 logs/
+*secrets.toml
