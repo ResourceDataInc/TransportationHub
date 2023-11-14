@@ -7,7 +7,7 @@
     "buffer.count.records":"600000",
     "buffer.flush.time":"7200",
     "buffer.size.bytes":"100000000",
-    "snowflake.url.name":"***REMOVED***",
+    "snowflake.url.name":"<your url>",
     "snowflake.user.name":"<your user name>",
     "snowflake.private.key":"<your private key>",
     "snowflake.private.key.passphrase":"<your private key passphrase>",
