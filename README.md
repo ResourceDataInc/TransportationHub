@@ -9,8 +9,7 @@ The Transportation Hub is RDI's internal data streaming and data warehousing pro
 * Java - data requests on trimet API and data writes to kafka broker 
 * Confluent
   * Kafka Broker - durable queues and stream processing
-  * Schema Registry - track schema's for data inputs, also used for serializing and deserializing binary data 
-  * Control Center - viewing all streaming operations 
+  * Schema Registry - track schema's for data inputs, also used for serializing and deserializing binary data  
   * Ksqldb - streaming ETL
   * Connect - configuring output data destinations
 * React - javascript web development framework
