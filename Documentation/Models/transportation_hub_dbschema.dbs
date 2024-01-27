@@ -246,3 +246,251 @@
 		<entity schema="MART" name="VEHICLE" color="C1D8EE" x="48" y="48" />
 	</layout>
 </project>
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="transportation_hub" id="Project-1abb" database="Snowflake" >
+	<schema name="MART" >
+		<comment><![CDATA[Data mart for Transportation Hub. Includes dimension and fact tables in star/snowflake schema to support reporting in BI layer]]></comment>
+		<table name="ROUTE" prior="TABLE" >
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_ROUTE_ROUTE_ID" unique="PRIMARY_KEY" >
+				<column name="ROUTE_ID" />
+			</index>
+		</table>
+		<table name="STOP" prior="TABLE" >
+			<column name="STOP_ID" type="integer" jt="4" mandatory="y" />
+			<column name="STOP_DESCRIPTION" prior="STOP_NAME" type="varchar" length="100" jt="12" />
+			<index name="PK_TABLE_STOP_ID" unique="PRIMARY_KEY" >
+				<column name="STOP_ID" />
+			</index>
+		</table>
+		<table name="STOP_EVENT" prior="TABLE" >
+			<column name="STOP_EVENT_ID" prior="STOP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_EVENT_ID" prior="TRIP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="SCHEDULED_ARRIVAL_TIME" prior="ESTIMATED_ARRIVAL_TIME" type="number" jt="3" />
+			<column name="ACTUAL_ARRIVAL_TIME" type="number" jt="3" />
+			<column name="SCHEDULED_DEPARTURE_TIME" prior="ESTIMATED_DEPARTURE_TIME" type="number" jt="3" />
+			<column name="ACTUAL_DEPARTURE_TIME" type="number" jt="3" />
+			<index name="PK_STOP_EVENT_STOP_ID" unique="PRIMARY_KEY" >
+				<column name="STOP_EVENT_ID" />
+			</index>
+		</table>
+		<table name="TRIP_EVENT" prior="TABLE" >
+			<column name="TRIP_EVENT_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_DATE" type="date" jt="91" mandatory="y" />
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" />
+			<index name="PK_TRIP_EVENT_TRIP_EVENT_ID" unique="PRIMARY_KEY" >
+				<column name="TRIP_EVENT_ID" />
+			</index>
+		</table>
+		<table name="VEHICLE" prior="TABLE" >
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_VEHICLE_VEHICLE_ID" unique="PRIMARY_KEY" >
+				<column name="VEHICLE_ID" />
+			</index>
+		</table>
+	</schema>
+	<schema name="HUB" catalogname="TRANSPORTATION_HUB" >
+		<table name="BLOCKS" prior="TABLE" >
+			<column name="BLOCK_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_BLOCKS_BLOCK_ID" unique="PRIMARY_KEY" >
+				<column name="BLOCK_ID" />
+			</index>
+			<fk name="FK_BLOCKS_TRIP" to_schema="TRANSPORTATION_HUB.HUB" to_table="TRIPS" >
+				<fk_column name="TRIP_ID" pk="TRIP_ID" />
+			</fk>
+		</table>
+		<table name="MESSAGES" prior="MESSAGE" >
+			<column name="MESSAGE_ID" type="integer" jt="4" mandatory="y" />
+			<column name="SIGN_MESSAGE" type="varchar" length="50" jt="12" />
+			<column name="SIGN_MESSAGE_LONG" type="varchar" length="100" jt="12" />
+			<index name="PK_MESSAGE_MESSAGE_ID" unique="PRIMARY_KEY" >
+				<column name="MESSAGE_ID" />
+			</index>
+		</table>
+		<table name="PATTERNS" prior="PATTERN_ID" >
+			<column name="PATTERN_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="UNQ_PATTERNS_PATTERN_ID" unique="UNIQUE_KEY" >
+				<column name="PATTERN_ID" />
+			</index>
+			<index name="PK_PATTERNS_PATTERN_ID" unique="PRIMARY_KEY" >
+				<column name="PATTERN_ID" />
+			</index>
+		</table>
+		<table name="ROUTES" prior="ROUTE" >
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" >
+				<comment><![CDATA["routeNumber" in JSON dataset]]></comment>
+			</column>
+			<column name="ROUTE_TYPE" type="varchar" length="10" jt="12" />
+			<column name="ROUTE_SUB_TYPE" type="varchar" length="20" jt="12" />
+			<column name="ROUTE_COLOR" type="varchar" length="6" jt="12" />
+			<column name="FREQUENT_SERVICE" type="boolean" jt="16" />
+			<column name="ROUTE_DESC" type="varchar" length="50" jt="12" />
+			<index name="UNQ_ROUTE_ROUTE_ID" unique="UNIQUE_KEY" >
+				<column name="ROUTE_ID" />
+			</index>
+			<index name="PK_ROUTE_ROUTE_ID" unique="PRIMARY_KEY" >
+				<column name="ROUTE_ID" />
+			</index>
+		</table>
+		<table name="SCHEDULES" prior="TABLE" >
+			<column name="SCHEDULE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="STOP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="DIRECTION" type="varchar" jt="12" />
+			<column name="DAY_TYPE" type="varchar" jt="12" />
+			<column name="DAY_OF_WEEK" type="varchar" jt="12" />
+			<column name="SCHEDULED_ARRIVAL_TIME" type="timestamp_ntz" length="9" jt="93" />
+			<column name="SCHEDULED_DEPARTURE_TIME" prior="SCHEDULED_TIME" type="timestamp_ntz" length="9" jt="93" />
+			<index name="PK_SCHEDULES_SCHEDULE_ID" unique="PRIMARY_KEY" >
+				<column name="SCHEDULE_ID" />
+			</index>
+			<fk name="FK_SCHEDULES_STOPS" to_schema="TRANSPORTATION_HUB.HUB" to_table="STOPS" >
+				<fk_column name="STOP_ID" pk="STOP_ID" />
+			</fk>
+		</table>
+		<table name="STOPS" prior="TABLE" >
+			<comment><![CDATA[Defined as Location ID in the TriMet API. Identifies stops along a bus or MAX route.]]></comment>
+			<column name="STOP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="STOP_DESCRIPTION" type="varchar" jt="12" />
+			<column name="LATITUDE" type="number" length="15" decimal="12" jt="3" >
+				<comment><![CDATA[Stop latitude]]></comment>
+			</column>
+			<column name="LONGITUDE" type="number" length="15" decimal="12" jt="3" />
+			<column name="DIRECTION" type="varchar" jt="12" />
+			<column name="STOP_SEQUENCE" type="number" length="38" decimal="0" jt="3" />
+			<index name="UNQ_STOPS_STOP_ID" unique="UNIQUE_KEY" >
+				<column name="STOP_ID" />
+			</index>
+			<index name="PK_STOPS_STOP_ID" unique="PRIMARY_KEY" >
+				<column name="STOP_ID" />
+			</index>
+			<fk name="FK_STOPS_ROUTE" to_schema="TRANSPORTATION_HUB.HUB" to_table="ROUTES" >
+				<fk_column name="ROUTE_ID" pk="ROUTE_ID" />
+			</fk>
+		</table>
+		<table name="TRIPS" prior="TRIP" >
+			<column name="TRIP_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="ROUTE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="PATTERN_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<index name="PK_TRIP_TRIP_ID" unique="PRIMARY_KEY" >
+				<column name="TRIP_ID" />
+			</index>
+			<fk name="FK_TRIP_PATTERNS" to_schema="TRANSPORTATION_HUB.HUB" to_table="PATTERNS" >
+				<fk_column name="PATTERN_ID" pk="PATTERN_ID" />
+			</fk>
+			<fk name="FK_TRIP_ROUTE" to_schema="TRANSPORTATION_HUB.HUB" to_table="ROUTES" >
+				<fk_column name="ROUTE_ID" pk="ROUTE_ID" />
+			</fk>
+			<fk name="FK_TRIP_VEHICLE" to_schema="TRANSPORTATION_HUB.HUB" to_table="VEHICLES" >
+				<fk_column name="VEHICLE_ID" pk="VEHICLE_ID" />
+			</fk>
+		</table>
+		<table name="VEHICLES" prior="VEHICLE" >
+			<column name="VEHICLE_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="VEHICLE_TYPE" type="varchar" length="10" jt="12" />
+			<index name="PK_VEHICLE_VEHICLE_ID" unique="PRIMARY_KEY" >
+				<column name="VEHICLE_ID" />
+			</index>
+			<pre_script><![CDATA[CREATE OR REPLACE SEQUENCE VEHICLE_SEQ START WITH 1 INCREMENT BY 1]]></pre_script>
+		</table>
+		<table name="VEHICLE_POSITIONS" prior="VEHICLE_POSITION" >
+			<column name="VEHICLE_POSITION_ID" prior="VEHICLE_POSITION_UID" type="number" length="38" decimal="0" jt="3" mandatory="y" >
+				<defo><![CDATA[VEHICLE_POSITION_SEQ.NEXTVAL]]></defo>
+			</column>
+			<column name="VEHICLE_ID" prior="VEHICLE_UID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="DATETIME" prior="DATE" type="timestamp_ntz" length="9" jt="93" mandatory="y" />
+			<column name="LATITUDE" type="number" length="15" decimal="12" jt="3" mandatory="y" />
+			<column name="LONGITUDE" type="number" length="15" decimal="12" jt="3" mandatory="y" />
+			<column name="ROUTE_ID" prior="ROUTE_UID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="TRIP_ID" prior="TRIPID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="LAST_STOP_ID" prior="LAST_LOC_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="NEXT_STOP_ID" prior="NEXT_LOC_ID" type="number" length="38" decimal="0" jt="3" mandatory="y" />
+			<column name="IN_CONGESTION" type="boolean" jt="16" />
+			<column name="OFF_ROUTE" type="boolean" jt="16" />
+			<column name="MESSAGE_ID" prior="MESSAGE_UID" type="number" length="38" decimal="0" jt="3" />
+			<index name="PK_VEHICLE_POSITION_ID" unique="PRIMARY_KEY" >
+				<column name="VEHICLE_POSITION_ID" />
+			</index>
+			<fk name="FK_VEHICLE_POSITION_STOPS" to_schema="TRANSPORTATION_HUB.HUB" to_table="STOPS" >
+				<fk_column name="NEXT_STOP_ID" pk="STOP_ID" />
+			</fk>
+			<fk name="FK_VEHICLE_POSITION_STOPS_0" to_schema="TRANSPORTATION_HUB.HUB" to_table="STOPS" >
+				<fk_column name="LAST_STOP_ID" pk="STOP_ID" />
+			</fk>
+			<fk name="FK_VEHICLE_POSITION_VEHICLE" to_schema="TRANSPORTATION_HUB.HUB" to_table="VEHICLES" >
+				<fk_column name="VEHICLE_ID" pk="VEHICLE_ID" />
+			</fk>
+		</table>
+	</schema>
+	<schema name="PUBLIC" catalogname="TRANSPORTATION_HUB" />
+	<schema name="STAGING" catalogname="TRANSPORTATION_HUB" >
+		<table name="ROUTE_STAGING" prior="TABLE" >
+			<column name="ROUTECOLOR" type="varchar" jt="12" />
+			<column name="FREQUENTSERVICE" type="boolean" jt="16" />
+			<column name="ROUTE" type="integer" jt="4" />
+			<column name="DETOUR" type="boolean" jt="16" />
+			<column name="ROUTESUBTYPE" type="varchar" jt="12" />
+			<column name="ID" type="integer" jt="4" />
+			<column name="TYPE" type="varchar" jt="12" />
+			<column name="DESC" type="varchar" jt="12" />
+			<column name="ROUTESORTORDER" type="integer" jt="4" />
+		</table>
+		<table name="VEHICLE_STAGING" prior="TABLE" >
+			<comment><![CDATA[transforms JSON from S3 external stage to staging table]]></comment>
+			<column name="BEARING" type="integer" jt="4" />
+			<column name="BLOCKID" type="integer" jt="4" />
+			<column name="DELAY" type="integer" jt="4" />
+			<column name="EXPIRES" type="datetime" jt="91" />
+			<column name="EXTRABLOCKID" prior="EXTRA_BLOCKID" type="integer" jt="4" />
+			<column name="GARAGE" type="varchar" length="10" jt="12" />
+			<column name="IN_CONGESTION" type="boolean" jt="16" />
+			<column name="LASTLOCID" prior="LAST_LOCID" type="integer" jt="4" />
+			<column name="LASTSTOPSEQ" prior="LAST_STOP_SEQ" type="integer" jt="4" />
+			<column name="LATITUDE" type="float" jt="6" />
+			<column name="LOADPERCENTAGE" prior="LOAD_PERCENTAGE" type="integer" jt="4" />
+			<column name="LOCATIONINSCHEDULEDAY" prior="LOCATION_IN_SCHEDULE_DAY" type="integer" jt="4" />
+			<column name="LONGITUDE" type="float" jt="6" />
+			<column name="MESSAGECODE" prior="MESSAGE_CODE" type="integer" jt="4" />
+			<column name="NEWTRIP" prior="NEW_TRIP" type="boolean" jt="16" />
+			<column name="NEXTLOCID" prior="NEXT_LOCID" type="integer" jt="4" />
+			<column name="NEXTSTOPSEQ" prior="NEXT_STOP_SEQ" type="integer" jt="4" />
+			<column name="OFFROUTE" prior="OFF_ROUTE" type="boolean" jt="16" />
+			<column name="ROUTECOLOR" prior="COLOR" type="varchar" length="6" jt="12" />
+			<column name="ROUTENUMBER" prior="ROUTE_NUMBER" type="integer" jt="4" />
+			<column name="ROUTESUBTYPE" prior="ROUTE_SUB_TYPE" type="varchar" length="20" jt="12" />
+			<column name="SERVICEDATE" prior="SERVICE_DATE" type="datetime" jt="91" />
+			<column name="SIGNMESSAGE" prior="SIGN_MESSAGE" type="varchar" length="50" jt="12" />
+			<column name="SIGNMESSAGELONG" prior="SIGN_MESSAGE_LONG" type="text" length="100" jt="12" />
+			<column name="SOURCE" type="varchar" length="5" jt="12" />
+			<column name="TIME" type="datetime" jt="91" />
+			<column name="TRIPID" type="integer" jt="4" />
+			<column name="VEHICLETYPE" prior="VEHICLE_TYPE" type="varchar" length="10" jt="12" >
+				<comment><![CDATA["type" from JSON dataset]]></comment>
+			</column>
+			<column name="VEHICLEID" type="integer" jt="4" />
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout-ac3" show_relation="columns" >
+		<entity schema="TRANSPORTATION_HUB.HUB" name="BLOCKS" color="CAEEC1" x="1616" y="64" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="MESSAGES" color="C1D8EE" x="528" y="432" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="PATTERNS" color="C1D8EE" x="1600" y="544" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="ROUTES" color="C1D8EE" x="1392" y="528" />
+		<entity schema="TRANSPORTATION_HUB.STAGING" name="ROUTE_STAGING" color="EEC1C1" x="288" y="64" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="SCHEDULES" color="C1D8EE" x="624" y="608" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="STOPS" color="C1D8EE" x="960" y="528" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="TRIPS" color="CAEEC1" x="1328" y="48" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLES" color="C1D8EE" x="1200" y="432" />
+		<entity schema="TRANSPORTATION_HUB.HUB" name="VEHICLE_POSITIONS" color="CAEEC1" x="960" y="48" />
+		<entity schema="TRANSPORTATION_HUB.STAGING" name="VEHICLE_STAGING" color="EEC1C1" x="48" y="64" />
+	</layout>
+	<layout name="MART" id="Layout-1850" show_relation="cascade" >
+		<entity schema="MART" name="ROUTE" color="C1D8EE" x="112" y="208" />
+		<entity schema="MART" name="STOP" color="C1D8EE" x="832" y="80" />
+		<entity schema="MART" name="STOP_EVENT" color="C1D8EE" x="496" y="96" />
+		<entity schema="MART" name="TRIP_EVENT" color="C1D8EE" x="288" y="48" />
+		<entity schema="MART" name="VEHICLE" color="C1D8EE" x="48" y="48" />
+	</layout>
+</project>
