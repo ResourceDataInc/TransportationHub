@@ -3,6 +3,9 @@
 - [Tutorials and Snowflake Native App Pages](#relevant-tutorial-source-documentation-online)
 - [Goal - Share a Secure View that displays different results per customer](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
 - [Tool - Install Snowflake CLI](#Tool----Install-Snowflake-CLI)
+- [Create Native App Relevant Files Locally](#Create-Native-App-relevant-files-locally)
+- [Run the app against RDI Snowflake](#Run-the-App-against-RDI-Snowflake)
+- [List the app Privately](#List-the-App-Privately)
 
 # Data Applications, Data Sharing and Private Listings
 
@@ -175,6 +178,8 @@ connection. You will need at least the above fields specified. Note that
 my password is blurred in this document.
 
 # Create Native App relevant files locally
+
+Note:  This section mentions the steps but for this app the files should be in the repository
 
 1)  Run the following command to create a folder with skeleton Native
     App files present:
