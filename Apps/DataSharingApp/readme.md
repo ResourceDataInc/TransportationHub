@@ -1,3 +1,8 @@
+#### Table of Contents
+
+- [Tutorials and Snowflake Native App Pages](#relevant-tutorial-source-documentation-online)
+- [Deployment Overview](#deployment-overview)
+- [Goal - Share a Secure View](#goal-share-a-secure-view)
 
 # Data Applications, Data Sharing and Private Listings
 
