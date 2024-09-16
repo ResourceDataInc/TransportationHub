@@ -1,6 +1,6 @@
----
-title: Data Applications, Data Sharing and Private Listings
----
+
+# Data Applications, Data Sharing and Private Listings
+
 
 ## This documentation shows how to put together a Streamlit data application using the Snowflake Native App framework in order to share local data with a customer via a Private Listing in the Marketplace, provided that the customer has a full Snowflake account themselves.
 
@@ -65,8 +65,7 @@ CREATED_ON TIMESTAMP_LTZ(9) DEFAULT CURRENT_TIMESTAMP()
 These rows are present in the WIDGETS table and maintained there.
 
 ![A screenshot of a computer Description automatically
-generated](media/image1.png){width="6.5in"
-height="2.1972222222222224in"}
+generated](media/image1.png)
 
 2)  WIDGET_ACCESS_RULES
 
