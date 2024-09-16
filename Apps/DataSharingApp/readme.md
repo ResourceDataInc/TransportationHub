@@ -179,7 +179,7 @@ my password is blurred in this document.
 
 # Create Native App relevant files locally
 
-Note:  This section mentions the steps but for this app the files should be in the repository
+Note:  This section mentions the steps to create the files, but for the markdown version of this document, the files should be in the repository
 
 1)  Run the following command to create a folder with skeleton Native
     App files present:
