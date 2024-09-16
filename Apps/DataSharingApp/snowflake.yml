@@ -1,0 +1,15 @@
+definition_version: 1
+native_app:
+  name: widgets_app
+  source_stage: stage_content.widgets_app_stage
+  artifacts:
+    - src: app/*
+      dest: ./
+    - streamlit/widgets_app.py
+  package:
+    name: widgets_app_package
+    scripts:
+      - scripts/shared_content.sql
+  application:
+    name: widgets_app
+    debug: false
