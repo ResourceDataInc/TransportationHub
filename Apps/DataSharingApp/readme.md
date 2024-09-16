@@ -1,7 +1,8 @@
 #### Table of Contents
 
 - [Tutorials and Snowflake Native App Pages](#relevant-tutorial-source-documentation-online)
-- [Goal - Share a Secure View](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
+- [Goal - Share a Secure View that displays different results per customer](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
+- [Tool - Install Snowflake CLI](#Tool----Install-Snowflake-CLI)
 
 # Data Applications, Data Sharing and Private Listings
 
