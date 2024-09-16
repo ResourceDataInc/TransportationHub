@@ -262,8 +262,8 @@ CREATE OR ALTER VERSIONED SCHEMA code_schema;
 GRANT USAGE ON SCHEMA code_schema TO APPLICATION ROLE app_public;
 
 CREATE OR REPLACE STREAMLIT code_schema.widgets_app
-FROM \'/streamlit\'
-MAIN_FILE = \'/widgets_app.py\'
+FROM '/streamlit'
+MAIN_FILE = '/widgets_app.py'
 ;
 
 GRANT USAGE ON STREAMLIT code_schema.widgets_app TO APPLICATION ROLE
