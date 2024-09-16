@@ -94,7 +94,7 @@ COLOR,
 PRICE,
 CREATED_ON
 ) as
-SELECT w.\*
+SELECT w.*
 FROM DEV.BLINCOLN.widgets AS w
 WHERE w.id IN (SELECT widget_id
 FROM DEV.BLINCOLN.widget_access_rules AS a
@@ -199,7 +199,7 @@ COLOR,
 PRICE,
 CREATED_ON
 ) as
-SELECT w.\*
+SELECT w.*
 FROM dev.blincoln.widgets AS w
 WHERE w.id IN (
 SELECT widget_id
@@ -252,7 +252,7 @@ COLOR,
 PRICE,
 CREATED_ON
 ) as
-SELECT \*
+SELECT *
 FROM shared_data.widgets;
 
 GRANT SELECT on view core.widgets to APPLICATION ROLE app_public;
