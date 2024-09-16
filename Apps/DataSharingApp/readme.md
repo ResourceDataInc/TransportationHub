@@ -343,9 +343,9 @@ generated](media/image22.png)
 # List the App Privately
 
 1)  From RDI Snowflake Account in Snowsight, run the following command:
-
+```
 SHOW VERSIONS IN APPLICATION PACKAGE widgets_app_package;
-
+```
 > The results of this query should be as follows, and most importantly,
 > the review_status field should show 'APPROVED':
 >
@@ -358,10 +358,10 @@ SHOW VERSIONS IN APPLICATION PACKAGE widgets_app_package;
 > scripts/shared_content.sql has not been run and needs to be, where
 > {{package_name}} would at this stage be replaced with the name of the
 > package, WIDGETS_APP_PACKAGE:
-
+```
 ALTER APPLICATION PACKAGE WIDGETS_APP_PACKAGE SET DISTRIBUTION =
 EXTERNAL;
-
+```
 > If those two things have happened and it is still not approved, you
 > and/or someone else will have to figure out why. REVIEW_STATUS needs
 > to be 'APPROVED' to move on to the next step.
