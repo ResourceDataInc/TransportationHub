@@ -81,8 +81,7 @@ ACCOUNT_NAME VARCHAR(16777216)
 > there:
 >
 > ![A screenshot of a computer Description automatically
-> generated](media/image2.png){width="4.008146325459317in"
-> height="2.9876957567804023in"}
+> generated](media/image2.png)
 >
 > There are three unique ACCOUNT_NAME values: SAB13106, QJB12836, and
 > SZB57928. These represent the account locator values for an account,
@@ -126,8 +125,7 @@ WHERE upper(account_name) = CURRENT_ACCOUNT());
 > itself.
 >
 > ![A screenshot of a computer Description automatically
-> generated](media/image3.png){width="6.5in"
-> height="2.1979166666666665in"}
+> generated](media/image3.png)
 >
 > Note that for the screenshot of WIDGETS_VIEW, I was logged into the
 > main Resource Data Snowflake account, which has a locator of SZB57928.
@@ -144,40 +142,34 @@ WHERE upper(account_name) = CURRENT_ACCOUNT());
     Installation](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 
 ![A screenshot of a computer Description automatically
-generated](media/image4.png){width="6.5in"
-height="2.6194444444444445in"}
+generated](media/image4.png)
 
 Snowflake CLI is installed by installing the python library
 snowflake-cli-labs. If you use [anaconda](https://www.anaconda.com/),
 you can use the file local_test_env.yml in this folder and this command:
 
-![](media/image6.png){width="6.5in"
-height="0.3055555555555556in"}
+![](media/image6.png)
 
 It installs a conda environment called snowflake-cli that includes
 pytest, streamlit, and a few other relevant libraries besides Snowflake
 CLI. Then to activate that conda environment, use the following command:
 
-![](media/image7.png){width="4.7558070866141735in"
-height="0.49844488188976377in"}
+![](media/image7.png)
 
 Then the main command you'll be interested in is snow:
 
 ![A screenshot of a computer program Description automatically
-generated](media/image8.png){width="6.5in"
-height="3.545138888888889in"}
+generated](media/image8.png)
 
 2)  Configure the connection to Snowflake
 
 ![A screenshot of a computer program Description automatically
-generated](media/image9.png){width="6.5in"
-height="2.2944444444444443in"}
+generated](media/image9.png)
 
 Ordinarily, you'll want to use the following command to add a
 connection:
 
-![](media/image10.png){width="6.5in"
-height="0.7451388888888889in"}
+![](media/image10.png)
 
 This will simply ask for individual fields iteratively and then edit a
 local file called config.toml. Note that I run everything from a Windows
@@ -186,12 +178,10 @@ this file is located in the .config folder relative to my home Linux
 folder:
 
 ![A screen shot of a computer Description automatically
-generated](media/image11.png){width="6.5in"
-height="1.7173611111111111in"}
+generated](media/image11.png)
 
 ![A computer screen with text and numbers Description automatically
-generated](media/image12.png){width="5.988834208223972in"
-height="3.582884951881015in"}
+generated](media/image12.png)
 
 I have also named my connection rdi_snowflake and made that the default
 connection. You will need at least the above fields specified. Note that
@@ -204,13 +194,11 @@ my password is blurred in this document.
 
 Snow app init widgets
 
-![](media/image13.png){width="6.5in"
-height="0.7159722222222222in"}
+![](media/image13.png)
 
 Once you've done this, the folder structure should look like this:![A
 screen shot of a computer Description automatically
-generated](media/image14.png){width="6.5in"
-height="1.5743055555555556in"}
+generated](media/image14.png)
 
 2)  Create a folder called scripts and create a file in it called
     shared_content.sql and copy the following contents into the file:
@@ -365,8 +353,7 @@ st.dataframe(queried_data, use_container_width=True)
 6)  Now the folder structure should look like this:
 
 ![A screen shot of a computer program Description automatically
-generated](media/image15.png){width="6.5in"
-height="1.3604166666666666in"}
+generated](media/image15.png)
 
 # Run the App against RDI Snowflake
 
@@ -375,15 +362,13 @@ height="1.3604166666666666in"}
 Snow app version create v1_0 -c rdi_snowflake
 
 ![A screenshot of a computer program Description automatically
-generated](media/image16.png){width="6.5in"
-height="2.238888888888889in"}
+generated](media/image16.png)
 
 2)  Now run this command to run the app and load it into snowflake:
 
 snow app run \--version V1_0 -c rdi_snowflake ![A screen shot of a
 computer Description automatically
-generated](media/image17.png){width="6.5in"
-height="0.9548611111111112in"}
+generated](media/image17.png)
 
 3)  Now run this command to set the release directive, a required step
     to list a data app, which we will do shortly:
@@ -391,8 +376,7 @@ height="0.9548611111111112in"}
 snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
 RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0\" -c rdi_snowflake ![A black
 screen with white text Description automatically
-generated](media/image18.png){width="6.5in"
-height="0.8118055555555556in"}
+generated](media/image18.png)
 
 4)  At this point, the account should have all it needs in snowflake and
     we should be able to check. From RDI's Snowflake with accountadmin
@@ -400,26 +384,22 @@ height="0.8118055555555556in"}
     Apps
 
 ![A screen shot of a computer Description automatically
-generated](media/image19.png){width="2.6728729221347334in"
-height="1.5923009623797026in"}
+generated](media/image19.png)
 
 Find WIDGETS_APP and click on it:\
 ![A screen shot of a computer Description automatically
-generated](media/image20.png){width="6.5in"
-height="1.0590277777777777in"}
+generated](media/image20.png)
 
 From there, click on the rightmost WIDGETS_APP link
 
 ![A screenshot of a computer Description automatically
-generated](media/image21.png){width="6.5in"
-height="1.6208333333333333in"}
+generated](media/image21.png)
 
 You should see this, indicating that you are seeing correct results for
 the RDI Snowflake Account:
 
 ![A screenshot of a computer screen Description automatically
-generated](media/image22.png){width="6.5in"
-height="2.328472222222222in"}
+generated](media/image22.png)
 
 # List the App Privately
 
@@ -430,8 +410,7 @@ SHOW VERSIONS IN APPLICATION PACKAGE widgets_app_package;
 > The results of this query should be as follows, and most importantly,
 > the review_status field should show 'APPROVED':
 >
-> ![](media/image23.png){width="6.5in"
-> height="0.37222222222222223in"}
+> ![](media/image23.png)
 >
 > If it does not show 'APPROVED,' then I think the most likely issue is
 > just waiting until the automated scan has finished, which gets
@@ -453,22 +432,19 @@ EXTERNAL;
     privileges:
 
 ![A screen shot of a computer Description automatically
-generated](media/image24.png){width="2.1345931758530186in"
-height="1.6584142607174104in"}
+generated](media/image24.png)
 
 3)  Click on "Create a listing"
 
 ![A screenshot of a computer Description automatically
-generated](media/image25.png){width="6.5in"
-height="2.4923611111111112in"}
+generated](media/image25.png)
 
 4)  In the Create Listing dialog, make sure "Only Specified Customers"
     is selected and type "WIDGETS_APP_PACKAGE" into the text box under
     the prompt, "What's the title of the listing?". Click Next.
 
 ![A screenshot of a computer Description automatically
-generated](media/image26.png){width="3.3149146981627298in"
-height="2.4582097550306212in"}
+generated](media/image26.png)
 
 5)  In the next "Create Listing" dialog, click +SELECT and click on
     WIDGETS_APP_PACKAGE to select it. Type "WIDGETS_APP_PACKAGE" or
@@ -477,31 +453,27 @@ height="2.4582097550306212in"}
     account of your customer. For me this was a trial account, and from
     that account, I retrieved the locator code by clicking below:\
     ![A screenshot of a computer Description automatically
-    generated](media/image27.png){width="5.617727471566054in"
-    height="2.919297900262467in"}
+    generated](media/image27.png)
 
 Paste that into the box that says, "Use account identifier to add." If
 all goes well, it will search for that account and you can click it to
 confirm. Then click Publish.
 
 ![A screenshot of a computer Description automatically
-generated](media/image28.png){width="3.5564774715660543in"
-height="3.698964348206474in"}
+generated](media/image28.png)
 
 6)  Now from the customer's Snowflake Apps menu (for me my trial
     account), you should see that the app was shared with them:
 
 ![A screenshot of a computer Description automatically
-generated](media/image29.png){width="4.1597101924759405in"
-height="2.460272309711286in"}
+generated](media/image29.png)
 
 7)  If they click Get, then Listing Details, and then Open, they should
     be able to reach the same Streamlit WIDGETS_APP page, and it should
     look like this:
 
 ![A screenshot of a computer Description automatically
-generated](media/image30.png){width="6.5in"
-height="1.7763888888888888in"}
+generated](media/image30.png)
 
 This is a different subset of widgets showing that the share is relevant
 to them because their account is different and we are as a result
