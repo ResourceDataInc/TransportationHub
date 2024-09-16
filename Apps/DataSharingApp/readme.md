@@ -273,27 +273,21 @@ app_public;
 5)  Create a folder called streamlit and create a file inside called
     widgets_app.py with the following contents:
 
-\# Import python packages
+` # Import python packages
+` import streamlit as st
+` from snowflake.snowpark.context import get_active_session
 
-import streamlit as st
+` # Get the current credentials
+` session = get_active_session()
+` cmd = f"""
+` select * from core.widgets
+` """
 
-from snowflake.snowpark.context import get_active_session
+` queried_data = session.sql(cmd).to_pandas()
 
-\# Get the current credentials
+` st.subheader(\"WIDGETS\")
 
-session = get_active_session()
-
-cmd = f\"\"\"
-
-select \* from core.widgets
-
-\"\"\"
-
-queried_data = session.sql(cmd).to_pandas()
-
-st.subheader(\"WIDGETS\")
-
-st.dataframe(queried_data, use_container_width=True)
+` st.dataframe(queried_data, use_container_width=True)
 
 6)  Now the folder structure should look like this:
 
@@ -304,7 +298,7 @@ generated](media/image15.png)
 
 1)  Run this command to create a version of the app before running it:
 
-Snow app version create v1_0 -c rdi_snowflake
+` Snow app version create v1_0 -c rdi_snowflake
 
 ![A screenshot of a computer program Description automatically
 generated](media/image16.png)
