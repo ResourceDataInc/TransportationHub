@@ -46,23 +46,18 @@ Note also that this document was originally written on microsoft word and then c
 
 # Goal - Share a secure view that displays different results per customer with the customers who are served
 
-1)  WIDGETS table:
-
+1)  `WIDGETS` table:
+```
 create or replace TABLE DEV.BLINCOLN.WIDGETS (
-
 ID NUMBER(38,0),
-
 NAME VARCHAR(16777216),
-
 COLOR VARCHAR(16777216),
-
 PRICE NUMBER(38,0),
-
 CREATED_ON TIMESTAMP_LTZ(9) DEFAULT CURRENT_TIMESTAMP()
-
 );
+```
 
-These rows are present in the WIDGETS table and maintained there.
+These rows are present in the `WIDGETS` table and maintained there.
 
 ![A screenshot of a computer Description automatically
 generated](media/image1.png)
