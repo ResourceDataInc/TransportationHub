@@ -311,10 +311,10 @@ generated](media/image17.png)
 3)  Now run this command to set the release directive, a required step
     to list a data app, which we will do shortly:
 ```
-snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
+snow sql -q "ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
+RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0" -c rdi_snowflake
 ```
-RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0\" -c rdi_snowflake ![A black
-screen with white text Description automatically
+![A black screen with white text Description automatically
 generated](media/image18.png)
 
 4)  At this point, the account should have all it needs in snowflake and
