@@ -284,9 +284,7 @@ app_public;
  """
 
  queried_data = session.sql(cmd).to_pandas()
-
  st.subheader(\"WIDGETS\")
-
  st.dataframe(queried_data, use_container_width=True)
 ```
 6)  Now the folder structure should look like this:
@@ -312,7 +310,7 @@ generated](media/image17.png)
 3)  Now run this command to set the release directive, a required step
     to list a data app, which we will do shortly:
 
-snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
+` snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
 RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0\" -c rdi_snowflake ![A black
 screen with white text Description automatically
 generated](media/image18.png)
