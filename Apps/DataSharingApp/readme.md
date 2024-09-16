@@ -64,14 +64,12 @@ generated](media/image1.png)
 
 2)  WIDGET_ACCESS_RULES
 
+```
 create or replace TABLE DEV.BLINCOLN.WIDGET_ACCESS_RULES (
-
 WIDGET_ID NUMBER(38,0),
-
 ACCOUNT_NAME VARCHAR(16777216)
-
 );
-
+```
 > These rows are present in the WIDGET_ACCESS_RULES table and maintained
 > there:
 >
@@ -88,31 +86,20 @@ ACCOUNT_NAME VARCHAR(16777216)
 > 28 days left of time on it.
 
 3)  WIDGETS_VIEW
-
+```
 create or replace secure view DEV.SHARE_SCHEMA.WIDGETS_VIEW(
-
 ID,
-
 NAME,
-
 COLOR,
-
 PRICE,
-
 CREATED_ON
-
 ) as
-
 SELECT w.\*
-
 FROM DEV.BLINCOLN.widgets AS w
-
 WHERE w.id IN (SELECT widget_id
-
 FROM DEV.BLINCOLN.widget_access_rules AS a
-
 WHERE upper(account_name) = CURRENT_ACCOUNT());
-
+```
 > This secure view makes use of WIDGETS and WIDGETS_ACCESS_RULES and
 > returns rows based on the return value of the function
 > CURRENT_ACCOUNT(). There is currently a version of it in
@@ -197,41 +184,27 @@ generated](media/image14.png)
 
 2)  Create a folder called scripts and create a file in it called
     shared_content.sql and copy the following contents into the file:
-
+```
 ALTER APPLICATION PACKAGE {{package_name}} SET DISTRIBUTION = EXTERNAL;
 
 USE APPLICATION PACKAGE {{package_name}};
 
 CREATE SCHEMA shared_data;
-
 USE SCHEMA shared_data;
 
 create or replace secure view widgets(
-
 ID,
-
 NAME,
-
 COLOR,
-
 PRICE,
-
 CREATED_ON
-
 ) as
-
 SELECT w.\*
-
 FROM dev.blincoln.widgets AS w
-
 WHERE w.id IN (
-
 SELECT widget_id
-
 FROM dev.blincoln.widget_access_rules AS a
-
 WHERE upper(account_name) = CURRENT_ACCOUNT()
-
 );
 
 GRANT REFERENCE_USAGE ON DATABASE dev TO SHARE IN APPLICATION PACKAGE
@@ -242,40 +215,26 @@ GRANT USAGE ON SCHEMA shared_data TO SHARE IN APPLICATION PACKAGE
 
 GRANT SELECT ON VIEW widgets TO SHARE IN APPLICATION PACKAGE
 {{package_name}};
-
+```
 3)  Edit snowflake.yml and paste the following text into it, overwriting
     what is there:
-
+```
 definition_version: 1
-
 native_app:
-
-name: widgets_app
-
-source_stage: stage_content.widgets_app_stage
-
-artifacts:
-
-\- src: app/\*
-
-dest: ./
-
-\- streamlit/widgets_app.py
-
-package:
-
-name: widgets_app_package
-
-scripts:
-
-\- scripts/shared_content.sql
-
-application:
-
-name: widgets_app
-
-debug: false
-
+  name: widgets_app
+  source_stage: stage_content.widgets_app_stage
+  artifacts:
+    - src: app/*
+      dest: ./
+    - streamlit/widgets_app.py
+  package:
+    name: widgets_app_package
+    scripts:
+      - scripts/shared_content.sql
+  application:
+    name: widgets_app
+    debug: false
+```
 4)  Edit app/setup_script.sql and paste the following text into it,
     overwriting what is there:
 
