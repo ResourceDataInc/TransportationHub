@@ -150,11 +150,7 @@ height="2.6194444444444445in"}
 
 Snowflake CLI is installed by installing the python library
 snowflake-cli-labs. If you use [anaconda](https://www.anaconda.com/),
-you can use
-
-![](media/image5.emf)
-
-and this command:
+you can use the file local_test_env.yml in this folder and this command:
 
 ![](media/image6.png){width="6.5in"
 height="0.3055555555555556in"}
