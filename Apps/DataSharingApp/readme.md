@@ -295,8 +295,9 @@ generated](media/image15.png)
 # Run the App against RDI Snowflake
 
 1)  Run this command to create a version of the app before running it:
-
-` snow app version create v1_0 -c rdi_snowflake
+```
+snow app version create v1_0 -c rdi_snowflake
+```
 
 ![A screenshot of a computer program Description automatically
 generated](media/image16.png)
@@ -309,8 +310,9 @@ generated](media/image17.png)
 
 3)  Now run this command to set the release directive, a required step
     to list a data app, which we will do shortly:
-
-` snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
+```
+snow sql -q \"ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
+```
 RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0\" -c rdi_snowflake ![A black
 screen with white text Description automatically
 generated](media/image18.png)
