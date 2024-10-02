@@ -6,9 +6,6 @@ dependencies:
   - python=3.8
   - pip
   - pip:
-      - pytest
       - streamlit>=1.28.0
-      - snowflake-cli-labs>=2.0.0
       - snowflake-snowpark-python
-      - snowflake-native-apps-permission-stub
       - plotly
