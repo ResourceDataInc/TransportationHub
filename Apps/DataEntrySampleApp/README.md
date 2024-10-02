@@ -5,11 +5,11 @@ The Data Entry Demo App is a Streamlit application for demonstrating Streamlit's
 - Install [miniconda](https://docs.conda.io/projects/miniconda/en/latest/index.html)
 - create a conda environment in the root of this folder.
     ```
-    $ conda create --name <env> --file requirements.txt
+    conda env update -f desa_env.yml
     ```
 - Activate the environment
     ```
-    conda activate <env>
+    conda activate desa
     ```
 - Set up environment configuration; create `.streamlit/secrets.toml` and enter your Snowflake account credentials 
     ```
