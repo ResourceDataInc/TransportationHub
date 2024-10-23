@@ -120,7 +120,7 @@ itself.
 Note that for the screenshot of WIDGETS_VIEW, I was logged into the
 main Resource Data Snowflake account, which has a locator of SZB57928. 
 Consequently, I get four rows, which represents the idea that in this
-example, my account has access to all four types of widgets. For the reader account,  
+example, my account has access to all four types of widgets. For the reader account, 
 it is simple to provide a share to this view so that from that account, you see three 
 rows. But for this document, I will go over the other method of sharing 
 this view, via a Snowflake Native App and Private Listing.
@@ -173,8 +173,7 @@ my password is blurred in this document.
 
 # Create Native App relevant files locally
 
-Note:  This section mentions the steps to create the files, but for the markdown version of this document, the files should be in the repository
-
+Note:  This section mentions the steps to create the files, but for the markdown version of this document, the files should be in the repository.
 Run the following command to create a folder with skeleton Native App files present:
 ```
 Snow app init widgets
@@ -313,7 +312,7 @@ snow sql -q "ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT RELEASE D
 <img src="media/image18.png" alt="image18" style="width:1000px;"/>
 
 At this point, the account should have all it needs in snowflake and we 
-should be able to check. From RDI's Snowflake with accountadmin rights,  
+should be able to check. From RDI's Snowflake with accountadmin rights, 
 go to Data Products at the left hand margin and click on Apps
 
 <img src="media/image19.png" alt="image19" style="width:400px;"/>
