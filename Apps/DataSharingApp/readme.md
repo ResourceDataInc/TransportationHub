@@ -1,11 +1,14 @@
 #### Table of Contents
 
-- [Tutorials and Snowflake Native App Pages](#relevant-tutorial-source-documentation-online)
-- [Goal - Share a Secure View that displays different results per customer](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
-- [Tool - Install Snowflake CLI](#Tool----Install-Snowflake-CLI)
-- [Create Native App Relevant Files Locally](#Create-Native-App-relevant-files-locally)
-- [Run the app against RDI Snowflake](#Run-the-App-against-RDI-Snowflake)
-- [List the app Privately](#List-the-App-Privately)
+- [Data Applications, Data Sharing and Private Listings](#data-applications-data-sharing-and-private-listings)
+  - [This documentation shows how to put together a Streamlit data application using the Snowflake Native App framework in order to share local data with a customer via a Private Listing in the Marketplace, provided that the customer has a full Snowflake account themselves.](#this-documentation-shows-how-to-put-together-a-streamlit-data-application-using-the-snowflake-native-app-framework-in-order-to-share-local-data-with-a-customer-via-a-private-listing-in-the-marketplace-provided-that-the-customer-has-a-full-snowflake-account-themselves)
+  - [Relevant Tutorial Source Documentation online:](#relevant-tutorial-source-documentation-online)
+  - [Official Snowflake Native App pages:](#official-snowflake-native-app-pages)
+- [Goal - Share a secure view that displays different results per customer with the customers who are served](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
+- [Tool -- Install Snowflake CLI](#tool----install-snowflake-cli)
+- [Create Native App relevant files locally](#create-native-app-relevant-files-locally)
+- [Run the App against RDI Snowflake](#run-the-app-against-rdi-snowflake)
+- [List the App Privately](#list-the-app-privately)
 
 # Data Applications, Data Sharing and Private Listings
 
@@ -138,8 +141,9 @@ Snowflake CLI is installed by installing the python library
 snowflake-cli-labs. If you use [anaconda](https://www.anaconda.com/),
 you can use the file local_test_env.yml in this folder and this command:
 
-![](media/image6.png)
-
+```
+conda env update -f local_test_env.yml
+```
 It installs a conda environment called snowflake-cli that includes
 pytest, streamlit, and a few other relevant libraries besides Snowflake
 CLI. Then to activate that conda environment, use the following command:
