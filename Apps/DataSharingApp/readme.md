@@ -87,14 +87,11 @@ there:
 
 There are three unique ACCOUNT_NAME values: SAB13106, QJB12836, and
 SZB57928. These represent the account locator values for an account,
-or, exactly  
-what the function CURRENT_ACCOUNT() returns when logged in
+or, exactly what the function CURRENT_ACCOUNT() returns when logged in
 under a given account. SZB57928 is the account locator for Resource
-Data's main internal  
-Snowflake account. QJB12836 is the locator for a
+Data's main internal Snowflake account. QJB12836 is the locator for a
 reader account that is associated with Resource Data's main account.
-SAB13106 represents a trial account  
-that I just signed up for and has
+SAB13106 represents a trial account that I just signed up for and has
 28 days left of time on it.
 
 WIDGETS_VIEW
@@ -114,23 +111,19 @@ WHERE upper(account_name) = CURRENT_ACCOUNT());
 ```
 This secure view makes use of WIDGETS and WIDGETS_ACCESS_RULES and
 returns rows based on the return value of the function
-CURRENT_ACCOUNT(). There is  
-currently a version of it in
+CURRENT_ACCOUNT(). There is currently a version of it in
 DEV.SHARE_SCHEMA, but the important thing is the secure view query
 itself.
 
 <img src="media/image3.png" alt="image3" style="width:1000px;"/>
 
 Note that for the screenshot of WIDGETS_VIEW, I was logged into the
-main Resource Data Snowflake account, which has a locator of SZB57928.  
+main Resource Data Snowflake account, which has a locator of SZB57928. 
 Consequently, I get four rows, which represents the idea that in this
-example, my account has access to all four types of widgets. For the
-reader account,  
-it is simple to provide a share to this view so that
-from that account, you see three rows. But for this document, I will
-go over the other method of sharing  
-this view, via a Snowflake Native
-App and Private Listing.
+example, my account has access to all four types of widgets. For the reader account,  
+it is simple to provide a share to this view so that from that account, you see three 
+rows. But for this document, I will go over the other method of sharing 
+this view, via a Snowflake Native App and Private Listing.
 
 # Tool -- Install Snowflake CLI
 
@@ -175,7 +168,7 @@ folder:
 <img src="media/image12.png" alt="image12" style="width:800px;"/>
 
 I have also named my connection rdi_snowflake and made that the default
-connection. You will need at least the above fields specified. Note that  
+connection. You will need at least the above fields specified. Note that 
 my password is blurred in this document.
 
 # Create Native App relevant files locally
@@ -364,11 +357,9 @@ EXTERNAL;
 ```
 If those two things have happened and it is still not approved, you
 and/or someone else will have to figure out why. REVIEW_STATUS needs
-to be  
-'APPROVED' to move on to the next step.  
-Click on Provider Studio under Data Products on the left hand margin
-    of Snowsight while logged into RDI Snowflake with ACCOUNTADMIN
-    privileges:
+to be 'APPROVED' to move on to the next step. 
+Click on Provider Studio under Data Products on the left hand margin of 
+Snowsight while logged into RDI Snowflake with ACCOUNTADMIN privileges:
 
 <img src="media/image24.png" alt="image24" style="width:400px;"/>
 
@@ -377,18 +368,16 @@ Click on "Create a listing"
 <img src="media/image25.png" alt="image25" style="width:800px;"/>
 
 In the Create Listing dialog, make sure "Only Specified Customers" is 
-selected and type "WIDGETS_APP_PACKAGE" into the text box under the  
+selected and type "WIDGETS_APP_PACKAGE" into the text box under the 
 prompt, "What's the title of the listing?". Click Next.
 
 <img src="media/image26.png" alt="image26" style="width:600px;"/>
 
 In the next "Create Listing" dialog, click +SELECT and click on 
 WIDGETS_APP_PACKAGE to select it. Type "WIDGETS_APP_PACKAGE" or 
-whatever  
-you want in the text box marked "Briefly describe your 
+whatever you want in the text box marked "Briefly describe your 
 listing." Lastly, you need the locator code for the snowflake 
-account of your customer.  
-For me this was a trial account, and from 
+account of your customer. For me this was a trial account, and from 
 that account, I retrieved the locator code by clicking below:
 
 <img src="media/image27.png" alt="image27" style="width:800px;"/>
