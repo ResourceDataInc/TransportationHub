@@ -1,11 +1,14 @@
 #### Table of Contents
 
-- [Tutorials and Snowflake Native App Pages](#relevant-tutorial-source-documentation-online)
-- [Goal - Share a Secure View that displays different results per customer](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
-- [Tool - Install Snowflake CLI](#Tool----Install-Snowflake-CLI)
-- [Create Native App Relevant Files Locally](#Create-Native-App-relevant-files-locally)
-- [Run the app against RDI Snowflake](#Run-the-App-against-RDI-Snowflake)
-- [List the app Privately](#List-the-App-Privately)
+- [Data Applications, Data Sharing and Private Listings](#data-applications-data-sharing-and-private-listings)
+  - [This documentation shows how to put together a Streamlit data application using the Snowflake Native App framework in order to share local data with a customer via a Private Listing in the Marketplace, provided that the customer has a full Snowflake account themselves.](#this-documentation-shows-how-to-put-together-a-streamlit-data-application-using-the-snowflake-native-app-framework-in-order-to-share-local-data-with-a-customer-via-a-private-listing-in-the-marketplace-provided-that-the-customer-has-a-full-snowflake-account-themselves)
+  - [Relevant Tutorial Source Documentation online:](#relevant-tutorial-source-documentation-online)
+  - [Official Snowflake Native App pages:](#official-snowflake-native-app-pages)
+- [Goal - Share a secure view that displays different results per customer with the customers who are served](#goal---share-a-secure-view-that-displays-different-results-per-customer-with-the-customers-who-are-served)
+- [Tool -- Install Snowflake CLI](#tool----install-snowflake-cli)
+- [Create Native App relevant files locally](#create-native-app-relevant-files-locally)
+- [Run the App against RDI Snowflake](#run-the-app-against-rdi-snowflake)
+- [List the App Privately](#list-the-app-privately)
 
 # Data Applications, Data Sharing and Private Listings
 
@@ -54,7 +57,7 @@ Note also that this document was originally written on microsoft word and then c
 
 # Goal - Share a secure view that displays different results per customer with the customers who are served
 
-1)  `WIDGETS` table:
+`WIDGETS` table:
 ```
 create or replace TABLE DEV.BLINCOLN.WIDGETS (
 ID NUMBER(38,0),
@@ -67,10 +70,9 @@ CREATED_ON TIMESTAMP_LTZ(9) DEFAULT CURRENT_TIMESTAMP()
 
 These rows are present in the `WIDGETS` table and maintained there.
 
-![A screenshot of a computer Description automatically
-generated](media/image1.png)
+<img src="media/image1.png" alt="image1" style="width:1000px;"/>
 
-2)  WIDGET_ACCESS_RULES
+WIDGET_ACCESS_RULES
 
 ```
 create or replace TABLE DEV.BLINCOLN.WIDGET_ACCESS_RULES (
@@ -78,22 +80,21 @@ WIDGET_ID NUMBER(38,0),
 ACCOUNT_NAME VARCHAR(16777216)
 );
 ```
-> These rows are present in the WIDGET_ACCESS_RULES table and maintained
-> there:
->
-> ![A screenshot of a computer Description automatically
-> generated](media/image2.png)
->
-> There are three unique ACCOUNT_NAME values: SAB13106, QJB12836, and
-> SZB57928. These represent the account locator values for an account,
-> or, exactly what the function CURRENT_ACCOUNT() returns when logged in
-> under a given account. SZB57928 is the account locator for Resource
-> Data's main internal Snowflake account. QJB12836 is the locator for a
-> reader account that is associated with Resource Data's main account.
-> SAB13106 represents a trial account that I just signed up for and has
-> 28 days left of time on it.
+These rows are present in the WIDGET_ACCESS_RULES table and maintained
+there:
 
-3)  WIDGETS_VIEW
+<img src="media/image2.png" alt="image2" style="width:800px;"/>
+
+There are three unique ACCOUNT_NAME values: SAB13106, QJB12836, and
+SZB57928. These represent the account locator values for an account,
+or, exactly what the function CURRENT_ACCOUNT() returns when logged in
+under a given account. SZB57928 is the account locator for Resource
+Data's main internal Snowflake account. QJB12836 is the locator for a
+reader account that is associated with Resource Data's main account.
+SAB13106 represents a trial account that I just signed up for and has
+28 days left of time on it.
+
+WIDGETS_VIEW
 ```
 create or replace secure view DEV.SHARE_SCHEMA.WIDGETS_VIEW(
 ID,
@@ -108,92 +109,83 @@ WHERE w.id IN (SELECT widget_id
 FROM DEV.BLINCOLN.widget_access_rules AS a
 WHERE upper(account_name) = CURRENT_ACCOUNT());
 ```
-> This secure view makes use of WIDGETS and WIDGETS_ACCESS_RULES and
-> returns rows based on the return value of the function
-> CURRENT_ACCOUNT(). There is currently a version of it in
-> DEV.SHARE_SCHEMA, but the important thing is the secure view query
-> itself.
->
-> ![A screenshot of a computer Description automatically
-> generated](media/image3.png)
->
-> Note that for the screenshot of WIDGETS_VIEW, I was logged into the
-> main Resource Data Snowflake account, which has a locator of SZB57928.
-> Consequently, I get four rows, which represents the idea that in this
-> example, my account has access to all four types of widgets. For the
-> reader account, it is simple to provide a share to this view so that
-> from that account, you see three rows. But for this document, I will
-> go over the other method of sharing this view, via a Snowflake Native
-> App and Private Listing.
+This secure view makes use of WIDGETS and WIDGETS_ACCESS_RULES and
+returns rows based on the return value of the function
+CURRENT_ACCOUNT(). There is currently a version of it in
+DEV.SHARE_SCHEMA, but the important thing is the secure view query
+itself.
+
+<img src="media/image3.png" alt="image3" style="width:1000px;"/>
+
+Note that for the screenshot of WIDGETS_VIEW, I was logged into the
+main Resource Data Snowflake account, which has a locator of SZB57928. 
+Consequently, I get four rows, which represents the idea that in this
+example, my account has access to all four types of widgets. For the reader account, 
+it is simple to provide a share to this view so that from that account, you see three 
+rows. But for this document, I will go over the other method of sharing 
+this view, via a Snowflake Native App and Private Listing.
 
 # Tool -- Install Snowflake CLI
 
-1)  [Official Instructions for Snowflake CLI
-    Installation](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
+[Official Instructions for Snowflake CLI Installation](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 
-![A screenshot of a computer Description automatically
-generated](media/image4.png)
+<img src="media/image4.png" alt="image4" style="width:800px;"/>
 
 Snowflake CLI is installed by installing the python library
 snowflake-cli-labs. If you use [anaconda](https://www.anaconda.com/),
 you can use the file local_test_env.yml in this folder and this command:
 
-![](media/image6.png)
-
+```
+conda env update -f local_test_env.yml
+```
 It installs a conda environment called snowflake-cli that includes
-pytest, streamlit, and a few other relevant libraries besides Snowflake
+pytest, streamlit, and a few other relevant libraries besides Snowflake  
 CLI. Then to activate that conda environment, use the following command:
 
-![](media/image7.png)
+<img src="media/image7.png" alt="image7" style="width:800px;"/>
 
 Then the main command you'll be interested in is snow:
 
-![A screenshot of a computer program Description automatically
-generated](media/image8.png)
+<img src="media/image8.png" alt="image8" style="width:800px;"/>
 
-2)  Configure the connection to Snowflake
+Configure the connection to Snowflake
 
-![A screenshot of a computer program Description automatically
-generated](media/image9.png)
+<img src="media/image9.png" alt="image9" style="width:800px;"/>
 
 Ordinarily, you'll want to use the following command to add a
 connection:
 
-![](media/image10.png)
+<img src="media/image10.png" alt="image10" style="width:800px;"/>
 
 This will simply ask for individual fields iteratively and then edit a
-local file called config.toml. Note that I run everything from a Windows
+local file called config.toml. Note that I run everything from a Windows  
 Subsystem for Linux Ubuntu installation on my windows machine, so for me
 this file is located in the .config folder relative to my home Linux
 folder:
 
-![A screen shot of a computer Description automatically
-generated](media/image11.png)
+<img src="media/image11.png" alt="image11" style="width:800px;"/>
 
-![A computer screen with text and numbers Description automatically
-generated](media/image12.png)
+<img src="media/image12.png" alt="image12" style="width:800px;"/>
 
 I have also named my connection rdi_snowflake and made that the default
-connection. You will need at least the above fields specified. Note that
+connection. You will need at least the above fields specified. Note that 
 my password is blurred in this document.
 
 # Create Native App relevant files locally
 
-Note:  This section mentions the steps to create the files, but for the markdown version of this document, the files should be in the repository
-
-1)  Run the following command to create a folder with skeleton Native
-    App files present:
-
+Note:  This section mentions the steps to create the files, but for the markdown version of this document, the files should be in the repository.
+Run the following command to create a folder with skeleton Native App files present:
+```
 Snow app init widgets
+```
 
-![](media/image13.png)
+<img src="media/image13.png" alt="image13" style="width:800px;"/>
 
-Once you've done this, the folder structure should look like this:![A
-screen shot of a computer Description automatically
-generated](media/image14.png)
+Once you've done this, the folder structure should look like this:
 
-2)  Create a folder called scripts and create a file in it called
-    shared_content.sql and copy the following contents into the file:
+<img src="media/image14.png" alt="image14" style="width:800px;"/>
+
+Create a folder called scripts and create a file in it called shared_content.sql and copy the following contents into the file:
 ```
 ALTER APPLICATION PACKAGE {{package_name}} SET DISTRIBUTION = EXTERNAL;
 
@@ -226,8 +218,7 @@ GRANT USAGE ON SCHEMA shared_data TO SHARE IN APPLICATION PACKAGE
 GRANT SELECT ON VIEW widgets TO SHARE IN APPLICATION PACKAGE
 {{package_name}};
 ```
-3)  Edit snowflake.yml and paste the following text into it, overwriting
-    what is there:
+Edit snowflake.yml and paste the following text into it, overwriting what is there:
 ```
 definition_version: 1
 native_app:
@@ -245,8 +236,7 @@ native_app:
     name: widgets_app
     debug: false
 ```
-4)  Edit app/setup_script.sql and paste the following text into it,
-    overwriting what is there:
+Edit app/setup_script.sql and paste the following text into it, overwriting what is there:
 
 ```
 CREATE APPLICATION ROLE IF NOT EXISTS app_public;
@@ -280,8 +270,7 @@ GRANT USAGE ON STREAMLIT code_schema.widgets_app TO APPLICATION ROLE
 app_public;
 ```
 
-5)  Create a folder called streamlit and create a file inside called
-    widgets_app.py with the following contents:
+Create a folder called streamlit and create a file inside called widgets_app.py with the following contents:
 ```
  # Import python packages
  import streamlit as st
@@ -297,132 +286,117 @@ app_public;
  st.subheader(\"WIDGETS\")
  st.dataframe(queried_data, use_container_width=True)
 ```
-6)  Now the folder structure should look like this:
+Now the folder structure should look like this:
 
-![A screen shot of a computer program Description automatically
-generated](media/image15.png)
+<img src="media/image15.png" alt="image15" style="width:800px;"/>
 
 # Run the App against RDI Snowflake
 
-1)  Run this command to create a version of the app before running it:
+Run this command to create a version of the app before running it:
 ```
 snow app version create v1_0 -c rdi_snowflake
 ```
+<img src="media/image16.png" alt="image16" style="width:800px;"/>
 
-![A screenshot of a computer program Description automatically
-generated](media/image16.png)
-
-2)  Now run this command to run the app and load it into snowflake:
-
-snow app run \--version V1_0 -c rdi_snowflake ![A screen shot of a
-computer Description automatically
-generated](media/image17.png)
-
-3)  Now run this command to set the release directive, a required step
-    to list a data app, which we will do shortly:
+Now run this command to run the app and load it into snowflake:
 ```
-snow sql -q "ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT
-RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0" -c rdi_snowflake
+snow app run --version V1_0 -c rdi_snowflake 
 ```
-![A black screen with white text Description automatically
-generated](media/image18.png)
+<img src="media/image17.png" alt="image17" style="width:800px;"/>
 
-4)  At this point, the account should have all it needs in snowflake and
-    we should be able to check. From RDI's Snowflake with accountadmin
-    rights, go to Data Products at the left hand margin and click on
-    Apps
+Now run this command to set the release directive, a required step to list a data app, which we will do shortly:
+```
+snow sql -q "ALTER APPLICATION PACKAGE widgets_app_package SET DEFAULT RELEASE DIRECTIVE VERSION = v1_0 PATCH = 0" -c rdi_snowflake
+```
 
-![A screen shot of a computer Description automatically
-generated](media/image19.png)
+<img src="media/image18.png" alt="image18" style="width:1000px;"/>
 
-Find WIDGETS_APP and click on it:\
-![A screen shot of a computer Description automatically
-generated](media/image20.png)
+At this point, the account should have all it needs in snowflake and we 
+should be able to check. From RDI's Snowflake with accountadmin rights, 
+go to Data Products at the left hand margin and click on Apps
+
+<img src="media/image19.png" alt="image19" style="width:400px;"/>
+
+Find WIDGETS_APP and click on it:
+
+<img src="media/image20.png" alt="image20" style="width:800px;"/>
 
 From there, click on the rightmost WIDGETS_APP link
 
-![A screenshot of a computer Description automatically
-generated](media/image21.png)
+<img src="media/image21.png" alt="image21" style="width:500px;"/>
 
 You should see this, indicating that you are seeing correct results for
 the RDI Snowflake Account:
 
-![A screenshot of a computer screen Description automatically
-generated](media/image22.png)
+<img src="media/image22.png" alt="image22" style="width:800px;"/>
 
 # List the App Privately
 
-1)  From RDI Snowflake Account in Snowsight, run the following command:
+From RDI Snowflake Account in Snowsight, run the following command:
 ```
 SHOW VERSIONS IN APPLICATION PACKAGE widgets_app_package;
 ```
-> The results of this query should be as follows, and most importantly,
-> the review_status field should show 'APPROVED':
->
-> ![](media/image23.png)
->
-> If it does not show 'APPROVED,' then I think the most likely issue is
-> just waiting until the automated scan has finished, which gets
-> initiated when the release directive is set (see step 3 of running the
-> app above). It's also possible that the line at the top of
-> scripts/shared_content.sql has not been run and needs to be, where
-> {{package_name}} would at this stage be replaced with the name of the
-> package, WIDGETS_APP_PACKAGE:
+The results of this query should be as follows, and most importantly,
+the review_status field should show 'APPROVED':
+
+<img src="media/image23.png" alt="image23" style="width:800px;"/>
+
+If it does not show 'APPROVED,' then I think the most likely issue is
+just waiting until the automated scan has finished, which gets
+initiated  
+when the release directive is set (see step 3 of running the
+app above). It's also possible that the line at the top of
+scripts/shared_content.sql  
+has not been run and needs to be, where
+{{package_name}} would at this stage be replaced with the name of the
+package, WIDGETS_APP_PACKAGE:
 ```
 ALTER APPLICATION PACKAGE WIDGETS_APP_PACKAGE SET DISTRIBUTION =
 EXTERNAL;
 ```
-> If those two things have happened and it is still not approved, you
-> and/or someone else will have to figure out why. REVIEW_STATUS needs
-> to be 'APPROVED' to move on to the next step.
+If those two things have happened and it is still not approved, you
+and/or someone else will have to figure out why. REVIEW_STATUS needs
+to be 'APPROVED' to move on to the next step. 
+Click on Provider Studio under Data Products on the left hand margin of 
+Snowsight while logged into RDI Snowflake with ACCOUNTADMIN privileges:
 
-2)  Click on Provider Studio under Data Products on the left hand margin
-    of Snowsight while logged into RDI Snowflake with ACCOUNTADMIN
-    privileges:
+<img src="media/image24.png" alt="image24" style="width:400px;"/>
 
-![A screen shot of a computer Description automatically
-generated](media/image24.png)
+Click on "Create a listing"
 
-3)  Click on "Create a listing"
+<img src="media/image25.png" alt="image25" style="width:800px;"/>
 
-![A screenshot of a computer Description automatically
-generated](media/image25.png)
+In the Create Listing dialog, make sure "Only Specified Customers" is 
+selected and type "WIDGETS_APP_PACKAGE" into the text box under the 
+prompt, "What's the title of the listing?". Click Next.
 
-4)  In the Create Listing dialog, make sure "Only Specified Customers"
-    is selected and type "WIDGETS_APP_PACKAGE" into the text box under
-    the prompt, "What's the title of the listing?". Click Next.
+<img src="media/image26.png" alt="image26" style="width:600px;"/>
 
-![A screenshot of a computer Description automatically
-generated](media/image26.png)
+In the next "Create Listing" dialog, click +SELECT and click on 
+WIDGETS_APP_PACKAGE to select it. Type "WIDGETS_APP_PACKAGE" or 
+whatever you want in the text box marked "Briefly describe your 
+listing." Lastly, you need the locator code for the snowflake 
+account of your customer. For me this was a trial account, and from 
+that account, I retrieved the locator code by clicking below:
 
-5)  In the next "Create Listing" dialog, click +SELECT and click on
-    WIDGETS_APP_PACKAGE to select it. Type "WIDGETS_APP_PACKAGE" or
-    whatever you want in the text box marked "Briefly describe your
-    listing." Lastly, you need the locator code for the snowflake
-    account of your customer. For me this was a trial account, and from
-    that account, I retrieved the locator code by clicking below:\
-    ![A screenshot of a computer Description automatically
-    generated](media/image27.png)
+<img src="media/image27.png" alt="image27" style="width:800px;"/>
 
 Paste that into the box that says, "Use account identifier to add." If
 all goes well, it will search for that account and you can click it to
 confirm. Then click Publish.
 
-![A screenshot of a computer Description automatically
-generated](media/image28.png)
+<img src="media/image28.png" alt="image28" style="width:600px;"/>
 
-6)  Now from the customer's Snowflake Apps menu (for me my trial
-    account), you should see that the app was shared with them:
+Now from the customer's Snowflake Apps menu (for me my trial 
+account), you should see that the app was shared with them:
 
-![A screenshot of a computer Description automatically
-generated](media/image29.png)
+<img src="media/image29.png" alt="image29" style="width:400px;"/>
 
-7)  If they click Get, then Listing Details, and then Open, they should
-    be able to reach the same Streamlit WIDGETS_APP page, and it should
-    look like this:
+If they click Get, then Listing Details, and then Open, they should
+be able to reach the same Streamlit WIDGETS_APP page, and it should
+look like this:
 
-![A screenshot of a computer Description automatically
-generated](media/image30.png)
+<img src="media/image30.png" alt="image30" style="width:600px;"/>
 
 This is a different subset of widgets showing that the share is relevant
 to them because their account is different and we are as a result

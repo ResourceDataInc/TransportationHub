@@ -3,7 +3,7 @@ name: desa
 channels:
   - snowflake
 dependencies:
-  - python=3.8
+  - python=3.11
   - pip
   - pip:
       - streamlit>=1.28.0
